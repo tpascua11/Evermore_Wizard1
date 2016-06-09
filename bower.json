@@ -1,0 +1,25 @@
+{
+  "name": "evermore_wizard1",
+  "homepage": "https://github.com/tpascua11/Evermore_Wizard1",
+  "authors": [
+    "bahamutr13 <tedlpascua@gmail.com>"
+  ],
+  "description": "A Game About A dinosaur Wizard",
+  "main": "",
+  "keywords": [
+    "Wizard",
+    "Dinosaur",
+    "Raptor"
+  ],
+  "license": "GPL3",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "phaser": "^2.4.8"
+  }
+}
