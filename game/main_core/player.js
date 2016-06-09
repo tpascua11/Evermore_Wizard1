@@ -1,74 +1,89 @@
-// Player
+//------------------
+//  Player
+//------------------
 
-//Base Stats
-var playerInfo = { 
-  //Stats
-  health: 100, maxHealth: 100,
-  mana  : 75 , maxMana  : 100, 
-  rmana : 25 , maxRmana : 25,
+//---------------------------------------------------------
+// Player_Information
+//---------------------------------------------------------
+var playerStats = {
+  health   : 100
+}
+var player = {
+  health   : 100,
+  maxHealth: 100,
+  mana     : 75 ,
+  maxMana  : 100,
+  rmana    : 25 ,
+  maxRmana : 25 ,
+  curSpd   : 0,
+  speed    : 200,
+  sprint   : 500,
+  acl      : 50 ,
+  left     : 0  ,
+  right    : 0  ,
+  casting  : 0  , 
   rechargeRate: 1,
   resistance: "nothing",
   weak: "nothing"
 };
 
-//Character Creation
-//
-function loadPlayerSprite(){
-  game.load.spritesheet('dino', '../assets/Dino_Test6.png', 16, 16);
-}
-
-function createDefaultPlayer(){
-    //SpriteSetup
-    player = game.add.sprite(300, game.world.height - 150, 'dino');
-    player.scale.setTo(3,3);
-
-    //Physics
-    game.physics.arcade.enable(player);
-    player.body.bounce.y = 0.0;
-    player.body.gravity.y = 1000;
-    player.body.collideWorldBounds = true;
-    
-    //-----------
-    //Animation
-    //----------
-    //Walking Animation
-      player.animations.add('right', [24, 25, 26, 27, 28, 29, 30, 31], 20, true);
-      player.animations.add('left', [40, 41, 42, 43, 44, 45, 46, 47], 20, true);
-      //player.animations.add('left', [17, 16, 19, 18], 10, true);
-      //player.animations.add('right', [20, 21, 22, 23], 10, true)
-
-    //Sprinting Animation
-      player.animations.add('leftSprint', [8, 9, 10, 11], 10, true);
-      player.animations.add('rightSprint', [13, 12, 15, 14], 10, true)
-}
-
-/*
-function setupSpriteForPlayer(){
-  var dog;
-
-}
-
-*/
 var rmove = 0;
 var lmove = 0;
 var speedLimit = 200;
 var sprintLimit = 500;
 var currentSpeed = 0;
 
+//---------------------------------------------------------
+// Player_Building
+//---------------------------------------------------------
+function loadPlayerSprite(){
+  game.load.spritesheet('dino', '../assets/Dino_Test6.png', 16, 16);
+}
+
+function createPlayer(){
+    player = game.add.sprite(300, game.world.height - 150, 'dino');
+    player.scale.setTo(3,3);
+
+    game.physics.arcade.enable(player);
+    player.body.bounce.y = 0.0;
+    player.body.gravity.y = 1000;
+    player.body.collideWorldBounds = true;
+}
+
+function createPlayerAnimations(){
+    //player.animations.add('left', [17, 16, 19, 18], 10, true);
+    //player.animations.add('right', [20, 21, 22, 23], 10, true)
+
+    //Walking Animation
+    player.animations.add('right', [24, 25, 26, 27, 28, 29, 30, 31], 20, true);
+    player.animations.add('left', [40, 41, 42, 43, 44, 45, 46, 47], 20, true);
+
+    //Sprinting Animation
+    player.animations.add('leftSprint', [8, 9, 10, 11], 10, true);
+    player.animations.add('rightSprint', [13, 12, 15, 14], 10, true);
+}
+
 function movingLeft(){
+  player.right = 0;
+  player.left = 1;
   lmove = 1;
 }
 function stopLeft(){
+  player.left = 0;
   lmove = 0;
 }
-
 function movingRight(){
+  player.left= 0;
+  player.right = 1;
   rmove = 1;
 }
 function stopRight(){
+  player.right = 0;
   rmove = 0;
 }
+
 function movement(){
+  /*
   if(rmove && lmove){
     if(player.body.velocity.x > 2){
       player.body.velocity.x -= 10;
@@ -87,6 +102,7 @@ function movement(){
   }
   else 
     player.body.velocity.x = 0;
+    */
 }
 
 //Player Actions
