@@ -82,9 +82,6 @@ function create() {
 
    // The player and its settings
     createPlayer();
-    createPlayerAnimations();
-
-
     stars = game.add.group();
     stars.enableBody = true;
 
@@ -100,7 +97,7 @@ function create() {
         star.body.bounce.y = 0.7 + Math.random() * 0.2;
     }
   scoreText = game.add.text(300, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
-  healthText = game.add.text(32, 32, playerStats.health, {fontSize: '32px', fill: '900'}) ;
+  //healthText = game.add.text(32, 32, playerInfo.health, {fontSize: '32px', fill: '900'}) ;
 
 //Music Test
     music = game.add.audio('boden');
@@ -121,16 +118,18 @@ function create() {
 function collectStar (player, star) {
     // Removes the star from the screen
     star.kill();
+
     coin.play();
     score += 10;
     scoreText.text = 'Score: ' + score;
-    playerStats.health += 10;
-    healthText.text = 100;
+    //playerInfo.health += 10;
+   // healthText.text = 100;
 }
 stepsMakeSound = 0;
 
 var jumpLimit = 2;
 var jumpRefresh = true;
+
 
 
 function collision(){
