@@ -17,6 +17,8 @@ function preload() {
   //game.load.audio('jump', '../assets/Jump19.wav');
   //game.load.audio('steps', '../assets/step.wav');
   game.load.audio('coin', '../assets/coin.wav');
+
+  preloadBackground();
 }
 
 var platforms;
@@ -73,15 +75,19 @@ function create() {
     ground.body.immovable = true;
 
     //  Now let's create two ledges
+    /*
     var ledge = platforms.create(400, 400, 'ground');
     ledge.body.immovable = true;
     ledge = platforms.create(-150, 250, 'ground');
     ledge.body.immovable = true;
     ledge = platforms.create(-150, 500, 'ground');
     ledge.body.immovable = true;
+    */
 
    // The player and its settings
     createPlayer();
+    game.camera.follow(player);
+
     stars = game.add.group();
     stars.enableBody = true;
 
@@ -102,7 +108,7 @@ function create() {
 //Music Test
     music = game.add.audio('boden');
 
-    music.play();
+    //music.play();
   
   //doJump.onDown.add(playerJump, this);
 
@@ -112,7 +118,7 @@ function create() {
   makeEntity();
   console.log(entity);
   playerDefaultMovement();
-
+  loadBackground();
 }
 
 function collectStar (player, star) {
@@ -139,7 +145,9 @@ function collision(){
 }
 function update() {
   collision();
+  entityCollision();
   movement();
+  
 
   //  Reset the players velocity (movement)
 /*
