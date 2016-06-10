@@ -14,8 +14,8 @@ function preload() {
 
   cursors = game.input.keyboard.createCursorKeys();
   game.load.audio('boden', ['../assets/meltdown.mp3']);
-  game.load.audio('jump', '../assets/Jump19.wav');
-  game.load.audio('steps', '../assets/step.wav');
+  //game.load.audio('jump', '../assets/Jump19.wav');
+  //game.load.audio('steps', '../assets/step.wav');
   game.load.audio('coin', '../assets/coin.wav');
 }
 
@@ -36,8 +36,8 @@ var moveOnce = 0;
 var doJump;
 
 function create() {
-  jump = game.add.audio('jump');
-  steps = game.add.audio('steps');
+  //jump = game.add.audio('jump');
+  //steps = game.add.audio('steps');
   coin = game.add.audio('coin');
 
   sprint = game.input.keyboard.addKey(Phaser.Keyboard.SHIFT);

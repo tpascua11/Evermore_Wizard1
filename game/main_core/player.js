@@ -27,6 +27,7 @@ var playerStats = {
   jumpSpan : 50 ,
   direction: 0  ,
   casting  : 0  ,
+  stepsCount: 25,
   rechargeRate: 1,
   resistance: "nothing",
   weak: "nothing"
@@ -43,15 +44,21 @@ var currentSpeed = 0;
 //---------------------------------------------------------
 function loadPlayerSprite(){
   game.load.spritesheet('dino', '../assets/Dino_Test6.png', 16, 16);
+  game.load.audio('steps', '../assets/step.wav');
+  game.load.audio('jumpSound', '../assets/Jump19.wav');
 }
 
 function createPlayer(){
+
     player = game.add.sprite(300, game.world.height - 150, 'dino');
+    steps = game.add.audio('steps');
+    jumpSound = game.add.audio('jumpSound');
+
     player.scale.setTo(3,3);
 
     game.physics.arcade.enable(player);
     player.body.bounce.y = 0.0;
-    player.body.gravity.y = 1000;
+    player.body.gravity.y = 1250;
     player.body.collideWorldBounds = true;
     createPlayerAnimations();
 }
@@ -69,6 +76,9 @@ function createPlayerAnimations(){
     player.animations.add('rightSprint', [13, 12, 15, 14], 10, true);
 }
 
+//---------------------------
+// Player Actions
+//---------------------------
 function playerMoveLeft(){
   direction = -1;
   playerStats.moveRight = 0;
@@ -92,100 +102,165 @@ function playerSprint(){
 function playerSprintStop(){
   playerStats.sprinting = 0;
 }
-var test;
+
 function playerJump(){
-  test = 0;
-  if(playerStats.jump >= playerStats.jumpTotal){
-    test = 1;
-    return;
-  }
-  if(test == 1){
-    console.log("This Text Should Not Show\n");
-  }
+  if(playerStats.jump >= playerStats.jumpTotal) return;
   playerStats.jump++;
   playerStats.jumping = 1;
+  jumpSound.play();
   console.log("Jumping\n");
-
 }
 function playerJumpStop(){
   playerStats.jumping  = 0;
   playerStats.jumpAtY = 0;
 }
 
+//--------------------------------
+// Player_Movement
+//--------------------------------
 function movement(){
   if(player.body.touching.down) playerStats.jump = 0;
 
   if (playerStats.jumping){
-        if(playerStats.jumpAtY >= playerStats.jumpSpan){
-          playerStats.jumping = 0;
-          playerStats.jumpAtY = 0;
-          console.log("Stop Jumping\n");
-        }
-        else{
-          playerStats.jumpAtY += playerStats.jumpAcl;
-          player.body.velocity.y = -playerStats.jumpAcl*50;
-        }
-        player.animations.stop();
-        if(direction == -1) player.frame = 33;
-        else player.frame = 37;
-
-        if(playerStats.moveRight){
-         if(player.body.velocity.x > 200) return;
-         player.body.velocity.x += 25;
-       }
-       else if(playerStats.moveLeft){
-         if(player.body.velocity.x < -200) return;
-         player.body.velocity.x -= 25;
-       }
-
+    playerJumpMovement();
   }
   else if (!player.body.touching.down){
-        player.animations.stop();
-        if(direction == -1) player.frame = 33;
-        else player.frame = 37;
-
-       if(playerStats.moveRight){
-         if(player.body.velocity.x > 200) return;
-         player.body.velocity.x += 25;
-       }
-       else if(playerStats.moveLeft){
-         if(player.body.velocity.x < -200) return;
-         player.body.velocity.x -= 25;
-       }
+    playerFallingMovement();
   }
   else if(playerStats.moveRight && playerStats.moveLeft){
-    if(player.body.velocity.x > 2){
-      player.body.velocity.x -= 10;
-    }
-    else if(player.body.velocity.x < -2){
-      player.body.velocity.x += 10;
-    }
-    else 
-      player.body.velocity.x = 0;
+    playerBreakingMovement();
   }
   else if(playerStats.sprinting && playerStats.moveRight){
-    player.body.velocity.x = playerStats.sprintSpd;
-    player.animations.play('rightSprint');
+    playerSprintingRightMovement();
   }
   else if(playerStats.sprinting && playerStats.moveLeft){
-    player.body.velocity.x = -playerStats.sprintSpd;
-    player.animations.play('leftSprint');
+    playerSprintingLeftMovement();
   }
   else if(playerStats.moveRight){
-    player.body.velocity.x = speedLimit;
-    player.animations.play('right');
+    playerMoveRightMovement();
   }
   else if(playerStats.moveLeft){
-    player.body.velocity.x = -speedLimit;
-    player.animations.play('left');
+    playerMoveLeftMovement();
   }
   else{
-    playerStats.jump = 0;
-    player.body.velocity.x = 0;
-    player.animations.stop();
-    if(direction ==  1) player.frame = 7;
-    if(direction == -1) player.frame = 1;
+    playerInactive();
   }
+}
+
+function playerAirMovement(){
+  if(playerStats.moveRight){
+    if(player.body.velocity.x > 200) return;
+    player.body.velocity.x += 25;
+  }
+  else if(playerStats.moveLeft){
+    if(player.body.velocity.x < -200) return;
+    player.body.velocity.x -= 25;
+  }
+}
+
+function playerJumpMovement(){
+  if(playerStats.jumpAtY >= playerStats.jumpSpan){
+    playerStats.jumping = 0;
+    playerStats.jumpAtY = 0;
+    console.log("Stop Jumping\n");
+  }
+  else{
+    playerStats.jumpAtY += playerStats.jumpAcl;
+    player.body.velocity.y = -playerStats.jumpAcl*55;
+  }
+  player.animations.stop();
+  if(direction == -1) player.frame = 33;
+  else player.frame = 37;
+
+  playerAirMovement();
+}
+
+function playerFallingMovement(){
+  player.animations.stop();
+  if(direction == -1) player.frame = 33;
+  else player.frame = 37;
+  playerAirMovement();
+}
+
+function playerBreakingMovement(){
+  if(player.body.velocity.x > 2){
+    player.body.velocity.x -= 10;
+  }
+  else if(player.body.velocity.x < -2){
+    player.body.velocity.x += 10;
+  }
+  else 
+    player.body.velocity.x = 0;
+}
+function playerSprintingRightMovement(){
+  player.animations.play('rightSprint');
+
+  player.animations.currentAnim.speed = player.body.velocity.x/25;
+  if(player.body.velocity.x < 500){
+    player.body.velocity.x += 3;
+  }
+  else player.body.velocity.x = 500;
+
+  if(playerStats.stepsCount <= 0){
+    steps.play();
+    playerStats.stepsCount = 5;
+  }
+  else{
+    playerStats.stepsCount -= 1;
+  }
+}
+
+function playerSprintingLeftMovement(){
+  player.animations.play('leftSprint');
+  player.animations.currentAnim.speed = player.body.velocity.x/25;
+  if(player.body.velocity.x > -500){
+    player.body.velocity.x -= 3;
+  }
+  else player.body.velocity.x = -500;
+  if(playerStats.stepsCount <= 0){
+    steps.play();
+    playerStats.stepsCount = 5;
+  }
+  else{
+    playerStats.stepsCount -= 1;
+  }
+}
+function playerMoveRightMovement(){
+
+  player.animations.currentAnim.speed = 10;
+  player.animations.currentAnim.speed = player.body.velocity.x/25;
+  if(player.body.velocity.x < 500){
+    player.body.velocity.x = speedLimit;
+    player.animations.play('right');
+    if(playerStats.stepsCount <= 0){
+      console.log("Step");
+      steps.play();
+      playerStats.stepsCount = 25;
+    }
+    else{
+      playerStats.stepsCount -= 1;
+    }
+  }
+}
+function playerMoveLeftMovement(){
+  player.animations.currentAnim.speed = 10;
+  player.body.velocity.x = -speedLimit;
+  player.animations.play('left');
+  if(playerStats.stepsCount <= 0){
+    console.log("Step");
+    steps.play();
+    playerStats.stepsCount= 25;
+  }
+  else{
+    playerStats.stepsCount -= 1;
+  }
+}
+function playerInactive(){
+  playerStats.jump = 0;
+  player.body.velocity.x = 0;
+  player.animations.stop();
+  if(direction ==  1) player.frame = 7;
+  if(direction == -1) player.frame = 1;
 }
 
 //Player Actions
@@ -203,64 +278,32 @@ function playerDefaultMovement(){
   sprint.onUp.add(playerSprintStop, this);
 }
 
-function playerActions(){
-    movement();
-    if (player.body.touching.down){
-      playerStanding();
-    }
-    if (!player.body.touching.down){
-      playerFalling();
-    }
-    else if (!player.velocity.x > 0){
-      movingRight();
-    }
-    else if (!player.velocity.x < 0){
-      movingLeft();
-    }
-}
+function movingLeft(){
+  player.animations.currentAnim.speed = 10;
+  player.body.velocity.x = -200;
+  direction = -1;
 
-function playerStanding(){
-    if (player.body.touching.down){
-      jump = 0;
-      jumpExtend = 0;
-    }
-}
-
-function playerFalling(){
-  if (!player.body.touching.down){
-        player.animations.stop();
-        if(direction == -1) player.frame = 33;
-        else player.frame = 37;
-        if(direction == 1) player.feame = 37;
+  player.animations.play('left');
+  if(stepsMakeSound == 0){
+    //steps.play();
+    stepsMakeSound = 25;
+  }
+  else{
+    stepsMakeSound -= 1;
   }
 }
 
-function movingLeft(){
-      player.animations.currentAnim.speed = 10;
-      player.body.velocity.x = -200;
-      direction = -1;
-
-      player.animations.play('left');
-      if(stepsMakeSound == 0){
-        //steps.play();
-        stepsMakeSound = 25;
-      }
-      else{
-        stepsMakeSound -= 1;
-      }
-}
-
 function movingRight(){
-      player.animations.currentAnim.speed = 10;
-      //  Move to the right
-      player.body.velocity.x = 200;
-      direction = 1;
-      player.animations.play('right');
-      if(stepsMakeSound == 0){
-        //steps.play();
-        stepsMakeSound = 25;
-      }
-      else{
-        stepsMakeSound -= 1;
-      }
+  player.animations.currentAnim.speed = 10;
+  //  Move to the right
+  player.body.velocity.x = 200;
+  direction = 1;
+  player.animations.play('right');
+  if(stepsMakeSound == 0){
+    //steps.play();
+    stepsMakeSound = 25;
+  }
+  else{
+    stepsMakeSound -= 1;
+  }
 }
