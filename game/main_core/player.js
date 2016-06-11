@@ -38,11 +38,11 @@ var playerStats = {
   moveRight: 0  ,
   moving   : 0  ,
   jump     : 0  ,
-  jumpTotal: 2  ,
+  jumpTotal: 100,
   jumpAtY  : 0  ,
   jumpAcl  : 7  ,
   jumpSpan : 50 ,
-  direction: 0  ,
+  direction: 1  ,
   casting  : 0  ,
   stepsCount: 25,
   rechargeRate: 1,
@@ -105,7 +105,7 @@ function playerDefaultMovement(){
 }
 
 function playerMoveLeft(){
-  direction = -1;
+  player.direction = -1;
   player.moveRight = 0;
   player.moveLeft = 1;
 }
@@ -113,7 +113,7 @@ function playerStopLeft(){
   player.moveLeft = 0;
 }
 function playerMoveRight(){
-  direction = 1;
+  player.direction = 1;
   player.moveLeft= 0;
   player.moveRight = 1;
 }
@@ -193,7 +193,7 @@ function playerJumpMovement(){
     player.body.velocity.y = -player.jumpAcl*55;
   }
   player.animations.stop();
-  if(direction == -1) player.frame = 33;
+  if(player.direction == -1) player.frame = 33;
   else player.frame = 37;
 
   playerAirMovement();
@@ -201,7 +201,7 @@ function playerJumpMovement(){
 
 function playerFallingMovement(){
   player.animations.stop();
-  if(direction == -1) player.frame = 33;
+  if(player.direction == -1) player.frame = 33;
   else player.frame = 37;
   playerAirMovement();
 }
@@ -283,6 +283,6 @@ function playerInactive(){
   player.jump = 0;
   player.body.velocity.x = 0;
   player.animations.stop();
-  if(direction ==  1) player.frame = 7;
-  if(direction == -1) player.frame = 1;
+  if(player.direction ==  1) player.frame = 7;
+  else player.frame = 1;
 }
