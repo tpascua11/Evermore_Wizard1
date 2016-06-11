@@ -2,6 +2,8 @@
 
 //Base Stats
 var entity = [];
+var worldMaterial;
+var boxMaterial;
 var blocks;
 var bb;
 
@@ -13,15 +15,23 @@ var entityStats = {
 };
 
 function makeEntity(x, y, odd){
-  entity[entity.length]
 }
 
 function preloadBackground(){
   game.load.spritesheet('level1', '../assets/Blocks.png', 16, 16);
 
 }
-
+var amounts = 0;
 function makeBlock(){
+  amounts += 20;
+  console.debug("Blocks: ", amounts);
+  for (var i = 0; i < 20; i++){
+    var box = game.add.sprite(50 + i*100, 645, 'level1');
+    box.scale.setTo(1,1);
+    game.physics.p2.enable(box);
+    box.body.mass = 6;
+    box.body.setMaterial(boxMaterial);
+  }
   /*
     bb = game.add.group();
     bb = blocks.create(400, 100, 'level1');
@@ -50,13 +60,15 @@ function makeBlock(){
 }
 
 var timer;
-var boxMaterial;
-function loadBackground(){
+function continueBlocks(){
   timer = game.time.create(false);
-  timer.loop(1000, makeBlock, this);
+  timer.loop(3000, makeBlock, this);
   timer.start();
+}
+function loadBackground(){
 
   boxMaterial = game.physics.p2.createMaterial('worldMaterial');
+
   for (var i = 1; i < 4; i++){
         var box = game.add.sprite(300, 645 - (95 * i), 'level1');
         box.scale.setTo(3,3);
@@ -87,10 +99,6 @@ function loadBackground(){
  }
 
 function entityCollision(){
-  game.physics.arcade.collide(blocks);
-  game.physics.arcade.collide(blocks);
-  game.physics.arcade.collide(blocks);
-  game.physics.arcade.collide(blocks, platforms);
 
 }
 

@@ -22,6 +22,7 @@
 //---------------------------------------------------------
 var player;
 var playerMaterial;
+var groundPlayerCM;
 
 var playerStats = {
   health   : 100,
@@ -61,14 +62,14 @@ function loadPlayerSprite(){
 }
 
 function createPlayer(){
+    //Remember: Set Scale Then apply Phyisics
     player = game.add.sprite(300, game.world.height - 150, 'dino');
     steps = game.add.audio('steps');
     jumpSound = game.add.audio('jumpSound');
+    player.scale.setTo(3,3);
     game.physics.p2.enable(player);
     player.body.fixedRotation = true;
     player.body.damping = 0.5;
-    player.scale.setTo(3,3);
-    player.body.collideWorldBounds = true;
     createPlayerAnimations();
 
     playerMaterial = game.physics.p2.createMaterial('playerMaterial', player.body);
@@ -267,7 +268,6 @@ function playerMoveRightMovement(){
     }
   }
 }
-
 function playerMoveLeftMovement(){
   player.animations.currentAnim.speed = 10;
   player.body.velocity.x = -player.speed;
