@@ -29,7 +29,7 @@ function create() {
   bg = game.add.tileSprite(0, 0, 800, 600, 'sky');
   game.physics.startSystem(Phaser.Physics.P2JS);
   game.physics.p2.gravity.y = 1000;
-  game.physics.p2.world.defaultContactMaterial.friction = 0.3;
+  game.physics.p2.world.defaultContactMaterial.friction = 0.0;
   game.physics.p2.world.setGlobalStiffness(1e5);
 
   createPlayer();

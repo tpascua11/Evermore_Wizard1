@@ -64,8 +64,6 @@ function loadPlayerSprite(){
 function createPlayer(){
     //Remember: Set Scale Then apply Phyisics
     player = game.add.sprite(300, game.world.height - 150, 'dino');
-    steps = game.add.audio('steps');
-    jumpSound = game.add.audio('jumpSound');
     player.scale.setTo(3,3);
     game.physics.p2.enable(player);
     player.body.fixedRotation = true;
@@ -76,11 +74,12 @@ function createPlayer(){
 
     for(var attrname in playerStats){player[attrname] = playerStats[attrname]}
     console.log(player);
+
+    steps = game.add.audio('steps');
+    jumpSound = game.add.audio('jumpSound');
 }
 
 function createPlayerAnimations(){
-    //player.animations.add('left', [17, 16, 19, 18], 10, true);
-    //player.animations.add('right', [20, 21, 22, 23], 10, true)
     //Walking Animation
     player.animations.add('right', [24, 25, 26, 27, 28, 29, 30, 31], 20, true);
     player.animations.add('left', [40, 41, 42, 43, 44, 45, 46, 47], 20, true);

@@ -30,6 +30,7 @@ function makeBlock(){
     var size = game.rnd.integerInRange(1, 5);
     box.scale.setTo(size,size);
     game.physics.p2.enable(box);
+    box.body.fixedRotation = true;
     box.body.mass = 6;
     box.body.setMaterial(boxMaterial);
   }
@@ -47,6 +48,7 @@ function loadBackground(){
 
   for (var i = 1; i < 4; i++){
         var box = game.add.sprite(300, 645 - (95 * i), 'level1');
+
         var size = game.rnd.integerInRange(1, 5) 
         box.scale.setTo(size,3);
         game.physics.p2.enable(box);
