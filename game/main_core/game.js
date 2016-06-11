@@ -114,7 +114,7 @@ function collision(){
 }
 
 function update() {
-  collision();
   entityCollision();
+  collision();
   movement();
 }

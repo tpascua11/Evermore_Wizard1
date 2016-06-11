@@ -25,7 +25,7 @@ function makeBlock(){
     bb = blocks.create(400, 100, 'level1');
     //bb.scale.setTo(3,3);
     bb.body.gravity.y = 3000;
-    bb.body.bounce.y = 1.0;
+    //bb.body.bounce.y = 1.0;
     bb.body.bounce.x = 0.5;
     //bb.body.immovable = true;
     console.log("Making Block");
@@ -74,7 +74,10 @@ function loadBackground(){
 function entityCollision(){
   game.physics.arcade.collide(player, blocks);
   game.physics.arcade.collide(blocks);
+  game.physics.arcade.collide(blocks);
+  game.physics.arcade.collide(blocks);
   game.physics.arcade.collide(blocks, platforms);
+
 }
 
 function fixedPlaced(blocks){
