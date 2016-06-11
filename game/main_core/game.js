@@ -29,63 +29,51 @@ function create() {
 
   game.add.sprite(0, 0, 'star');
   //  We're going to be using physics, so enable the Arcade Physics system
-    game.physics.startSystem(Phaser.Physics.ARCADE);
-    //game.physics.startSystem(Phaser.Physics.P2JS);
+    //game.physics.startSystem(Phaser.Physics.ARCADE);
+    game.physics.startSystem(Phaser.Physics.P2JS);
+    game.physics.p2.gravity.y = 1000;
+    game.physics.p2.world.defaultContactMaterial.friction = 0.3;
+    game.physics.p2.world.setGlobalStiffness(1e5);
 
-    //  A simple background for our game
+    //HERE ! ! !
+    var worldMaterial = game.physics.p2.createMaterial('worldMaterial');
+    game.physics.p2.setWorldMaterial(worldMaterial, true, true, true, true);
+
+
+    //HERE ! ! !
     game.add.sprite(0, 0, 'sky');
 
-    //  The platforms group contains the ground and the 2 ledges we can jump on
     platforms = game.add.group();
-
-    //  We will enable physics for any object that is created in this group
     platforms.enableBody = true;
 
-    // Here we create the ground.
-    //var ground = platforms.create(0, game.world.height - 64, 'ground');
     var ground = platforms.create(0, game.world.height, 'ground');
-
-    //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
     ground.scale.setTo(3, 10);
-
-    //  This stops it from falling away when you jump on it
     ground.body.immovable = true;
 
     ground = platforms.create(-10, game.world.height-320, 'ground');
     ground.body.immovable = true;
     ground.scale.setTo(0.5, 10);
 
-
     ground = platforms.create(900, game.world.height-320, 'ground');
     ground.body.immovable = true;
     ground.scale.setTo(0.5, 10);
 
-
-   // The player and its settings
     createPlayer();
     game.camera.follow(player);
+  //var groundPlayerCM = game.physics.p2.createContactMaterial(playerMaterial, worldMaterial, { friction: 0.0 });
 
     stars = game.add.group();
     stars.enableBody = true;
 
-    //  Here we'll create 12 of them evenly spaced apart
     for (var i = 0; i < 12; i++){
-        //  Create a star inside of the 'stars' group
         var star = stars.create(i * 70, 0, 'star');
-
-        //  Let gravity do its thing
         star.body.gravity.y = 2200;
-
-        //  This just gives each star a slightly random bounce value
-        //star.body.bounce.y = 0.7 + Math.random() * 0.2;
     }
   //scoreText = game.add.text(300, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
   //healthText = game.add.text(32, 32, playerInfo.health, {fontSize: '32px', fill: '900'}) ;
 
-//Music Test
-    music = game.add.audio('boden');
-
-    //music.play();
+  music = game.add.audio('boden');
+  //music.play();
   
   game.world.setBounds(0, 0, 2000, 2000);
   makeEntity();

@@ -21,6 +21,7 @@
 // 1. Player_Information
 //---------------------------------------------------------
 var player;
+var playerMaterial;
 
 var playerStats = {
   health   : 100,
@@ -63,12 +64,14 @@ function createPlayer(){
     player = game.add.sprite(300, game.world.height - 150, 'dino');
     steps = game.add.audio('steps');
     jumpSound = game.add.audio('jumpSound');
+    game.physics.p2.enable(player);
+    player.body.fixedRotation = true;
+    player.body.damping = 0.5;
     player.scale.setTo(3,3);
-    game.physics.arcade.enable(player);
-    player.body.bounce.y = 0.0;
-    player.body.gravity.y = 1250;
     player.body.collideWorldBounds = true;
     createPlayerAnimations();
+
+    playerMaterial = game.physics.p2.createMaterial('playerMaterial', player.body);
 
     for(var attrname in playerStats){player[attrname] = playerStats[attrname]}
     console.log(player);
@@ -77,7 +80,6 @@ function createPlayer(){
 function createPlayerAnimations(){
     //player.animations.add('left', [17, 16, 19, 18], 10, true);
     //player.animations.add('right', [20, 21, 22, 23], 10, true)
-
     //Walking Animation
     player.animations.add('right', [24, 25, 26, 27, 28, 29, 30, 31], 20, true);
     player.animations.add('left', [40, 41, 42, 43, 44, 45, 46, 47], 20, true);
@@ -143,12 +145,12 @@ function playerJumpStop(){
 // Player_Physics
 //--------------------------------
 function movement(){
-  if(player.body.touching.down) player.jump = 0;
+  if(checkIfCanJump()) player.jump = 0;
 
   if (player.jumping){
     playerJumpMovement();
   }
-  else if (!player.body.touching.down){
+  else if (!checkIfCanJump()){
     playerFallingMovement();
   }
   else if(player.moveRight && player.moveLeft){
@@ -250,7 +252,6 @@ function playerSprintingLeftMovement(){
   }
 }
 function playerMoveRightMovement(){
-
   player.animations.currentAnim.speed = 10;
   player.animations.currentAnim.speed = player.body.velocity.x/25;
   if(player.body.velocity.x < 500){
@@ -266,6 +267,7 @@ function playerMoveRightMovement(){
     }
   }
 }
+
 function playerMoveLeftMovement(){
   player.animations.currentAnim.speed = 10;
   player.body.velocity.x = -player.speed;
@@ -285,4 +287,32 @@ function playerInactive(){
   player.animations.stop();
   if(player.direction ==  1) player.frame = 7;
   else player.frame = 1;
+}
+
+//--------------
+//HELPER
+//--------------
+var yAxis = p2.vec2.fromValues(0, 1);
+function checkIfCanJump() {
+    var result = false;
+    for (var i=0; i < game.physics.p2.world.narrowphase.contactEquations.length; i++)
+    {
+        var c = game.physics.p2.world.narrowphase.contactEquations[i];
+
+        if (c.bodyA === player.body.data || c.bodyB === player.body.data)
+        {
+            var d = p2.vec2.dot(c.normalA, yAxis);
+
+            if (c.bodyA === player.body.data)
+            {
+                d *= -1;
+            }
+
+            if (d > 0.5)
+            {
+                result = true;
+            }
+        }
+    }
+    return result;
 }
