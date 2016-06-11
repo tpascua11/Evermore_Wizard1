@@ -32,11 +32,6 @@ function create() {
   game.physics.p2.world.defaultContactMaterial.friction = 0.3;
   game.physics.p2.world.setGlobalStiffness(1e5);
 
-
-  text = game.add.text(0, 300, fps);
-  //text.anchor.set(0.5);
-
-
   createPlayer();
   playerDefaultMovement();
 
@@ -53,19 +48,13 @@ function create() {
     box.body.mass = 6;
     box.body.setMaterial(boxMaterial);
   }
-
-  //var groundBoxesCM = game.physics.p2.createContactMaterial(worldMaterial, boxMaterial, { friction: 0.6 });
   var groundBoxesCM = game.physics.p2.createContactMaterial(worldMaterial, boxMaterial, { friction: 0.7 , restitution: 1.0 });
 }
 
 function collision(){
-  //game.physics.arcade.collide(player, platforms);
-  //game.physics.arcade.collide(stars, platforms);
 }
 
 function update() {
   console.log(game.time.fps);
   movement();
-  //entityCollision();
-  //collision();
 }

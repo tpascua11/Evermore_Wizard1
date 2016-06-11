@@ -27,42 +27,18 @@ function makeBlock(){
   console.debug("Blocks: ", amounts);
   for (var i = 0; i < 20; i++){
     var box = game.add.sprite(50 + i*100, 645, 'level1');
-    box.scale.setTo(1,1);
+    var size = game.rnd.integerInRange(1, 5);
+    box.scale.setTo(size,size);
     game.physics.p2.enable(box);
     box.body.mass = 6;
     box.body.setMaterial(boxMaterial);
   }
-  /*
-    bb = game.add.group();
-    bb = blocks.create(400, 100, 'level1');
-    //bb.scale.setTo(3,3);
-    bb.body.gravity.y = 3000;
-    //bb.body.bounce.y = 1.0;
-    bb.body.bounce.x = 0.5;
-    //bb.body.immovable = true;
-    console.log("Making Block");
-    //box.body.drag.setTo(10000);
-    //
-    bb = game.add.group();
-    bb = blocks.create(500, 100, 'level1');
-    //bb.scale.setTo(3,3);
-    bb.body.gravity.y = 3000;
-    bb.body.bounce.y = 1.0;
-    //bb.body.immovable = true;
-    //
-     bb = game.add.group();
-    bb = blocks.create(600, 100, 'level1');
-    //bb.scale.setTo(3,3);
-    bb.body.gravity.y = 3000;
-    bb.body.bounce.y = 1.0;
-    */
-
 }
 
 var timer;
 function continueBlocks(){
   timer = game.time.create(false);
-  timer.loop(3000, makeBlock, this);
+  timer.loop(9000, makeBlock, this);
   timer.start();
 }
 function loadBackground(){
@@ -71,7 +47,8 @@ function loadBackground(){
 
   for (var i = 1; i < 4; i++){
         var box = game.add.sprite(300, 645 - (95 * i), 'level1');
-        box.scale.setTo(3,3);
+        var size = game.rnd.integerInRange(1, 5) 
+        box.scale.setTo(size,3);
         game.physics.p2.enable(box);
         box.body.mass = 6;
         // box.body.static = true;
