@@ -25,7 +25,7 @@ var amounts = 0;
 function makeBlock(){
   amounts += 20;
   console.debug("Blocks: ", amounts);
-  for (var i = 0; i < 20; i++){
+  for (var i = 0; i < 1; i++){
     var box = game.add.sprite(50 + i*100, 645, 'level1');
     var size = game.rnd.integerInRange(1, 5);
     box.scale.setTo(size,size);
@@ -37,18 +37,22 @@ function makeBlock(){
 }
 
 var timer;
-function continueBlocks(){
-  timer = game.time.create(false);
-  timer.loop(9000, makeBlock, this);
-  timer.start();
-}
-function loadBackground(){
 
+function continueBlocks(blast){
+  timer = game.time.create(false);
+  timer.loop(2000, makeBlock, this);
+  timer.start();
+
+  timer2 = game.time.create(false);
+  timer2.loop(8000, makeBlock, this);
+  timer2.start();
+}
+
+function loadBackground(){
   boxMaterial = game.physics.p2.createMaterial('worldMaterial');
 
-  for (var i = 1; i < 4; i++){
+  for (var i = 1; i < 2; i++){
         var box = game.add.sprite(300, 645 - (95 * i), 'level1');
-
         var size = game.rnd.integerInRange(1, 5) 
         box.scale.setTo(size,3);
         game.physics.p2.enable(box);

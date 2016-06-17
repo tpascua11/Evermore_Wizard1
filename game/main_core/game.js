@@ -18,18 +18,12 @@ function preload() {
 }
 var fps = 0;
 function create() {
-  //Keys
-  sprint = game.input.keyboard.addKey(Phaser.Keyboard.SHIFT);
-  moveLeft = game.input.keyboard.addKey(Phaser.Keyboard.A);
-  moveRight = game.input.keyboard.addKey(Phaser.Keyboard.D);
-  doJump = game.input.keyboard.addKey(Phaser.Keyboard.W);
-
   //We're going to be using physics, so enable the Arcade Physics system
   //game.physics.startSystem(Phaser.Physics.ARCADE);
   bg = game.add.tileSprite(0, 0, 800, 600, 'sky');
   game.physics.startSystem(Phaser.Physics.P2JS);
   game.physics.p2.gravity.y = 1000;
-  game.physics.p2.world.defaultContactMaterial.friction = 0.0;
+  game.physics.p2.world.defaultContactMaterial.friction = 0.3;
   game.physics.p2.world.setGlobalStiffness(1e5);
 
   createPlayer();

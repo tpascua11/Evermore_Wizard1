@@ -57,18 +57,55 @@ var playerStats = {
 //---------------------------------------------------------
 function loadPlayerSprite(){
   game.load.spritesheet('dino', '../assets/Dino_Test6.png', 16, 16);
+  game.load.spritesheet('bmissle', '../assets/Blue_Magic_Missles_Big.png', 16, 16);
+  game.load.spritesheet('smissle', '../assets/Blue_Magic_Missles.png', 16, 16);
+  game.load.spritesheet('teleport', '../assets/White_Teleport-sheet.png', 16, 16);
+  game.load.spritesheet('casting', '../assets/Casting.png', 16, 16);
+
   game.load.audio('steps', '../assets/step.wav');
   game.load.audio('jumpSound', '../assets/Jump19.wav');
 }
 
+function createPlayerSpells(){
+  magicMaterial = game.physics.p2.createMaterial('magicMaterial');
+}
+function createBlast(){
+  var blast = game.add.sprite(player.body.x + 50*player.direction, player.body.y, 'bmissle');
+  blast.scale.setTo(3,3);
+  game.physics.p2.enable(blast);
+  //blast.body.mass = 0;
+  blast.body.fixedRotation = true;
+  blast.body.data.gravityScale = 0;
+  blast.body.damping = 0;
+  blast.body.velocity.y = 0;
+  if(player.direction == 1){
+   blast.body.velocity.x = 500;
+  }
+  if(player.direction == -1){
+   blast.body.velocity.x = -500;
+  }
+  blast.body.setMaterial(magicMaterial);
+  fadeBlast(blast);
+
+  //game.time.events.add(Phaser.Timer.SECOND * 4, this.fadeBlast(), this, blast);
+}
+
+function fadeBlast(blast) {
+  //blast.kill();
+  console.log("Done");
+}
+
 function createPlayer(){
     //Remember: Set Scale Then apply Phyisics
+    playerControl();
     player = game.add.sprite(300, game.world.height - 150, 'dino');
     player.scale.setTo(3,3);
     game.physics.p2.enable(player);
     player.body.fixedRotation = true;
     player.body.damping = 0.5;
     createPlayerAnimations();
+
+    createPlayerSpells();
 
     playerMaterial = game.physics.p2.createMaterial('playerMaterial', player.body);
 
@@ -77,6 +114,16 @@ function createPlayer(){
 
     steps = game.add.audio('steps');
     jumpSound = game.add.audio('jumpSound');
+}
+
+function playerControl(){
+  sprint = game.input.keyboard.addKey(Phaser.Keyboard.SHIFT);
+  moveLeft = game.input.keyboard.addKey(Phaser.Keyboard.A);
+  moveRight = game.input.keyboard.addKey(Phaser.Keyboard.D);
+  doJump = game.input.keyboard.addKey(Phaser.Keyboard.W);
+  magicMissle = game.input.keyboard.addKey(Phaser.Keyboard.K);
+  magicBarrier = game.input.keyboard.addKey(Phaser.Keyboard.L);
+  teleport = game.input.keyboard.addKey(Phaser.Keyboard.J);
 }
 
 function createPlayerAnimations(){
@@ -104,6 +151,44 @@ function playerDefaultMovement(){
 
   sprint.onDown.add(playerSprint, this);
   sprint.onUp.add(playerSprintStop, this);
+
+  magicMissle.onDown.add(playerShoot, this);
+  magicBarrier.onDown.add(playerShield, this);
+  teleport.onDown.add(playerTeleport, this);
+
+}
+
+function playerTeleport(){
+  console.log("IM Teleporting");
+  if(player.moveRight){
+    player.reset(player.body.x+100,player.body.y);
+  }
+  else if(player.moveLeft){
+    player.reset(player.body.x-100,player.body.y);
+  }
+  else 
+    player.reset(player.body.x,player.body.y-100);
+}
+
+function playerShoot(){
+  console.log("IM Shooting");
+  createBlast();
+  
+}
+
+function playerShield(){
+  console.log("IM Defending");
+  var direct = 0;
+  if(player.moveLeft) direct = -100;
+  else direct = 100;
+  var box = game.add.sprite(player.body.x + direct, player.body.y, 'level1');
+  var size = game.rnd.integerInRange(1, 5);
+  box.scale.setTo(size,size);
+  game.physics.p2.enable(box);
+  box.body.fixedRotation = true;
+  box.body.mass = 6;
+  box.body.velocity.x = direct*100;
+  box.body.setMaterial(boxMaterial);
 }
 
 function playerMoveLeft(){
@@ -136,6 +221,7 @@ function playerJump(){
   jumpSound.play();
   console.log("Jumping\n");
 }
+
 function playerJumpStop(){
   player.jumping  = 0;
   player.jumpAtY = 0;
