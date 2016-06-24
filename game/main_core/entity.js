@@ -24,7 +24,7 @@ function preloadBackground(){
 var amounts = 0;
 function makeBlock(){
   amounts += 20;
-  console.debug("Blocks: ", amounts);
+  //console.debug("Blocks: ", amounts);
   for (var i = 0; i < 1; i++){
     var box = game.add.sprite(50 + i*100, 645, 'level1');
     var size = game.rnd.integerInRange(1, 5);
@@ -37,6 +37,7 @@ function makeBlock(){
 }
 
 var timer;
+var playerTimer;
 
 function continueBlocks(blast){
   timer = game.time.create(false);

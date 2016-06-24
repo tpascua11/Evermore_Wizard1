@@ -49,6 +49,7 @@ function collision(){
 }
 
 function update() {
-  console.log(game.time.fps);
+  //console.log(game.time.fps);
   movement();
+  updateBlast();
 }

@@ -69,25 +69,69 @@ function loadPlayerSprite(){
 function createPlayerSpells(){
   magicMaterial = game.physics.p2.createMaterial('magicMaterial');
 }
+
+var playerTimer;
+var pTime = 0;
+var playerObjects = 0;
+
+function continuePlayerTimer(){
+  playerTimer = game.time.create(false);
+  playerTimer.loop(100, incrementPlayerTimer, this);
+  playerTimer.start();
+}
+function incrementPlayerTimer(){
+  if(playerObjects == 0){
+    pTime = 0;
+  }
+  else{
+    pTime++;
+  }
+  //console.log("TIME", pTime);
+}
+
+var blast = [];
+var blastN = 0;
+
 function createBlast(){
-  var blast = game.add.sprite(player.body.x + 50*player.direction, player.body.y, 'bmissle');
-  blast.scale.setTo(3,3);
-  game.physics.p2.enable(blast);
+  var i = blastN;
+  blast[i] = game.add.sprite(player.body.x + 50*player.direction, player.body.y, 'bmissle');
+  blast[i].scale.setTo(3,3);
+  game.physics.p2.enable(blast[i]);
   //blast.body.mass = 0;
-  blast.body.fixedRotation = true;
-  blast.body.data.gravityScale = 0;
-  blast.body.damping = 0;
-  blast.body.velocity.y = 0;
+  blast[i].body.fixedRotation = true;
+  blast[i].body.data.gravityScale = 0;
+  blast[i].body.damping = 0;
+  blast[i].body.velocity.y = 0;
   if(player.direction == 1){
-   blast.body.velocity.x = 500;
+   blast[i].body.velocity.x = 500;
   }
   if(player.direction == -1){
-   blast.body.velocity.x = -500;
+   blast[i].body.velocity.x = -500;
   }
-  blast.body.setMaterial(magicMaterial);
-  fadeBlast(blast);
-
+  blast[i].body.setMaterial(magicMaterial);
+  blast[i].timeAt = pTime + 10;
+  //console.log(blast[i].timeAt);
+  blastN++;
+  playerObjects++;
+  //fadeBlast(blast[i]);
   //game.time.events.add(Phaser.Timer.SECOND * 4, this.fadeBlast(), this, blast);
+}
+
+function updateBlast(){
+  //console.log(blastN);
+  for(var i = 0; i <= blastN; i++){
+    if(blast[i] == undefined){
+      return;
+    }
+    else if(blast[i].timeAt < pTime){
+      console.log(blast[i]);
+      console.log("Swap And Killing");
+      blast[i].kill();
+      blast[i] = blast[blastN];
+      console.log(blast[i]);
+      //blastN--;
+    }
+  }
 }
 
 function fadeBlast(blast) {
@@ -114,6 +158,8 @@ function createPlayer(){
 
     steps = game.add.audio('steps');
     jumpSound = game.add.audio('jumpSound');
+
+    continuePlayerTimer();
 }
 
 function playerControl(){
