@@ -25,6 +25,8 @@ function create() {
   game.physics.p2.gravity.y = 1000;
   game.physics.p2.world.defaultContactMaterial.friction = 0.3;
   game.physics.p2.world.setGlobalStiffness(1e5);
+  game.physics.p2.setImpactEvents(true);
+
 
   createPlayer();
   playerDefaultMovement();
@@ -34,14 +36,14 @@ function create() {
   continueBlocks();
 
   game.physics.p2.setWorldMaterial(worldMaterial, true, true, true, true); 
-
+/*
   for (var i = 1; i < 4; i++){
     var box = game.add.sprite(300, 645 - (95 * i), 'level1');
     box.scale.setTo(3,3);
     game.physics.p2.enable(box);
     box.body.mass = 6;
     box.body.setMaterial(boxMaterial);
-  }
+  }*/
   var groundBoxesCM = game.physics.p2.createContactMaterial(worldMaterial, boxMaterial, { friction: 0.7 , restitution: 1.0 });
 }
 
