@@ -27,7 +27,6 @@ function create() {
   game.physics.p2.world.setGlobalStiffness(1e5);
   game.physics.p2.setImpactEvents(true);
 
-
   createPlayer();
   playerDefaultMovement();
 

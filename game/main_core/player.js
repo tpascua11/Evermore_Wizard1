@@ -47,6 +47,7 @@ var playerStats = {
   jumpSpan : 50 ,
   direction: 1  ,
   casting  : 0  ,
+  charged  : 0  ,
   stepsCount: 25,
   rechargeRate: 1,
   resistance: "nothing",
@@ -90,7 +91,7 @@ function continuePlayerTimer(){
 }
 
 function incrementPlayerTimer(){
-    if(spells.length == 0) pTime = 0;
+    if(spells.length == 0 && player.casting == 0) pTime = 0;
     else pTime++;
     console.log("TIME", pTime);
 }
@@ -163,7 +164,9 @@ function setupSpells(){
 function createSpell(){
   blaster = game.add.sprite(player.body.x + 100*player.direction, player.body.y, 'bmissle');
   //blaster.anchor.setTo(0.5);
-  blaster.scale.setTo(4,4);
+  blaster.scale.setTo(pTime - player.charged, pTime - player.charged);
+  game.physics.p2.enable(blaster);
+  //blaster.scale.setTo(4,4);
   if(player.direction == 1){
     blaster.animations.add('run', [3, 4, 5], 30, true);
     blaster.animations.add('end', [11, 10, 9], 30, true);
@@ -172,7 +175,6 @@ function createSpell(){
     blaster.animations.add('run', [0, 1, 2], 30, true);
     blaster.animations.add('end', [6, 7, 8], 30, true);
   }
-  game.physics.p2.enable(blaster);
   //blast.body.mass = 0;
   blaster.body.fixedRotation = true;
   blaster.body.data.gravityScale = 0;
@@ -185,24 +187,23 @@ function createSpell(){
    blaster.body.velocity.x = -500;
   }
   blaster.animations.play('run', 15, true);
-
   blaster.body.setMaterial(magicMaterial);
-  //blaster.body.setCollisionGroup(magicCG);
-
   blaster.timeAt = pTime + 10;
-  blaster.body.onEndContact.add(missleFinale, this);
-  spells.push(blaster);
+  //blaster.body.onEndContact.add(missleFinale, this);
+  blaster.body.onEndContact.add(missleFinale, blaster);
   //spells[spells.length-1].body.onBeginContact.add(missleFinale, this);
+  spells.push(blaster);
+  //blaster = new Object();
 }
 
 function missleFinale(body1, body2){
   blastSound.play();
-  blaster.animations.play('end', 10, true);
-  blaster.body.velocity.x = 0;
-  blaster.body.damping = 1;
-  blaster.body.mass= 1.1;
-  blaster.timeAt = pTime+2;
-  blastSound.play();
+  blast = this;
+  blast.animations.play('end', 10, true);
+  blast.body.velocity.x = 0;
+  blast.body.damping = 1;
+  blast.body.mass= 1.1;
+  blast.timeAt = pTime+2;
 }
 
 function updateSpells(){
@@ -232,9 +233,10 @@ function playerDefaultMovement(){
   sprint.onUp.add(playerSprintStop, this);
 
   magicMissle.onUp.add(playerShoot, this);
+  magicMissle.onDown.add(charging, this);
+
   magicBarrier.onDown.add(playerShield, this);
   teleport.onDown.add(playerTeleport, this);
-
 }
 
 function playerTeleport(){
@@ -248,6 +250,11 @@ function playerTeleport(){
   }
   else 
     player.reset(player.body.x,player.body.y-100);
+}
+
+function charging(){
+  player.casting = 1;
+  player.charged = pTime;
 }
 
 function playerShoot(){
@@ -271,7 +278,6 @@ function playerShield(){
   box.body.velocity.x = direct*100;
   box.body.setMaterial(boxMaterial);
 }
-
 function playerMoveLeft(){
   player.direction = -1;
   player.moveRight = 0;
@@ -294,7 +300,6 @@ function playerSprint(){
 function playerSprintStop(){
   player.sprinting = 0;
 }
-
 function playerJump(){
   if(player.jump >= player.jumpTotal) return;
   player.jump++;
@@ -302,12 +307,10 @@ function playerJump(){
   jumpSound.play();
   console.log("Jumping\n");
 }
-
 function playerJumpStop(){
   player.jumping  = 0;
   player.jumpAtY = 0;
 }
-
 //--------------------------------
 // Player_Physics
 //--------------------------------
