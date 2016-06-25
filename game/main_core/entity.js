@@ -32,7 +32,7 @@ function makeBlock(){
     game.physics.p2.enable(box);
     box.body.fixedRotation = true;
     box.body.mass = 6;
-    //box.body.setMaterial(boxMaterial);
+    box.body.setMaterial(boxMaterial);
   }
 }
 
@@ -50,7 +50,7 @@ function continueBlocks(blast){
 }
 
 function loadBackground(){
-  //boxMaterial = game.physics.p2.createMaterial('worldMaterial');
+  boxMaterial = game.physics.p2.createMaterial('worldMaterial');
 
   for (var i = 1; i < 2; i++){
         var box = game.add.sprite(300, 645 - (95 * i), 'level1');
@@ -59,7 +59,7 @@ function loadBackground(){
         game.physics.p2.enable(box);
         box.body.mass = 6;
         // box.body.static = true;
-        //box.body.setMaterial(boxMaterial);
+        box.body.setMaterial(boxMaterial);
   }
 
   //blocks = game.add.group();
@@ -68,7 +68,7 @@ function loadBackground(){
   blocks.setAll('body.bounce.x', 1);
   blocks.setAll('body.bounce.y', 1);
   */
-  //blocks = game.physics.p2.createMaterial('level1')
+  blocks = game.physics.p2.createMaterial('level1')
   //game.physics.arcade.enable(blocks);
 /*
  *

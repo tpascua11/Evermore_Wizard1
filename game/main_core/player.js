@@ -22,6 +22,7 @@
 //---------------------------------------------------------
 var player;
 var playerMaterial;
+var magicCG;
 var groundPlayerCM;
 
 var playerStats = {
@@ -156,6 +157,7 @@ function setupSpells(){
   //explosions = game.add.group();
   //explosions.createMultiple(30, 'bmissle');
   //explosions.forEach(setupInvader, this);
+  magicCG = game.physics.p2.createCollisionGroup();
 }
 
 function createSpell(){
@@ -185,14 +187,17 @@ function createSpell(){
   blaster.animations.play('run', 15, true);
 
   blaster.body.setMaterial(magicMaterial);
+  //blaster.body.setCollisionGroup(magicCG);
+
   blaster.timeAt = pTime + 10;
-  blaster.body.onBeginContact.add(missleFinale, this);
+  blaster.body.onEndContact.add(missleFinale, this);
   spells.push(blaster);
   //spells[spells.length-1].body.onBeginContact.add(missleFinale, this);
 }
 
-function missleFinale(){
-  spells[spells.length-1].animations.play('end', 10, true);
+function missleFinale(body1, body2){
+  blastSound.play();
+  blaster.animations.play('end', 10, true);
   blaster.body.velocity.x = 0;
   blaster.body.damping = 1;
   blaster.body.mass= 1.1;
