@@ -51,5 +51,5 @@ function collision(){
 function update() {
   //console.log(game.time.fps);
   movement();
-  updateBlast();
+  updateSpells();
 }

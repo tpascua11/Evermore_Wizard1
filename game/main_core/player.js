@@ -80,41 +80,47 @@ function continuePlayerTimer(){
   playerTimer.start();
 }
 function incrementPlayerTimer(){
-  if(playerObjects == 0){
-    pTime = 0;
-  }
-  else{
     pTime++;
-  }
-  //console.log("TIME", pTime);
+    console.log("TIME", pTime);
 }
+
+//---------------------------------------------------------
+// . Spell_Building
+//---------------------------------------------------------
+var spells = [];
 
 var blast = [];
 var blastN = 0;
 
-function createBlast(){
-  var i = blastN;
-  blast[i] = game.add.sprite(player.body.x + 50*player.direction, player.body.y, 'bmissle');
-  blast[i].scale.setTo(3,3);
-  game.physics.p2.enable(blast[i]);
+function createSpell(){
+  blaster = game.add.sprite(player.body.x + 50*player.direction, player.body.y, 'bmissle');
+  blaster.scale.setTo(3,3);
+  game.physics.p2.enable(blaster);
   //blast.body.mass = 0;
-  blast[i].body.fixedRotation = true;
-  blast[i].body.data.gravityScale = 0;
-  blast[i].body.damping = 0;
-  blast[i].body.velocity.y = 0;
+  blaster.body.fixedRotation = true;
+  blaster.body.data.gravityScale = 0;
+  blaster.body.damping = 0;
+  blaster.body.velocity.y = 0;
   if(player.direction == 1){
-   blast[i].body.velocity.x = 500;
+   blaster.body.velocity.x = 500;
   }
   if(player.direction == -1){
-   blast[i].body.velocity.x = -500;
+   blaster.body.velocity.x = -500;
   }
-  blast[i].body.setMaterial(magicMaterial);
-  blast[i].timeAt = pTime + 10;
-  //console.log(blast[i].timeAt);
-  blastN++;
-  playerObjects++;
-  //fadeBlast(blast[i]);
-  //game.time.events.add(Phaser.Timer.SECOND * 4, this.fadeBlast(), this, blast);
+  blaster.body.setMaterial(magicMaterial);
+  blaster.timeAt = pTime + 10;
+  spells.push(blaster);
+}
+
+function updateSpells(){
+  console.log(spells.length);
+  console.log(spells);
+  for(var i = spells.length -1; i >= 0; i--){
+    if(spells[i].timeAt < pTime){
+      spells[i].kill();
+      spells.splice(i, 1);
+    }
+  }
 }
 
 function updateBlast(){
@@ -140,26 +146,26 @@ function fadeBlast(blast) {
 }
 
 function createPlayer(){
-    //Remember: Set Scale Then apply Phyisics
-    playerControl();
-    player = game.add.sprite(300, game.world.height - 150, 'dino');
-    player.scale.setTo(3,3);
-    game.physics.p2.enable(player);
-    player.body.fixedRotation = true;
-    player.body.damping = 0.5;
-    createPlayerAnimations();
+  //Remember: Set Scale Then apply Phyisics
+  playerControl();
+  player = game.add.sprite(300, game.world.height - 150, 'dino');
+  player.scale.setTo(3,3);
+  game.physics.p2.enable(player);
+  player.body.fixedRotation = true;
+  player.body.damping = 0.5;
+  createPlayerAnimations();
 
-    createPlayerSpells();
+  createPlayerSpells();
 
-    playerMaterial = game.physics.p2.createMaterial('playerMaterial', player.body);
+  playerMaterial = game.physics.p2.createMaterial('playerMaterial', player.body);
 
-    for(var attrname in playerStats){player[attrname] = playerStats[attrname]}
-    console.log(player);
+  for(var attrname in playerStats){player[attrname] = playerStats[attrname]}
+  console.log(player);
 
-    steps = game.add.audio('steps');
-    jumpSound = game.add.audio('jumpSound');
+  steps = game.add.audio('steps');
+  jumpSound = game.add.audio('jumpSound');
 
-    continuePlayerTimer();
+  continuePlayerTimer();
 }
 
 function playerControl(){
@@ -173,13 +179,13 @@ function playerControl(){
 }
 
 function createPlayerAnimations(){
-    //Walking Animation
-    player.animations.add('right', [24, 25, 26, 27, 28, 29, 30, 31], 20, true);
-    player.animations.add('left', [40, 41, 42, 43, 44, 45, 46, 47], 20, true);
+  //Walking Animation
+  player.animations.add('right', [24, 25, 26, 27, 28, 29, 30, 31], 20, true);
+  player.animations.add('left', [40, 41, 42, 43, 44, 45, 46, 47], 20, true);
 
-    //Sprinting Animation
-    player.animations.add('leftSprint', [8, 9, 10, 11], 10, true);
-    player.animations.add('rightSprint', [13, 12, 15, 14], 10, true);
+  //Sprinting Animation
+  player.animations.add('leftSprint', [8, 9, 10, 11], 10, true);
+  player.animations.add('rightSprint', [13, 12, 15, 14], 10, true);
 }
 
 //---------------------------
@@ -218,8 +224,9 @@ function playerTeleport(){
 
 function playerShoot(){
   console.log("IM Shooting");
-  createBlast();
-  
+  //createBlast();
+  createSpell();
+
 }
 
 function playerShield(){
@@ -425,25 +432,25 @@ function playerInactive(){
 //--------------
 var yAxis = p2.vec2.fromValues(0, 1);
 function checkIfCanJump() {
-    var result = false;
-    for (var i=0; i < game.physics.p2.world.narrowphase.contactEquations.length; i++)
+  var result = false;
+  for (var i=0; i < game.physics.p2.world.narrowphase.contactEquations.length; i++)
+  {
+    var c = game.physics.p2.world.narrowphase.contactEquations[i];
+
+    if (c.bodyA === player.body.data || c.bodyB === player.body.data)
     {
-        var c = game.physics.p2.world.narrowphase.contactEquations[i];
+      var d = p2.vec2.dot(c.normalA, yAxis);
 
-        if (c.bodyA === player.body.data || c.bodyB === player.body.data)
-        {
-            var d = p2.vec2.dot(c.normalA, yAxis);
+      if (c.bodyA === player.body.data)
+      {
+        d *= -1;
+      }
 
-            if (c.bodyA === player.body.data)
-            {
-                d *= -1;
-            }
-
-            if (d > 0.5)
-            {
-                result = true;
-            }
-        }
+      if (d > 0.5)
+      {
+        result = true;
+      }
     }
-    return result;
+  }
+  return result;
 }
