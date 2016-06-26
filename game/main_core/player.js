@@ -24,6 +24,8 @@ var player;
 var playerMaterial;
 var magicCG;
 var groundPlayerCM;
+var playerFPS = 0;
+var playerFPStext;
 
 var playerStats = {
   health   : 100,
@@ -75,6 +77,7 @@ function loadPlayerSprite(){
 
   game.load.audio('steps', '../assets/step.wav');
   game.load.audio('jumpSound', '../assets/Jump19.wav');
+
 }
 
 function createPlayerSpells(){
@@ -84,6 +87,7 @@ function createPlayerSpells(){
 var playerTimer;
 var chargeTimer;
 var pTime = 0;
+var pCharge = 1;
 var playerObjects = 0;
 
 function continuePlayerTimer(){
@@ -93,19 +97,25 @@ function continuePlayerTimer(){
 }
 function chargingTimer(){
   chargeTimer = game.time.create(false);
-  chargeTimer.loop(500, incrementPlayerTimer, this);
+  chargeTimer.loop(500, incrementChargeTimer, this);
   chargeTimer.start();
 }
 function endChargingTimer(){
-  chargeTimer.end();
+  chargeTimer.stop();
+
 }
 
 function incrementPlayerTimer(){
     if(spells.length == 0 && player.casting == 0) pTime = 0;
     else pTime++;
-    console.log("TIME", pTime);
+    //console.log("TIME", pTime);
+    if(player.casting) chargingBlast();
 }
-
+function incrementChargeTimer(){
+    if(pCharge < 4) pCharge+= 0.1;
+    if(player.casting) chargingBlast();
+    //console.log("Ccharge", pCharge);
+}
 
 function createPlayer(){
   //Remember: Set Scale Then apply Phyisics
@@ -115,6 +125,7 @@ function createPlayer(){
   game.physics.p2.enable(player);
   player.body.fixedRotation = true;
   player.body.damping = 0.5;
+  playerFPS = game.add.text(player.body.x, player.body.y, game.time.fps, {fontSize: '32px', fill: '#ffff00'});
   createPlayerAnimations();
 
   createPlayerSpells();
@@ -176,9 +187,11 @@ function setupSpells(){
 function chargingBlast(){
   //blaster = game.add.sprite(player.body.x + 100*player.direction, player.body.y, 'bmissle');
   blaster.body.x = player.body.x + 100*player.direction;
-  blaster.body.x = player.body.y;
-  blaster.scale.setTo(pTime - player.charged, pTime - player.charged);
-
+  blaster.body.y = player.body.y;
+  blaster.body.velocity.y = 0;
+  blaster.body.velocity.x = 0;
+  blaster.scale.setTo(pCharge, pCharge);
+  blaster.animations.currentAnim.speed = 100;
 }
 
 function shootBlast(){
@@ -186,6 +199,7 @@ function shootBlast(){
   blaster.body.data.gravityScale = 0;
   blaster.body.damping = 0;
   blaster.body.velocity.y = 0;
+  blaster.body.force = 3000;
   if(player.direction == 1){
    blaster.body.velocity.x = 500;
   }
@@ -196,14 +210,26 @@ function shootBlast(){
   blaster.timeAt = pTime + 10;
   //blaster.body.onEndContact.add(missleFinale, this);
   blaster.body.onBeginContact.add(missleFinale, blaster);
+  blaster.body.onBeginContact.add(hitBox, this);
   //spells[spells.length-1].body.onBeginContact.add(missleFinale, this);
   spells.push(blaster);
+  player.casting = 0;
+  shootSound.play();
+}
+function hitBox(body1, body2){
+  tester = this;
+  if(body1 == null) return;
+  body1.sprite.alpha -= 0.1;
+  body1.health -= 20;
+  if(body1.health <= 0) body1.sprite.kill();
 }
 
 function makeBlast(){
   blaster = game.add.sprite(player.body.x + 100*player.direction, player.body.y, 'bmissle');
   blaster.scale.setTo(0.3,0.3);
   game.physics.p2.enable(blaster);
+  blaster.gravityScale = 0;
+  blaster.body.fixedRotation = true;
   if(player.direction == 1){
     blaster.animations.add('run', [3, 4, 5], 30, true);
     blaster.animations.add('end', [11, 10, 9], 30, true);
@@ -236,10 +262,10 @@ function createSpell(){
   blaster.body.damping = 0;
   blaster.body.velocity.y = 0;
   if(player.direction == 1){
-   blaster.body.velocity.x = 500;
+   blaster.body.velocity.x = 2500;
   }
   if(player.direction == -1){
-   blaster.body.velocity.x = -500;
+   blaster.body.velocity.x = -2500;
   }
   blaster.animations.play('run', 15, true);
   blaster.body.setMaterial(magicMaterial);
@@ -262,7 +288,7 @@ function missleFinale(body1, body2){
 }
 
 function updateSpells(){
-  console.log("Total Spells", spells.length);
+  //console.log("Total Spells", spells.length);
   for(var i = spells.length -1; i >= 0; i--){
     if(spells[i].timeAt < pTime){
       spells[i].kill();
@@ -310,14 +336,18 @@ function playerTeleport(){
 function charging(){
   player.casting = 1;
   player.charged = pTime;
+  chargingTimer();
+  makeBlast();
 }
 
 function playerShoot(){
   console.log("IM Shooting");
   //createBlast();
-  createSpell();
-  shootSound.play();
-  player.casting = 0;
+  shootBlast();
+  pCharge = 1;
+  endChargingTimer();
+  //shootSound.play();
+  //player.casting = 0;
 }
 
 function playerShield(){
@@ -329,6 +359,7 @@ function playerShield(){
   game.physics.p2.enable(box);
   box.body.fixedRotation = true;
   box.body.mass = 6;
+  box.body.health = 100;
   box.body.velocity.y = -1000;
   box.body.setMaterial(boxMaterial);
 
@@ -530,7 +561,6 @@ function casting(){
 }
 
 function playerInactive(){
-  console.log("nothing");
   player.jump = 0;
   player.body.velocity.x = 0;
   player.animations.stop();

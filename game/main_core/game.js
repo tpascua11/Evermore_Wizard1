@@ -53,6 +53,8 @@ function collision(){
 
 function update() {
   //console.log(game.time.fps);
+  playerFPS.text = game.time.fps;
+  playerFPS.reset(player.body.x, player.body.y - 66);
   movement();
   updateSpells();
 }

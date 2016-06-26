@@ -40,12 +40,12 @@
       "typescript/pixi.comments.d.ts"
     ]
   },
-  "version": "2.4.8",
-  "_release": "2.4.8",
+  "version": "2.5.0",
+  "_release": "2.5.0",
   "_resolution": {
     "type": "version",
-    "tag": "v2.4.8",
-    "commit": "9f28d0659daaed07a15bc45ef39d89b97f3f3ecf"
+    "tag": "v2.5.0",
+    "commit": "a9976d270378ac554c768ced4c9e39c0a7231eff"
   },
   "_source": "https://github.com/photonstorm/phaser.git",
   "_target": "^2.4.8",
