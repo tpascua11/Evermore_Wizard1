@@ -20,7 +20,7 @@ var fps = 0;
 function create() {
   //We're going to be using physics, so enable the Arcade Physics system
   //game.physics.startSystem(Phaser.Physics.ARCADE);
-  bg = game.add.tileSprite(0, 0, 800, 600, 'sky');
+  //bg = game.add.tileSprite(0, 0, 800, 600, 'sky');
   game.physics.startSystem(Phaser.Physics.P2JS);
   game.physics.p2.gravity.y = 1000;
   game.physics.p2.world.defaultContactMaterial.friction = 0.3;
@@ -44,6 +44,8 @@ function create() {
     box.body.setMaterial(boxMaterial);
   }*/
   var groundBoxesCM = game.physics.p2.createContactMaterial(worldMaterial, boxMaterial, { friction: 0.7 , restitution: 1.0 });
+
+  game.stage.smoothed = false;
 }
 
 function collision(){

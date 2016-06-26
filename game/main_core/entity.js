@@ -40,6 +40,7 @@ var timer;
 var playerTimer;
 
 function continueBlocks(blast){
+  /*
   timer = game.time.create(false);
   timer.loop(2000, makeBlock, this);
   timer.start();
@@ -47,6 +48,7 @@ function continueBlocks(blast){
   timer2 = game.time.create(false);
   timer2.loop(8000, makeBlock, this);
   timer2.start();
+  */
 }
 
 function loadBackground(){

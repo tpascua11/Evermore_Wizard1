@@ -58,8 +58,9 @@ var playerStats = {
 // 2. Player_Building
 //---------------------------------------------------------
 function loadPlayerSprite(){
-  game.load.spritesheet('dino', '../assets/Dino_Test6.png', 16, 16);
-  game.load.spritesheet('bmissle', '../assets/DarkMagicMissles.png', 16, 16);
+  //game.load.spritesheet('dino', '../assets/Dino_Test6.png', 16, 16);
+  game.load.spritesheet('dino', '../assets/player/Vark_v1.png', 16, 16);
+  game.load.spritesheet('bmissle', '../assets/DarkMagicMisslesB.png', 64, 64);
   //game.load.spritesheet('bmissleR', '../assets/Blue_Magic_Missles_Big.png', 16, 16);
   game.load.spritesheet('smissle', '../assets/Blue_Magic_Missles.png', 16, 16);
   game.load.spritesheet('teleport', '../assets/White_Teleport-sheet.png', 16, 16);
@@ -81,6 +82,7 @@ function createPlayerSpells(){
 }
 
 var playerTimer;
+var chargeTimer;
 var pTime = 0;
 var playerObjects = 0;
 
@@ -88,6 +90,14 @@ function continuePlayerTimer(){
   playerTimer = game.time.create(false);
   playerTimer.loop(100, incrementPlayerTimer, this);
   playerTimer.start();
+}
+function chargingTimer(){
+  chargeTimer = game.time.create(false);
+  chargeTimer.loop(500, incrementPlayerTimer, this);
+  chargeTimer.start();
+}
+function endChargingTimer(){
+  chargeTimer.end();
 }
 
 function incrementPlayerTimer(){
@@ -133,12 +143,14 @@ function playerControl(){
 
 function createPlayerAnimations(){
   //Walking Animation
-  player.animations.add('right', [24, 25, 26, 27, 28, 29, 30, 31], 20, true);
-  player.animations.add('left', [40, 41, 42, 43, 44, 45, 46, 47], 20, true);
+  player.animations.add('right', 
+      [16, 17, 18, 19, 20, 21, 22], 25, true);
+  player.animations.add('left', 
+      [8, 9, 10, 11, 12, 13, 14], 25, true);
 
   //Sprinting Animation
-  player.animations.add('leftSprint', [8, 9, 10, 11], 10, true);
-  player.animations.add('rightSprint', [13, 12, 15, 14], 10, true);
+  player.animations.add('leftSprint', [24, 25, 26, 27], 10, true);
+  player.animations.add('rightSprint', [28, 29, 30, 31], 10, true);
 }
 //---------------------------------------------------------
 // . Spell_Building
@@ -161,11 +173,54 @@ function setupSpells(){
   magicCG = game.physics.p2.createCollisionGroup();
 }
 
+function chargingBlast(){
+  //blaster = game.add.sprite(player.body.x + 100*player.direction, player.body.y, 'bmissle');
+  blaster.body.x = player.body.x + 100*player.direction;
+  blaster.body.x = player.body.y;
+  blaster.scale.setTo(pTime - player.charged, pTime - player.charged);
+
+}
+
+function shootBlast(){
+  blaster.body.fixedRotation = true;
+  blaster.body.data.gravityScale = 0;
+  blaster.body.damping = 0;
+  blaster.body.velocity.y = 0;
+  if(player.direction == 1){
+   blaster.body.velocity.x = 500;
+  }
+  if(player.direction == -1){
+   blaster.body.velocity.x = -500;
+  }
+  blaster.body.setMaterial(magicMaterial);
+  blaster.timeAt = pTime + 10;
+  //blaster.body.onEndContact.add(missleFinale, this);
+  blaster.body.onBeginContact.add(missleFinale, blaster);
+  //spells[spells.length-1].body.onBeginContact.add(missleFinale, this);
+  spells.push(blaster);
+}
+
+function makeBlast(){
+  blaster = game.add.sprite(player.body.x + 100*player.direction, player.body.y, 'bmissle');
+  blaster.scale.setTo(0.3,0.3);
+  game.physics.p2.enable(blaster);
+  if(player.direction == 1){
+    blaster.animations.add('run', [3, 4, 5], 30, true);
+    blaster.animations.add('end', [11, 10, 9], 30, true);
+  }
+  else{
+    blaster.animations.add('run', [0, 1, 2], 30, true);
+    blaster.animations.add('end', [6, 7, 8], 30, true);
+  }
+  blaster.animations.play('run', 15, true);
+}
+
 function createSpell(){
   blaster = game.add.sprite(player.body.x + 100*player.direction, player.body.y, 'bmissle');
   //blaster.anchor.setTo(0.5);
-  blaster.scale.setTo(pTime - player.charged, pTime - player.charged);
+  blaster.scale.setTo(0.3,0.3);
   game.physics.p2.enable(blaster);
+  blaster.scale.setTo(pTime - player.charged, pTime - player.charged);
   //blaster.scale.setTo(4,4);
   if(player.direction == 1){
     blaster.animations.add('run', [3, 4, 5], 30, true);
@@ -190,7 +245,7 @@ function createSpell(){
   blaster.body.setMaterial(magicMaterial);
   blaster.timeAt = pTime + 10;
   //blaster.body.onEndContact.add(missleFinale, this);
-  blaster.body.onEndContact.add(missleFinale, blaster);
+  blaster.body.onBeginContact.add(missleFinale, blaster);
   //spells[spells.length-1].body.onBeginContact.add(missleFinale, this);
   spells.push(blaster);
   //blaster = new Object();
@@ -262,21 +317,21 @@ function playerShoot(){
   //createBlast();
   createSpell();
   shootSound.play();
+  player.casting = 0;
 }
 
 function playerShield(){
   console.log("IM Defending");
   var direct = 0;
-  if(player.moveLeft) direct = -100;
-  else direct = 100;
-  var box = game.add.sprite(player.body.x + direct, player.body.y, 'level1');
+  var box = game.add.sprite(player.body.x + player.direction*100, player.body.y - 20, 'level1');
   var size = game.rnd.integerInRange(1, 5);
   box.scale.setTo(size,size);
   game.physics.p2.enable(box);
   box.body.fixedRotation = true;
   box.body.mass = 6;
-  box.body.velocity.x = direct*100;
+  box.body.velocity.y = -1000;
   box.body.setMaterial(boxMaterial);
+
 }
 function playerMoveLeft(){
   player.direction = -1;
@@ -317,7 +372,10 @@ function playerJumpStop(){
 function movement(){
   if(checkIfCanJump()) player.jump = 0;
 
-  if (player.jumping){
+  if(player.casting){
+    casting();
+  }
+  else if (player.jumping){
     playerJumpMovement();
   }
   else if (!checkIfCanJump()){
@@ -392,14 +450,17 @@ function playerSprintingRightMovement(){
   player.animations.play('rightSprint');
 
   player.animations.currentAnim.speed = player.body.velocity.x/25;
+  /*
   if(player.body.velocity.x < 500){
     player.body.velocity.x += 3;
   }
   else player.body.velocity.x = 500;
+  */
+  player.body.velocity.x = 500;
 
   if(player.stepsCount <= 0){
     steps.play();
-    player.stepsCount = 5;
+    player.stepsCount = 10;
   }
   else{
     player.stepsCount -= 1;
@@ -409,10 +470,13 @@ function playerSprintingRightMovement(){
 function playerSprintingLeftMovement(){
   player.animations.play('leftSprint');
   player.animations.currentAnim.speed = player.body.velocity.x/25;
+  /*
   if(player.body.velocity.x > -500){
     player.body.velocity.x -= 3;
   }
   else player.body.velocity.x = -500;
+  */
+  player.body.velocity.x = -500;
   if(player.stepsCount <= 0){
     steps.play();
     player.stepsCount = 5;
@@ -430,7 +494,7 @@ function playerMoveRightMovement(){
     if(player.stepsCount <= 0){
       console.log("Step");
       steps.play();
-      player.stepsCount = 25;
+      player.stepsCount = 20;
     }
     else{
       player.stepsCount -= 1;
@@ -444,13 +508,29 @@ function playerMoveLeftMovement(){
   if(player.stepsCount <= 0){
     console.log("Step");
     steps.play();
-    player.stepsCount= 25;
+    player.stepsCount= 20;
   }
   else{
     player.stepsCount -= 1;
   }
 }
+function casting(){
+  player.animations.stop();
+  if(player.direction == 1) player.frame = 39;
+  else player.frame = 32;
+   if(player.stepsCount <= 0){
+    console.log("Step");
+    chargeSound.play();
+    player.stepsCount= 30;
+  }
+  else{
+    player.stepsCount -= 1;
+  }
+
+}
+
 function playerInactive(){
+  console.log("nothing");
   player.jump = 0;
   player.body.velocity.x = 0;
   player.animations.stop();
