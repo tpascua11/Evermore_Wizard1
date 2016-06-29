@@ -16,11 +16,8 @@ function preload() {
   preloadBackground();
   game.time.advancedTiming = true; 
 }
-var fps = 0;
 function create() {
-  //We're going to be using physics, so enable the Arcade Physics system
-  //game.physics.startSystem(Phaser.Physics.ARCADE);
-  //bg = game.add.tileSprite(0, 0, 800, 600, 'sky');
+  bg = game.add.tileSprite(0, 0, 800, 600, 'sky');
   game.physics.startSystem(Phaser.Physics.P2JS);
   game.physics.p2.gravity.y = 1000;
   game.physics.p2.world.defaultContactMaterial.friction = 0.3;
@@ -53,7 +50,8 @@ function collision(){
 
 function update() {
   //console.log(game.time.fps);
-  playerFPS.text = game.time.fps;
+  //playerFPS.text = game.time.fps;
+  playerFPS.text = player.rmana.toFixed(2);
   playerFPS.reset(player.body.x, player.body.y - 66);
   movement();
   updateSpells();
