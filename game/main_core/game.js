@@ -9,6 +9,7 @@ function preload() {
   game.load.spritesheet('teleport', '../assets/White-Teleport-Sheet.png', 16, 16);
   game.load.spritesheet('shock', '../assets/Shock.png', 16, 16);
   game.load.audio('boden', ['../assets/meltdown.mp3']);
+  game.load.audio('simple', ['../assets/UncleBibby_The_Simple_Complex.mp3']);
   game.load.audio('coin', '../assets/coin.wav');
 
   loadPlayerSprite()
@@ -23,6 +24,9 @@ function create() {
   game.physics.p2.world.defaultContactMaterial.friction = 0.3;
   game.physics.p2.world.setGlobalStiffness(1e5);
   game.physics.p2.setImpactEvents(true);
+
+  simple = game.add.audio('simple');
+  simple.play();
 
   createPlayer();
   playerDefaultMovement();
@@ -50,9 +54,10 @@ function collision(){
 
 function update() {
   //console.log(game.time.fps);
-  //playerFPS.text = game.time.fps;
-  playerFPS.text = player.rmana.toFixed(2);
-  playerFPS.reset(player.body.x, player.body.y - 66);
+  playerFPS.text = game.time.fps;
+  playerMana.text = player.rmana.toFixed(2);
+  playerMana.reset(player.body.x, player.body.y - 66);
+  playerFPS.reset(player.body.x-33, player.body.y - 66);
   movement();
   updateSpells();
 }

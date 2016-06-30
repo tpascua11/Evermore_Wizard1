@@ -26,6 +26,7 @@ var playerMaterial;
 var magicCG;
 var groundPlayerCM;
 var playerFPS = 0;
+var playerMana = 0;
 var playerFPStext;
 
 var playerStats = {
@@ -90,6 +91,7 @@ function createPlayer(){
   createPlayerSpells();
   continuePlayerTimer();
   startRegenTimer();
+  playerMana = game.add.text(player.body.x, player.body.y, game.time.fps, {fontSize: '32px', fill: '#66ffcc'});
   playerFPS = game.add.text(player.body.x, player.body.y, game.time.fps, {fontSize: '32px', fill: '#ffff00'});
 
   setupSpells();
@@ -107,8 +109,8 @@ function playerBody(){
 }
 
 function playerSounds(){
-  steps = game.add.audio('steps');
-  jumpSound = game.add.audio('jumpSound');
+  steps = game.add.audio('steps'); steps.volume = 0.5;
+  jumpSound = game.add.audio('jumpSound'); jumpSound.volume = 0.5; 
 }
 
 function playerControl(){
@@ -186,6 +188,15 @@ function incrementChargeTimer(){
       pCharge+= 0.2;
       player.rmana -= 0.2;
     }
+    if(pCharge < 1.5){
+      blaster.tint = 0x00ff00;
+    }
+    else if(pCharge < 3){
+      blaster.tint = 0xffff00;
+    }
+    else if(pCharge < 4){
+      blaster.tint = 0xff0000;
+    }
     if(player.casting) chargingBlast();
 }
 
@@ -205,11 +216,11 @@ function createPlayerSpells(){
 }
 
 function setupSpells(){
-  blastSound  = game.add.audio('blast');
-  chargeSound = game.add.audio('charge');
-  shootSound  = game.add.audio('shoot');
-  teleportSound = game.add.audio('teleport');
-  wallSound = game.add.audio('wall');
+  blastSound  = game.add.audio('blast');  blastSound.volume = 0.2;
+  chargeSound = game.add.audio('charge'); chargeSound.volume = 0.2;
+  shootSound  = game.add.audio('shoot');  shootSound.volume = 0.2;
+  teleportSound = game.add.audio('teleport'); teleportSound.volume = 0.2;
+  wallSound = game.add.audio('wall'); wallSound.volume = 0.2;
 }
 
 function makeBlast(){
@@ -316,6 +327,7 @@ function hitBox(body1, body2){
   tester = this;
   if(body1 == null) return;
   body1.sprite.alpha -= 0.1;
+  console.log('HP', body1.health);
   body1.health -= tester.damage;
   if(body1.health < 0) console.log("cool");
   console.log(tester.body.velocity.x);
@@ -472,8 +484,8 @@ function playerTower(){
   player.reset(box.body.x, box.body.y-50);
   player.body.velocity.y = -700;
 
-  //box.timeAt = pTime + 25;
-  //spells.push(box);
+  box.timeAt = pTime + 25;
+  spells.push(box);
 
   wallSound.play();
 }
