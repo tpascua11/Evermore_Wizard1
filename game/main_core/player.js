@@ -93,7 +93,6 @@ function createPlayer(){
   startRegenTimer();
   playerMana = game.add.text(player.body.x, player.body.y, game.time.fps, {fontSize: '32px', fill: '#66ffcc'});
   playerFPS = game.add.text(player.body.x, player.body.y, game.time.fps, {fontSize: '32px', fill: '#ffff00'});
-
   setupSpells();
 }
 
@@ -158,7 +157,6 @@ function incrementPlayerTimer(){
     //Do Other Stuff While Incrementing
     if(player.casting) repositionEnergy();
 }
-
 //---------------
 // Regain
 //---------------
