@@ -46,8 +46,8 @@ var playerStats = {
   jump     : 0  ,
   jumpTotal: 100,
   jumpAtY  : 0  ,
-  jumpAcl  : 7  ,
-  jumpSpan : 50 ,
+  jumpAcl  : 5  ,
+  jumpSpan : 75 ,
   direction: 1  ,
   casting  : 0  ,
   charged  : 0  ,
@@ -244,32 +244,54 @@ function chargingBlast(){
 }
 
 function repositionEnergy(){
-  blaster.body.x = player.body.x + 75*player.direction;
-  if(moveUp.isDown) blaster.body.y = player.body.y - 20;
-  else blaster.body.y = player.body.y;
+  if(moveUp.isDown && (moveRight.isDown || moveLeft.isDown)){
+    blaster.body.x = player.body.x + 75*player.direction;
+    blaster.body.y = player.body.y - 50;
+  }
+  else if(moveUp.isDown){
+    blaster.body.x = player.body.x;
+    blaster.body.y = player.body.y - 60;
+  }
+  else{
+    blaster.body.y = player.body.y;
+    blaster.body.x = player.body.x + 75 * player.direction;
+  }
+
 }
 
 function shootBlast(){
   if(player.casting == false) return;
   shootBlaster();
 
+  player.jumping = 0;
+  player.jumpAtY = 0;
+
 }
 function shootBlaster(){
+  if(pCharge > 1.2) blaster.damage = 0.5 + pCharge*10;
+  else blaster.damage = 1;
+  console.log('Blaster damage', blaster.damage);
+
   blaster.body.static = false;;
   blaster.body.fixedRotation = true;
   blaster.body.data.gravityScale = 0;
   blaster.body.damping = 0;
   blaster.body.velocity.y = 0;
   blaster.body.force = 3000;
-  if(player.direction == 1){
-   blaster.body.velocity.x = 500;
-  }
-  if(player.direction == -1){
-   blaster.body.velocity.x = -500;
-  }
-  if(moveUp.isDown){
+  if(moveUp.isDown && (moveLeft.isDown || moveRight.isDown)){
+    blaster.body.velocity.x = 500 * player.direction;
     blaster.body.velocity.y = -500;
   }
+  else if(moveUp.isDown){
+    blaster.body.velocity.y = -500;
+  }
+  else if(moveLeft.isDown || moveRight.isDown){
+    blaster.body.velocity.x = 500 * player.direction;
+  }
+  else{
+    blaster.body.velocity.x = 500 * player.direction;
+  }
+
   blaster.body.setMaterial(magicMaterial);
   blaster.timeAt = pTime + 10;
   //blaster.body.onEndContact.add(missleFinale, this);
@@ -294,7 +316,7 @@ function hitBox(body1, body2){
   tester = this;
   if(body1 == null) return;
   body1.sprite.alpha -= 0.1;
-  body1.health -= 20;
+  body1.health -= tester.damage;
   if(body1.health < 0) console.log("cool");
   console.log(tester.body.velocity.x);
   if(body1.health <= 0) body1.sprite.kill();
@@ -325,7 +347,7 @@ function missleFinale(body1, body2){
 }
 
 function updateSpells(){
-  console.log("Total Spells", spells.length);
+  //console.log("Total Spells", spells.length);
   for(var i = spells.length -1; i >= 0; i--){
     if(spells[i].timeAt < pTime){
       spells[i].kill();
@@ -345,8 +367,8 @@ function updateDeath(){
 // 3. Player_Actions
 //---------------------------
 function playerDefaultMovement(){
-//  doJump.onDown.add(playerJump, this);
- // doJump.onUp.add(playerJumpStop, this);
+  doJump.onDown.add(playerJump, this);
+  doJump.onUp.add(playerJumpStop, this);
 
   //moveUp.onDown.add(player, this)
 
@@ -389,7 +411,7 @@ function charging(){
 function playerShoot(){
   console.log("IM Shooting");
   shootBlast();
-  pCharge = 0.5;
+  pCharge = 1;
   endChargingTimer();
 }
 
@@ -440,7 +462,7 @@ function playerTower(){
 
   box.body.fixedRotation = true;
   box.body.mass = 6;
-  box.body.health = 100;
+  box.body.health = 40;
   //box.body.velocity.y = -500;
 
   box.body.static = false;
@@ -479,13 +501,14 @@ function playerSprintStop(){
   player.sprinting = 0;
 }
 function playerJump(){
-  if(player.jump >= player.jumpTotal) return;
+  if(player.jump >= player.jumpTotal || player.casting) return;
   player.jump++;
   player.jumping = 1;
   jumpSound.play();
   console.log("Jumping\n");
 }
 function playerJumpStop(){
+  if(player.casting) return;
   player.jumping  = 0;
   player.jumpAtY = 0;
 }
@@ -493,7 +516,9 @@ function playerJumpStop(){
 // Player_Physics
 //--------------------------------
 function movement(){
-  if(checkIfCanJump()) player.jump = 0;
+  if(checkIfCanJump()){
+    player.jump = 0;
+  }
 
   if(player.casting){
     casting();
@@ -536,6 +561,7 @@ function playerAirMovement(){
 }
 
 function playerJumpMovement(){
+  /*
   if(player.jumpAtY >= player.jumpSpan){
     player.jumping = 0;
     player.jumpAtY = 0;
@@ -544,10 +570,21 @@ function playerJumpMovement(){
   else{
     player.jumpAtY += player.jumpAcl;
     player.body.velocity.y = -player.jumpAcl*55;
+  }*/
+  if(player.jumpAtY < player.jumpSpan){
+    player.jumpAtY += player.jumpAcl;
+    player.body.velocity.y = -player.jumpAcl*55;
   }
+  else{
+    player.jumping = 0;
+    player.jumpAtY = 0;
+    console.log("Stop Jumping\n");
+  }
+
   player.animations.stop();
   if(player.direction == 1) player.frame = 14;
   else player.frame = 5;
+
 
   playerAirMovement();
 }
@@ -606,7 +643,6 @@ function playerMoveRightMovement(){
   player.body.velocity.x = player.speed;
   player.animations.play('right');
   if(player.stepsCount <= 0){
-    console.log("Step");
     steps.play();
     player.stepsCount = 17;
   }
@@ -619,7 +655,6 @@ function playerMoveLeftMovement(){
   player.body.velocity.x = -player.speed;
   player.animations.play('left');
   if(player.stepsCount <= 0){
-    console.log("Step");
     steps.play();
     player.stepsCount= 17;
   }
@@ -628,14 +663,29 @@ function playerMoveLeftMovement(){
   }
 }
 function casting(){
+  player.body.velocity.y -= 5;
   player.animations.stop();
-  if(player.direction == 1 && moveUp.isDown) player.frame = 13;
-  else if(player.direction == 1) player.frame = 12;
-  else if(moveUp.isDown) player.frame = 4;
-  else player.frame = 3;
+  if(!checkIfCanJump()){ 
+    jumpCasting();
+    return;
+  }
+  //if(moveRight.isDown && moveUp.isDown) player.frame = 13;
+  if(moveLeft.isDown && moveUp.isDown) player.frame = 4;
+  else if(moveRight.isDown && moveUp.isDown) player.frame = 12;
+  else if(player.direction == 1){
+    if(moveUp.isDown) player.frame = 11;
+    else player.frame = 12;
+  }
+  else{
+    if(moveUp.isDown) player.frame = 2;
+    else player.frame = 3;
+  }
+
+
+  //else if(moveUp.isDown) player.frame = 4;
+  //else player.frame = 3;
 
   if(player.stepsCount <= 0){
-    console.log("Step");
     chargeSound.play();
     player.stepsCount= 30;
   }
@@ -644,6 +694,31 @@ function casting(){
   }
 
 }
+
+function jumpCasting(){
+  if(!player.casting) return;
+  player.animations.stop();
+  //if(moveRight.isDown && moveUp.isDown) player.frame = 13;
+  if(moveLeft.isDown && moveUp.isDown) player.frame = 74;
+  else if(moveRight.isDown && moveUp.isDown) player.frame = 83;
+  else if(player.direction == 1){
+    if(moveUp.isDown) player.frame = 67;
+    else player.frame = 64;
+  }
+  else{
+    if(moveUp.isDown) player.frame = 58;
+    else player.frame = 55;
+  }
+
+  if(player.stepsCount <= 0){
+    chargeSound.play();
+    player.stepsCount= 30;
+  }
+  else{
+    player.stepsCount -= 1;
+  }
+}
+
 
 function playerInactive(){
   player.jump = 0;
