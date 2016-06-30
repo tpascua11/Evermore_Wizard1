@@ -35,7 +35,7 @@ function create() {
   game.physics.p2.setImpactEvents(true);
 
   simple = game.add.audio('simple');
-  simple.play();
+  //simple.play();
 
   createPlayer();
   playerDefaultMovement();
@@ -53,7 +53,7 @@ function create() {
     box.body.mass = 6;
     box.body.setMaterial(boxMaterial);
   }*/
-  var groundBoxesCM = game.physics.p2.createContactMaterial(worldMaterial, boxMaterial, { friction: 0.7 , restitution: 1.0 });
+  var groundBoxesCM = game.physics.p2.createContactMaterial(worldMaterial, boxMaterial, { friction: 0.7 , restitution: 0.0 });
 
   game.stage.smoothed = false;
 }

@@ -50,6 +50,7 @@ for (var i = 0; i < 5; i++){
   box.body.fixedRotation = true;
   box.body.mass = 6;
   box.body.health = 1;
+  //box.body.restitution= 0;
   //box.body.velocity.y = -500;
 
   box.body.static = false;
@@ -64,11 +65,11 @@ var playerTimer;
 
 function continueBlocks(blast){
   timer = game.time.create(false);
-  timer.loop(5000, makeBlock, this);
+  timer.loop(10000, makeBlock, this);
   timer.start();
 
   timer2 = game.time.create(false);
-  timer2.loop(8000, makeBlock, this);
+  timer2.loop(100000, makeBlock, this);
   timer2.start();
 }
 

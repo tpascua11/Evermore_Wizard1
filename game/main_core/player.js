@@ -223,7 +223,6 @@ function setupSpells(){
 
 function makeBlast(){
   //blaster = game.add.sprite(player.body.x + 100*player.direction, player.body.y, 'bmissle');
-  console.log("It's Here?");
   player.rmana-= 1;
   blaster = game.add.sprite(player.body.x + 100*player.direction, player.body.y, 'energyBall');
   blaster.scale.setTo(0.3,0.3);
@@ -234,6 +233,7 @@ function makeBlast(){
   blaster.enableBody = false;
 
   blaster.scale.setTo(pCharge,pCharge);
+  blaster.pCharge = pCharge;
   blaster.gravityScale = 0;
   blaster.body.fixedRotation = true;
   blaster.animations.add('run', [0, 1, 2, 3, 4,5], true);
@@ -249,6 +249,8 @@ function chargingBlast(){
   //blaster.body.x = player.body.x + 40*player.direction;
   //blaster.body.y = player.body.y;
   blaster.scale.setTo(pCharge, pCharge);
+  blaster.pCharge = pCharge;
+  console.log("You Shoot A Blast", blaster.height, blaster.width);
   //blaster.animations.currentAnim.speed = 100;
 }
 
@@ -279,9 +281,9 @@ function shootBlast(){
 function shootBlaster(){
   if(pCharge > 1.2) blaster.damage = 0.5 + pCharge*10;
   else blaster.damage = 1;
-  console.log('Blaster damage', blaster.damage);
+  //console.log('Blaster damage', blaster.damage);
 
-  blaster.body.static = false;;
+  blaster.body.static = false;
   blaster.body.fixedRotation = true;
   blaster.body.data.gravityScale = 0;
   blaster.body.damping = 0;
@@ -303,11 +305,13 @@ function shootBlaster(){
 
   blaster.body.setMaterial(magicMaterial);
   blaster.timeAt = pTime + 10;
-  //blaster.body.onEndContact.add(missleFinale, this);
-  blaster.body.onBeginContact.add(hitBox, blaster);
+  //blaster.body.onEndContact.add(missleFinale, blaster);
+  //blaster.body.onBeginContact.add(hitBox, blaster);
   blaster.body.onBeginContact.add(missleFinale, blaster);
   //spells[spells.length-1].body.onBeginContact.add(missleFinale, this);
-  console.log("Spells Length", spells.length);
+  //console.log("Spells Length", spells.length);
+  //
+  blaster.body.onEndContact.add(missleFinale, blaster);
   spells.push(blaster);
   player.casting = 0;
   shootSound.play();
@@ -325,14 +329,15 @@ function hitBox(body1, body2){
   tester = this;
   if(body1 == null) return;
   body1.sprite.alpha -= 0.1;
-  console.log('HP', body1.health);
+  //console.log('HP', body1.health);
   body1.health -= tester.damage;
-  if(body1.health < 0) console.log("cool");
-  console.log(tester.body.velocity.x);
+  //if(body1.health < 0) console.log("cool");
+  //console.log(tester.body.velocity.x);
   if(body1.health <= 0) body1.sprite.kill();
 }
 
 function missleFinaleFail(blaster){
+  blaster.body.static = false;
   console.log("This should work");
   blastSound.play();
   //blaster = this;
@@ -344,8 +349,11 @@ function missleFinaleFail(blaster){
 }
 
 function missleFinale(body1, body2){
-  blastSound.play();
   blast = this;
+  if(blaster.end) return;
+  blastSound.play();
+  blaster.body.static = true;
+  blast.end = true;
   blast.loadTexture('magicExpand', 0, false);
   blast.animations.play('end', 25, false, true);
   //blast.animations.play('end', 9, true);
@@ -353,16 +361,45 @@ function missleFinale(body1, body2){
   blast.body.damping = 1;
   blast.body.mass= 1.1;
   blast.timeAt = pTime+10;
+
+  blast.scale.setTo(3 * blast.pCharge, 3 * blast.pCharge);
+  blast.body.setRectangle(blast.height, blast.width);
+  blast.body.onBeginContact.add(hitBox, blast);
+  blast.body.static = true;
   //spells.splice(blast.spellID-1, 1);
 }
 
+function missleFinaleD(blast){
+  if(blaster.end) return;
+  blastSound.play();
+  //blast = this;
+  blast.body.static = true;
+  console.log(pCharge);
+  console.log("You Shoot A Blast", blast.height, blast.width);
+  blast.end = true;
+  blast.scale.setTo(3 * blast.pCharge, 3 * blast.pCharge);
+  blast.loadTexture('magicExpand', 0, false);
+  blast.animations.play('end', 25, false, true);
+  //blast.animations.play('end', 9, true);
+  blast.body.velocity.x = 0;
+  blast.body.damping = 1;
+  blast.body.mass= 1.1;
+  blast.timeAt = pTime+15;
+  blast.body.setRectangle(blast.height, blast.width);
+  //blast.setRectangleFromSprite(blast);
+  blast.body.onEndContact.add(hitBox, blast);
+  //blast.body.onBeginContact.add(missleFinale, blast);
+}
+
 function updateSpells(){
-  //console.log("Total Spells", spells.length);
+  console.log("Total Spells", spells.length);
   for(var i = spells.length -1; i >= 0; i--){
     if(spells[i].timeAt < pTime){
-      spells[i].kill();
-      spells.splice(i, 1);
-
+      if(!spells[i].end) missleFinaleD(spells[i]);
+      else{
+        spells[i].kill();
+        spells.splice(i, 1);
+      } 
     }
   }
   updateDeath();
