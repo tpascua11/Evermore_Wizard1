@@ -53,7 +53,7 @@ var playerStats = {
   casting  : 0  ,
   charged  : 0  ,
   stepsCount: 25,
-  rechargeRate: 2,
+  rechargeRate: 5,
   resistance: "nothing",
   weak: "nothing"
 };
@@ -306,12 +306,11 @@ function shootBlaster(){
   blaster.body.setMaterial(magicMaterial);
   blaster.timeAt = pTime + 10;
   //blaster.body.onEndContact.add(missleFinale, blaster);
-  //blaster.body.onBeginContact.add(hitBox, blaster);
-  blaster.body.onBeginContact.add(missleFinale, blaster);
+  blaster.body.onBeginContact.add(hitBox, blaster);
+  //blaster.body.onEndContact.add(missleFinale, blaster);
   //spells[spells.length-1].body.onBeginContact.add(missleFinale, this);
   //console.log("Spells Length", spells.length);
-  //
-  blaster.body.onEndContact.add(missleFinale, blaster);
+  blaster.body.onBeginContact.add(missleFinale, blaster);
   spells.push(blaster);
   player.casting = 0;
   shootSound.play();
@@ -350,14 +349,16 @@ function missleFinaleFail(blaster){
 
 function missleFinale(body1, body2){
   blast = this;
-  if(blaster.end) return;
+  if(blast.end) return;
+
+  blast.body.static = true;
   blastSound.play();
-  blaster.body.static = true;
   blast.end = true;
   blast.loadTexture('magicExpand', 0, false);
   blast.animations.play('end', 25, false, true);
   //blast.animations.play('end', 9, true);
   blast.body.velocity.x = 0;
+  blast.body.velocity.y = 0;
   blast.body.damping = 1;
   blast.body.mass= 1.1;
   blast.timeAt = pTime+10;
@@ -365,7 +366,6 @@ function missleFinale(body1, body2){
   blast.scale.setTo(3 * blast.pCharge, 3 * blast.pCharge);
   blast.body.setRectangle(blast.height, blast.width);
   blast.body.onBeginContact.add(hitBox, blast);
-  blast.body.static = true;
   //spells.splice(blast.spellID-1, 1);
 }
 
@@ -718,7 +718,7 @@ function casting(){
   }
   //if(moveRight.isDown && moveUp.isDown) player.frame = 13;
   if(moveLeft.isDown && moveUp.isDown) player.frame = 4;
-  else if(moveRight.isDown && moveUp.isDown) player.frame = 12;
+  else if(moveRight.isDown && moveUp.isDown) player.frame = 13;
   else if(player.direction == 1){
     if(moveUp.isDown) player.frame = 11;
     else player.frame = 12;
@@ -744,6 +744,7 @@ function casting(){
 
 function jumpCasting(){
   if(!player.casting) return;
+  player.body.velocity.x -= player.direction*1;
   player.animations.stop();
   //if(moveRight.isDown && moveUp.isDown) player.frame = 13;
   if(moveLeft.isDown && moveUp.isDown) player.frame = 74;
