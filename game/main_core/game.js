@@ -4,8 +4,6 @@ var game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, 'Evermore: The Wi
 //var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 var platforms;
 
-
-
 function preload() {
   //scaling();
   //scaleFix();
@@ -27,17 +25,21 @@ function preload() {
   game.time.advancedTiming = true; 
 }
 function create() {
-  bg = game.add.tileSprite(0, 0, 800, 600, 'sky');
+  bg = game.add.tileSprite(0, 0, 1920, 1920, 'sky');
   game.physics.startSystem(Phaser.Physics.P2JS);
   game.physics.p2.gravity.y = 1000;
   game.physics.p2.world.defaultContactMaterial.friction = 0.3;
   game.physics.p2.world.setGlobalStiffness(1e5);
   game.physics.p2.setImpactEvents(true);
+  game.world.setBounds(0, 0, 1920, 1920);
+
+
 
   simple = game.add.audio('simple');
   //simple.play();
 
   createPlayer();
+  game.camera.follow(player);
   playerDefaultMovement();
 
   var worldMaterial = game.physics.p2.createMaterial('worldMaterial');

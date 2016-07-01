@@ -85,6 +85,7 @@ function loadPlayerSprite(){
 
 function createPlayer(){
   playerBody();
+  playerTesting();
   playerSounds();
   createPlayerAnimations();
   playerControl();
@@ -96,9 +97,18 @@ function createPlayer(){
   setupSpells();
 }
 
+function playerTesting(){
+    console.log("Can I drag you");
+    player.anchor.set(0.5);
+    player.body.static = true;
+    //player.body.static = false;
+    //player.inputEnabled = true;
+    //player.input.enableDrag(true);
+}
+
 function playerBody(){
   //Remember: Set Scale Then apply Phyisics
-  player = game.add.sprite(300, game.world.height - 150, 'dino');
+  player = game.add.sprite(300, 100, 'dino');
   player.scale.setTo(3,3);
   game.physics.p2.enable(player);
   player.body.fixedRotation = true;
@@ -392,7 +402,7 @@ function missleFinaleD(blast){
 }
 
 function updateSpells(){
-  console.log("Total Spells", spells.length);
+  //console.log("Total Spells", spells.length);
   for(var i = spells.length -1; i >= 0; i--){
     if(spells[i].timeAt < pTime){
       if(!spells[i].end) missleFinaleD(spells[i]);

@@ -34,7 +34,7 @@ function makeBlock(){
     box.body.mass = 6;
     box.body.setMaterial(boxMaterial);
   }*/
-
+if(boxAmounts > 150) return;
 for (var i = 0; i < 5; i++){
   var box = game.add.sprite(100 + i*100, 645, 'level1');
   //var size = game.rnd.integerInRange(1, 5);
@@ -55,17 +55,22 @@ for (var i = 0; i < 5; i++){
 
   box.body.static = false;
   box.body.setMaterial(boxMaterial);
+
 }
+
+boxAmounts += 5;
+console.log('BOXES: ', boxAmounts);
 
 
 }
 
 var timer;
 var playerTimer;
+var boxAmounts = 0;
 
 function continueBlocks(blast){
   timer = game.time.create(false);
-  timer.loop(10000, makeBlock, this);
+  timer.loop(100000, makeBlock, this);
   timer.start();
 
   timer2 = game.time.create(false);
@@ -84,7 +89,10 @@ function loadBackground(){
     box.body.mass = 6;
     // box.body.static = true;
     box.body.setMaterial(boxMaterial);
+    
   }
+
+  //blocks = game.physics.p2.createMaterial('level1')
 
   //blocks = game.add.group();
   /*
@@ -92,7 +100,6 @@ function loadBackground(){
      blocks.setAll('body.bounce.x', 1);
      blocks.setAll('body.bounce.y', 1);
      */
-  blocks = game.physics.p2.createMaterial('level1')
     //game.physics.arcade.enable(blocks);
     /*
      *
