@@ -100,7 +100,7 @@ function createPlayer(){
 function playerTesting(){
     console.log("Can I drag you");
     player.anchor.set(0.5);
-    player.body.static = true;
+    player.body.static = false;
     //player.body.static = false;
     //player.inputEnabled = true;
     //player.input.enableDrag(true);
