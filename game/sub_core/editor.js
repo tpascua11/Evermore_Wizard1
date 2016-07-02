@@ -36,6 +36,7 @@ function create() {
   setupMouse();
   game.camera.follow(player);
   playerDefaultMovement();
+  toolControls();
 
   var worldMaterial = game.physics.p2.createMaterial('worldMaterial');
   boxMaterial = game.physics.p2.createMaterial('worldMaterial');

@@ -33,8 +33,6 @@ function create() {
   game.physics.p2.setImpactEvents(true);
   game.world.setBounds(0, 0, 1920, 1920);
 
-
-
   simple = game.add.audio('simple');
   //simple.play();
 

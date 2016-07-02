@@ -131,7 +131,10 @@ function playerControl(){
 
   magicMissle = game.input.keyboard.addKey(Phaser.Keyboard.K);
   magicBarrier = game.input.keyboard.addKey(Phaser.Keyboard.L);
+  //magicShield = game.input.keyboard.addKey(Phaser.Keyboard.L);
   teleport = game.input.keyboard.addKey(Phaser.Keyboard.J);
+
+  magicLevitate = game.input.keyboard.addKey(Phaser.Keyboard.P);
 }
 
 function createPlayerAnimations(){
@@ -441,7 +444,14 @@ function playerDefaultMovement(){
   magicMissle.onUp.add(playerShoot, this);
   magicMissle.onDown.add(charging, this);
 
-  magicBarrier.onDown.add(playerTower, this);
+  //magicBarrier.onDown.add(playerTower, this);
+  magicBarrier.onDown.add(playerBarrier, this);
+  magicBarrier.onUp.add(playerStopBarrier, this);
+
+  magicLevitate.onDown.add(playerLevitate, this);
+  magicLevitate.onUp.add(playerLevitate, this);
+
+
   teleport.onDown.add(playerTeleport, this);
 }
 
@@ -533,6 +543,43 @@ function playerTower(){
   spells.push(box);
 
   wallSound.play();
+}
+
+var activeBox;
+function playerBarrier(){
+  if(player.rmana <= 0) return;
+  player.casting = true;
+  chargingTimer();
+  player.rmana -= 3;
+  console.log("IM Defending");
+  var box = game.add.sprite(player.body.x + 50*player.direction, player.body.y-5, 'magicBlock');
+  size = 3;
+  box.scale.setTo(size,size+1);
+  game.physics.p2.enable(box);
+  box.animations.add('auto',
+      [0, 1, 2, 3], 25, true);
+  box.animations.play('auto', 15, true);
+  box.body.fixedRotation = true;
+  box.body.mass = 6;
+  box.body.health = 40;
+
+  box.body.static = true;
+  box.body.setMaterial(boxMaterial);
+  activeBox = box;
+  //spells.push(box);
+  wallSound.play();
+}
+function playerStopBarrier(){
+  player.casting = false;
+  activeBox.kill();
+}
+function playerLevitate(){
+  if(player.rmana <= 0) return;
+  console.log("What");
+  player.rmana -= 3;
+  player.body.velocity.x = 0;
+  player.body.velocity.y = 0;
+
 }
 
 function playerMoveLeft(){
