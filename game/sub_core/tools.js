@@ -48,7 +48,7 @@ function makeExist(){
   var box = game.add.sprite(mouse.body.x, mouse.body.y, 'exist');
   //var size = game.rnd.integerInRange(1, 5);
   size = 3;
-  box.scale.setTo(size,size+1);
+  box.scale.setTo(size, 0.5);
   game.physics.p2.enable(box);
 
   //box.animations.add('auto',
@@ -61,15 +61,17 @@ function makeExist(){
   box.body.health = 1;
 
   box.body.setMaterial(boxMaterial);
-  box.body.static = false;
+  box.body.static = true;
   //existingBlocks = [];
   existingBlocks.push(box);
   console.log("Existing Blocks", existingBlocks.length);
   box.eid = existingBlocks.length;
   box.body.eid = existingBlocks.length;
+  box.body.indestructible = true;
   console.log(box.eid);
   console.log(box.body.eid);
   //existsBlocks.push(box);
+  game.world.bringToTop(bg2);
 }
 
 function forceStatic(){
