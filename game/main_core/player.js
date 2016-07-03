@@ -27,7 +27,6 @@ var magicCG;
 var groundPlayerCM;
 var playerFPS = 0;
 var playerMana = 0;
-var playerFPStext;
 
 var playerStats = {
   health   : 100,
@@ -49,6 +48,8 @@ var playerStats = {
   jumpAtY  : 0  ,
   jumpAcl  : 5  ,
   jumpSpan : 75 ,
+  canJump  : 0  ,
+  levitation: 0 ,
   direction: 1  ,
   casting  : 0  ,
   charged  : 0  ,
@@ -122,9 +123,7 @@ function playerControl(){
 
   magicMissle = game.input.keyboard.addKey(Phaser.Keyboard.K);
   magicBarrier = game.input.keyboard.addKey(Phaser.Keyboard.L);
-  //magicShield = game.input.keyboard.addKey(Phaser.Keyboard.L);
   teleport = game.input.keyboard.addKey(Phaser.Keyboard.J);
-
   magicLevitate = game.input.keyboard.addKey(Phaser.Keyboard.P);
 }
 
@@ -143,7 +142,6 @@ function createPlayerAnimations(){
 var playerTimer;
 var chargeTimer;
 var regenTimer;
-var regenDo;
 var pTime = 0;
 var pCharge = 0.2;
 
@@ -181,7 +179,8 @@ function startRegenTimer(){
 }
 function regainMana(){
   if (player.maxRmana <= player.rmana || player.casting) return;
-  player.rmana += player.rechargeRate;
+  else if(player.levitation) player.rmana -= 3;
+  else player.rmana += player.rechargeRate;
 }
 
 //--------------
@@ -222,8 +221,6 @@ var blastMaterial;
 function createPlayerSpells(){
   magicMaterial = game.physics.p2.createMaterial('magicMaterial');
   blastMaterial = game.physics.p2.createMaterial('blastMaterial');
-  blastMaterial = game.add.sprite(player.body.x + 100*player.direction, player.body.y, 'bmissle');
-  //blastMaterial = game.physics.p2.enable(blaster);
 }
 
 function setupSpells(){
@@ -234,38 +231,50 @@ function setupSpells(){
   wallSound = game.add.audio('wall'); wallSound.volume = 0.2;
 }
 
+function placeFrontOfPlayer(magicObject){
+  if(moveUp.isDown && (moveLeft.isDown || moveRight.isDown)){
+    magicObject.body.velocity.x = 500 * player.direction;
+    magicObject.body.velocity.y = -500;
+  }
+  else if(moveUp.isDown){
+    magicObject.body.velocity.y = -500;
+  }
+  else if(moveLeft.isDown || moveRight.isDown){
+    magicObject.body.velocity.x = 500 * player.direction;
+  }
+  else{
+    magicObject.body.velocity.x = 500 * player.direction;
+  }
+}
+
+//______________________________
+//  Magic Blast
+//______________________________
 function makeBlast(){
+  pCharge = 1;
   player.rmana-= 1;
   blaster = game.add.sprite(player.body.x + 100*player.direction, player.body.y, 'energyBall');
   blaster.scale.setTo(0.3,0.3);
-
   game.physics.p2.enable(blaster);
-
   blaster.body.static = true;
-  blaster.enableBody = false;
-  blaster.scale.setTo(pCharge,pCharge);
+  blaster.body.enableBody = false;
   blaster.pCharge = pCharge;
+  blaster.scale.setTo(pCharge,pCharge);
   blaster.gravityScale = 0;
   blaster.body.fixedRotation = true;
   blaster.animations.add('run', [0, 1, 2, 3, 4,5], true);
   blaster.animations.add('end', [0, 1, 2, 3, 4, 5, 6], 30, true);
   blaster.animations.play('run', 15, true);
-
   blaster.body.x = player.body.x + 100*player.direction;
   blaster.body.y = player.body.y;
   blaster.end = false;
-
-  repositionEnergy();
   game.world.bringToTop(bg2);
+  repositionEnergy();
 }
 
 function chargingBlast(){
-  //blaster.body.x = player.body.x + 40*player.direction;
-  //blaster.body.y = player.body.y;
-  blaster.scale.setTo(pCharge, pCharge);
   blaster.pCharge = pCharge;
-  console.log("You Shoot A Blast", blaster.height, blaster.width);
-  //blaster.animations.currentAnim.speed = 100;
+  blaster.scale.setTo(pCharge, pCharge);
 }
 
 function repositionEnergy(){
@@ -281,61 +290,27 @@ function repositionEnergy(){
     blaster.body.y = player.body.y;
     blaster.body.x = player.body.x + 75 * player.direction;
   }
-
 }
 
-function shootBlast(){
-  if(player.casting == false) return;
-  shootBlaster();
-  player.jumping = 0;
-  player.jumpAtY = 0;
-  player.moving = 2;
-
-}
 function shootBlaster(){
   if(pCharge > 1.2) blaster.damage = 0.5 + pCharge*10;
   else blaster.damage = 1;
   //console.log('Blaster damage', blaster.damage);
-
   blaster.body.static = false;
   blaster.body.fixedRotation = true;
   blaster.body.data.gravityScale = 0;
   blaster.body.damping = 0;
   blaster.body.velocity.y = 0;
   blaster.body.force = 3000;
-  if(moveUp.isDown && (moveLeft.isDown || moveRight.isDown)){
-    blaster.body.velocity.x = 500 * player.direction;
-    blaster.body.velocity.y = -500;
-  }
-  else if(moveUp.isDown){
-    blaster.body.velocity.y = -500;
-  }
-  else if(moveLeft.isDown || moveRight.isDown){
-    blaster.body.velocity.x = 500 * player.direction;
-  }
-  else{
-    blaster.body.velocity.x = 500 * player.direction;
-  }
+  placeFrontOfPlayer(blaster);
 
   blaster.body.setMaterial(magicMaterial);
   blaster.timeAt = pTime + 10;
-  //blaster.body.onEndContact.add(missleFinale, blaster);
   blaster.body.onBeginContact.add(hitBox, blaster);
-  //blaster.body.onEndContact.add(missleFinale, blaster);
-  //spells[spells.length-1].body.onBeginContact.add(missleFinale, this);
-  //console.log("Spells Length", spells.length);
   blaster.body.onBeginContact.add(missleFinale, blaster);
   spells.push(blaster);
   player.casting = 0;
   shootSound.play();
-
-  if(player.rmana < 0){
-    console.log("This should work");
-    missleFinaleFail(blaster);
-  }
-}
-function shootWall(){
-
 }
 
 function hitBox(body1, body2){
@@ -347,34 +322,19 @@ function hitBox(body1, body2){
   if(body1.health <= 0) body1.sprite.kill();
 }
 
-function missleFinaleFail(blaster){
-  blaster.body.static = false;
-  console.log("This should work");
-  blastSound.play();
-  //blaster = this;
-  blaster.animations.play('end', 10, true);
-  blaster.body.velocity.x = 0;
-  blaster.body.damping = 1;
-  blaster.body.mass= 1.1;
-  blaster.timeAt = pTime+5;
-}
-
 function missleFinale(body1, body2){
   blast = this;
   if(blast.end) return;
-
   blast.body.static = true;
   blastSound.play();
   blast.end = true;
   blast.loadTexture('magicExpand', 0, false);
   blast.animations.play('end', 25, false, true);
-  //blast.animations.play('end', 9, true);
   blast.body.velocity.x = 0;
   blast.body.velocity.y = 0;
   blast.body.damping = 1;
   blast.body.mass= 1.1;
   blast.timeAt = pTime+10;
-
   blast.scale.setTo(3 * blast.pCharge, 3 * blast.pCharge);
   blast.body.setRectangle(blast.height, blast.width);
   blast.body.onBeginContact.add(hitBox, blast);
@@ -392,13 +352,11 @@ function missleFinaleD(blast){
   blast.scale.setTo(3 * blast.pCharge, 3 * blast.pCharge);
   blast.loadTexture('magicExpand', 0, false);
   blast.animations.play('end', 25, false, true);
-  //blast.animations.play('end', 9, true);
   blast.body.velocity.x = 0;
   blast.body.damping = 1;
   blast.body.mass= 1.1;
   blast.timeAt = pTime+15;
   blast.body.setRectangle(blast.height, blast.width);
-  //blast.setRectangleFromSprite(blast);
   blast.body.onEndContact.add(hitBox, blast);
   //blast.body.onBeginContact.add(missleFinale, blast);
 }
@@ -416,8 +374,9 @@ function updateSpells(){
   }
   updateDeath();
 }
+
 function updateDeath(){
-  if(player.health == 0){
+  if(player.body.health <= 0){
     console.log("YOU ARE Busted");
   }
 }
@@ -428,8 +387,6 @@ function updateDeath(){
 function playerDefaultMovement(){
   doJump.onDown.add(playerJump, this);
   doJump.onUp.add(playerJumpStop, this);
-
-  //moveUp.onDown.add(player, this)
 
   moveLeft.onDown.add(playerMoveLeft, this);
   moveLeft.onUp.add(playerStopLeft, this);
@@ -443,15 +400,16 @@ function playerDefaultMovement(){
   magicMissle.onUp.add(playerShoot, this);
   magicMissle.onDown.add(charging, this);
 
-  //magicBarrier.onDown.add(playerTower, this);
   magicBarrier.onDown.add(playerBarrier, this);
   magicBarrier.onUp.add(playerStopBarrier, this);
 
-  magicLevitate.onDown.add(playerLevitate, this);
-  magicLevitate.onUp.add(playerLevitate, this);
-
+  magicLevitate.onDown.add(levitationSwitch, this);
 
   teleport.onDown.add(playerTeleport, this);
+}
+
+function levitationSwitch(){
+  player.levitation = !player.levitation;
 }
 
 function playerTeleport(){
@@ -475,17 +433,19 @@ function charging(){
 }
 
 function playerShoot(){
+  if(player.casting == false) return;
   console.log("IM Shooting");
-  shootBlast();
+  shootBlaster();
+  player.jumping = 0;
+  player.jumpAtY = 0;
+  player.moving = 2;
   pCharge = 1;
   endChargingTimer();
   game.world.bringToTop(bg2);
-
 }
 
 function playerTower(){
   if(player.casting){
-
     var direct = 0;
     var box = game.add.sprite(player.body.x + (50 * player.direction), player.body.y - 20, 'magicShield');
     //var size = game.rnd.integerInRange(1, 5);
@@ -510,7 +470,6 @@ function playerTower(){
     box.body.setMaterial(boxMaterial);
 
 
-    //shootBlast();
 
     return;
   }
@@ -598,7 +557,7 @@ function playerStopBarrier(){
 function playerLevitate(){
   if(player.rmana <= 0) return;
   console.log("What");
-  player.rmana -= 3;
+  //player.rmana -= 3;
   player.body.velocity.x = 0;
   player.body.velocity.y = 0;
 
@@ -645,6 +604,9 @@ function movement(){
   if(checkIfCanJump()){
     player.jump = 0;
   }
+  if(player.levitation){
+    playerLevitate();
+  }
 
   if(player.casting){
     casting();
@@ -690,17 +652,7 @@ function playerAirMovement(){
 }
 
 function playerJumpMovement(){
-  /*
-  if(player.jumpAtY >= player.jumpSpan){
-    player.jumping = 0;
-    player.jumpAtY = 0;
-    console.log("Stop Jumping\n");
-  }
-  else{
-    player.jumpAtY += player.jumpAcl;
-    player.body.velocity.y = -player.jumpAcl*55;
-  }*/
-  if(player.jumpAtY < player.jumpSpan){
+   if(player.jumpAtY < player.jumpSpan){
     player.jumpAtY += player.jumpAcl;
     player.body.velocity.y = -player.jumpAcl*55;
   }
