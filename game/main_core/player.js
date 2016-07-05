@@ -60,7 +60,7 @@ var playerStats = {
   damageModifier: 10,
   magic: 0 ,
   stepsCount: 25,
-  rechargeRate: 1,
+  rechargeRate: 3,
   resistance: "nothing",
   weak: "nothing"
 };
@@ -102,7 +102,8 @@ function createPlayer(){
   continuePlayerTimer();
   startRegenTimer();
   //playerMana = game.add.text(player.body.x, player.body.y, game.time.fps, {fontSize: '32px', fill: '#66ffcc'});
-  playerFPS = game.add.text(player.body.x, player.body.y, game.time.fps, {fontSize: '32px', fill: '#ffff00'});
+  playerFPS = game.add.text(10, 10, game.time.fps, {fontSize: '25px', fill: '#ffff00'});
+  playerFPS.fixedToCamera = true;
   setupSpells();
   playerHUD();
 }
@@ -116,9 +117,9 @@ function playerHUD(){
   var heartWidth = gameWidth/2 - 30;
   var heartHeight = gameHeight - 155;
   */
-  var manaWidth = 20;
-  var manaHeight = 20;
-  var heartWidth = 10;
+  var manaWidth = 40;
+  var manaHeight = 25;
+  var heartWidth = 40;
   var heartHeight = 10;
 
   //var heightCenter = gameHeight - 150;
@@ -138,7 +139,6 @@ function updateEnergyBalls(){
   if(player.rmana < 0) manaHUD.frame = 0;
   else if(player.rmana >= 25) manaHUD.frame = 25;
   else manaHUD.frame = player.rmana;
-
 }
 
 function playerBody(){
@@ -209,10 +209,7 @@ function incrementPlayerTimer(){
   if(spells.length == 0) pTime = 0;
   else pTime++;
   //Do Other Stuff While Incrementing
-  if(player.barrier){
-    repositionPlayerBarrier();
-  }
-  else if(player.energy){
+  if(player.energy){
     repositionEnergy();
   }
   if(player.moving >= 0){
@@ -247,11 +244,11 @@ function endChargingTimer(){
   chargeTimer.stop();
 }
 function incrementChargeTimer(){
-  if(pCharge < 4){
-    pCharge+= 0.2;
-    player.rmana -= 0.2;
+  if(pCharge <= 4){
+    pCharge+= 0.5;
+    player.rmana -= 1;
   }
-  if(pCharge < 1.5){
+  if(pCharge < 2){
     blaster.tint = 0x00ff00;
   }
   else if(pCharge < 3){
@@ -383,7 +380,6 @@ function hitBox(body1, body2){
   if(body1 == null) return;
   if(body1.indestructible) return;
   tester = this;
-  body1.sprite.alpha -= 0.1;
   body1.health -= tester.damage;
   if(body1.health <= 0) body1.sprite.kill();
 }
@@ -627,13 +623,14 @@ function wall(){
   player.rmana -= 3;
   console.log("IM Defending");
   var box = game.add.sprite(player.body.x + 50*player.direction, player.body.y-5, 'magicBlock');
-  size = 3;
-  box.scale.setTo(size,size+1);
+  wHeight = 3;
+  wWidth = 2;
+  box.scale.setTo(wWidth,wHeight);
   game.physics.p2.enable(box);
   box.animations.add('auto',
       [0, 1, 2, 3], 25, true);
   box.animations.play('auto', 15, true);
-  box.body.fixedRotation = true;
+  box.body.fixedRotation = false;
   box.body.mass = 6;
   box.body.health = 40;
 
@@ -641,32 +638,40 @@ function wall(){
   box.body.setMaterial(boxMaterial);
   activeBox = box;
   wallSound.play();
+  //repositionPlayerBarrier();
 }
 function barrierPower(){
   console.log("Barrier Power");
 }
 function repositionPlayerBarrier(){
-  if(activeBox == null) return
+  if(activeBox == null) return;
+  if(!player.jump){
     if(moveDown.isDown && (moveRight.isDown || moveLeft.isDown)){
-      activeBox.body.x = player.body.x + 75*player.direction;
-      activeBox.body.y = player.body.y + 50;
+      activeBox.body.angle = 45*player.direction;
+      activeBox.body.x = player.body.x + 45*player.direction;
+      activeBox.body.y = player.body.y + 45;
     }
     else if(moveUp.isDown && (moveRight.isDown || moveLeft.isDown)){
-      activeBox.body.x = player.body.x + 75*player.direction;
-      activeBox.body.y = player.body.y - 50;
+      activeBox.body.angle = 135* player.direction;
+      activeBox.body.x = player.body.x + 45*player.direction;
+      activeBox.body.y = player.body.y - 45;
     }
     else if(moveDown.isDown){
+      activeBox.body.angle = 90;
       activeBox.body.x = player.body.x;
-      activeBox.body.y = player.body.y + 60;
+      activeBox.body.y = player.body.y + 55;
     }
     else if(moveUp.isDown){
+      activeBox.body.angle = 90;
       activeBox.body.x = player.body.x;
-      activeBox.body.y = player.body.y - 80;
+      activeBox.body.y = player.body.y - 60;
     }
     else{
+      activeBox.body.angle = 0;
       activeBox.body.y = player.body.y;
-      activeBox.body.x = player.body.x + 75 * player.direction;
+      activeBox.body.x = player.body.x + 60 * player.direction;
     }
+  }
 }
 function playerStopBarrier(){
   if(!player.barrier) return;
@@ -677,6 +682,8 @@ function playerStopBarrier(){
 
   player.casting = false;
   player.barrier = false;
+  player.jumping = 0;
+  player.jumpAtY = 0;
 }
 
 function playerLevitate(){
@@ -764,6 +771,8 @@ function movement(){
   else{
     playerInactive();
   }
+  repositionPlayerBarrier();
+
 }
 
 function playerAirMovement(){

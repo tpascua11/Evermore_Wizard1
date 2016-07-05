@@ -72,12 +72,10 @@ function collision(){
 
 
 function update() {
-  //console.log(game.time.fps);
   playerFPS.text = game.time.fps;
   playerFPS.reset(player.body.x-33, player.body.y - 66);
   movement();
   updateSpells();
   updateEnergyBalls();
-
   game.world.bringToTop(bg2);
 }
