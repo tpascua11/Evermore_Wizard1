@@ -59,7 +59,7 @@ function create() {
 
   game.stage.smoothed = false;
 
-  simple = game.add.audio('symbo');
+  simple = game.add.audio('simple');
   simple.play();
 
   createAI();
