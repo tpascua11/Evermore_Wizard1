@@ -93,7 +93,6 @@ function harm(body1){
   if(body1 == null) return;
   if(body1.indestructible) return;
   tester = this;
-  body1.sprite.alpha -= 0.1;
   body1.health -= tester.damage;
   console.log("health", body1.health);
   if(body1.health <= 0){

@@ -537,7 +537,7 @@ function charging(){
 }
 
 function playerShoot(){
-  if(!player.casting || !player.energy) return;
+  if(!player.casting || player.energy <= 0) return;
   shootBlaster();
   player.jumping = 0;
   player.jumpAtY = 0;
@@ -718,7 +718,7 @@ function playerSprintStop(){
   player.sprinting = 0;
 }
 function playerJump(){
-  if(player.jump >= player.jumpTotal || player.casting) return;
+  if(player.jump >= 1 || player.casting) return;
   player.jump++;
   player.jumping = 1;
   jumpSound.play();
