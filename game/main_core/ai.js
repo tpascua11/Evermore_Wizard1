@@ -23,7 +23,16 @@
 //---------------------------------------------------------
 var ai;
 
-var playerStats = {
+var aiBasicStats = {
+  health   : 100,
+  maxHealth: 100,
+  mana     : 75 ,
+  maxMana  : 100,
+  curSpd   : 0  ,
+  curSpd   : 0
+}
+
+var aiDefaultStats = {
   health   : 100,
   maxHealth: 100,
   mana     : 75 ,
@@ -56,45 +65,40 @@ var playerStats = {
 // 2. Player_Building
 //---------------------------------------------------------
 function loadAISprite(){
- //game.load.spritesheet('dino', '../assets/player/Vark_v1.png', 16, 16);
- //game.load.audio('jumpSound', '../assets/Jump19.wav');
+  game.load.spritesheet('slime', '../assets/monster/Slime.png', 16, 16);
 }
+//var slimey;
 
 function createAI(){
-  //Remember: Set Scale Then apply Phyisics
-  playerControl();
-  player = game.add.sprite(300, game.world.height - 150, 'dino');
-  player.scale.setTo(3,3);
-  game.physics.p2.enable(player);
-  player.body.fixedRotation = true;
-  player.body.damping = 0.5;
-  playerFPS = game.add.text(player.body.x, player.body.y, game.time.fps, {fontSize: '32px', fill: '#ffff00'});
-  createPlayerAnimations();
-
-  createPlayerSpells();
-
-  playerMaterial = game.physics.p2.createMaterial('playerMaterial', player.body);
-
-  for(var attrname in playerStats){player[attrname] = playerStats[attrname]}
-  console.log(player);
-
-  steps = game.add.audio('steps');
-  jumpSound = game.add.audio('jumpSound');
-
-  continuePlayerTimer();
-  setupSpells();
+  var i = 0;
+  //for(i = 0; i < 100; i++){
+    slimey = game.add.sprite(500 + i*10, 100, 'slime');
+    slimey.scale.setTo(3,3);
+    game.physics.p2.enable(slimey);
+    slimey.body.fixedRotation = true;
+    aiMaterial = game.physics.p2.createMaterial('aiMaterial', slimey.body);
+    slimey.body.health = 10;
+    slimey.damage = 10;
+    createAIAnimations();
+  //}
+    slimey.body.onBeginContact.add(harm, slimey);
 }
 
-function createPlayerAnimations(){
-  //Walking Animation
-  player.animations.add('right',
-      [16, 17, 18, 19, 20, 21, 22], 25, true);
-  player.animations.add('left',
-      [8, 9, 10, 11, 12, 13, 14], 25, true);
+function createAIAnimations(){
+  slimey.animations.add('move', [0, 1, 2, 3, 4], 25, true);
+  slimey.animations.play('move', 10, true);
+}
 
-  //Sprinting Animation
-  player.animations.add('leftSprint', [24, 25, 26, 27], 10, true);
-  player.animations.add('rightSprint', [28, 29, 30, 31], 10, true);
+function harm(body1){
+  if(body1 == null) return;
+  if(body1.indestructible) return;
+  tester = this;
+  body1.sprite.alpha -= 0.1;
+  body1.health -= tester.damage;
+  console.log("health", body1.health);
+  if(body1.health <= 0){
+    console.log("cool your dead");
+  }
 }
 
 //---------------------------
@@ -109,7 +113,7 @@ function detect(){
 //--------------------------------
 // 4. AI_Physics
 //--------------------------------
-function movement(){
+function aiMovement(){
 
 }
 

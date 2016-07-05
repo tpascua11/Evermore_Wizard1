@@ -71,9 +71,6 @@ var playerStats = {
 function loadPlayerSprite(){
   //SpriteSheet
   game.load.spritesheet('dino', '../assets/player/Vark_v42.png', 20, 20);
-  game.load.spritesheet('hearts', '../assets/player/hearts.png', 48, 16);
-  game.load.spritesheet('emptyball', '../assets/player/emptyBall.png', 16, 16);
-  game.load.spritesheet('manaballs', '../assets/player/manaBalls.png', 200, 8);
   game.load.spritesheet('bmissle', '../assets/DarkMagicMisslesB.png', 64, 64);
   game.load.spritesheet('smissle', '../assets/Blue_Magic_Missles.png', 16, 16);
   game.load.spritesheet('energyBall', '../assets/spells/BlueEnergyBall.png', 16, 16);
@@ -101,44 +98,9 @@ function createPlayer(){
   createPlayerSpells();
   continuePlayerTimer();
   startRegenTimer();
-  //playerMana = game.add.text(player.body.x, player.body.y, game.time.fps, {fontSize: '32px', fill: '#66ffcc'});
+  playerMana = game.add.text(player.body.x, player.body.y, game.time.fps, {fontSize: '32px', fill: '#66ffcc'});
   playerFPS = game.add.text(player.body.x, player.body.y, game.time.fps, {fontSize: '32px', fill: '#ffff00'});
   setupSpells();
-  playerHUD();
-}
-
-var manaHUD;
-var hearts;
-function playerHUD(){
-  /*
-  var manaWidth = gameWidth/3;
-  var manaHeight = gameHeight - 125;
-  var heartWidth = gameWidth/2 - 30;
-  var heartHeight = gameHeight - 155;
-  */
-  var manaWidth = 20;
-  var manaHeight = 20;
-  var heartWidth = 10;
-  var heartHeight = 10;
-
-  //var heightCenter = gameHeight - 150;
-  manaHUD = game.add.sprite(manaWidth, manaHeight, 'manaballs');
-  manaHUD.scale.setTo(1.5,1.5);
-  manaHUD.fixedToCamera = true;
-  //manaHUD.scale.setTo(2,2);
-  manaHUD.fixedToCamera = true;
-
-  hearts = game.add.sprite(heartWidth, heartHeight, 'hearts');
-  //hearts.scale.setTo(2,2);
-  hearts.frame = 2;
-  hearts.fixedToCamera = true;
-}
-
-function updateEnergyBalls(){
-  if(player.rmana < 0) manaHUD.frame = 0;
-  else if(player.rmana >= 25) manaHUD.frame = 25;
-  else manaHUD.frame = player.rmana;
-
 }
 
 function playerBody(){
@@ -152,8 +114,6 @@ function playerBody(){
   player.body.data.gravityScale = 1.00;
   //Apply playerStats to Player Object
   for(var attrname in playerStats){player[attrname] = playerStats[attrname]}
-  player.body.health = player.health;
-  console.log("Health", player.health);
 }
 
 function playerSounds(){
@@ -205,26 +165,26 @@ function continuePlayerTimer(){
 }
 function incrementPlayerTimer(){
   console.log(spells.length);
-  //if(spells.length == 0 && player.casting == 0) pTime = 0;
-  if(spells.length == 0) pTime = 0;
-  else pTime++;
-  //Do Other Stuff While Incrementing
-  if(player.barrier){
-    repositionPlayerBarrier();
-  }
-  else if(player.energy){
-    repositionEnergy();
-  }
-  if(player.moving >= 0){
-    player.moving--;
-  }
+    //if(spells.length == 0 && player.casting == 0) pTime = 0;
+    if(spells.length == 0) pTime = 0;
+    else pTime++;
+    //Do Other Stuff While Incrementing
+    if(player.barrier){
+      repositionPlayerBarrier();
+    }
+    else if(player.energy){
+      repositionEnergy();
+    }
+    if(player.moving >= 0){
+      player.moving--;
+    }
 }
 //__________
 // Regain
 //__________
 function startRegenTimer(){
   regenTimer= game.time.create(false);
-  regenTimer.loop(500, regainMana, this);
+  regenTimer.loop(1000, regainMana, this);
   regenTimer.start();
 }
 function regainMana(){
@@ -247,20 +207,20 @@ function endChargingTimer(){
   chargeTimer.stop();
 }
 function incrementChargeTimer(){
-  if(pCharge < 4){
-    pCharge+= 0.2;
-    player.rmana -= 0.2;
-  }
-  if(pCharge < 1.5){
-    blaster.tint = 0x00ff00;
-  }
-  else if(pCharge < 3){
-    blaster.tint = 0xffff00;
-  }
-  else if(pCharge < 4){
-    blaster.tint = 0xff0000;
-  }
-  if(player.casting) chargingBlast();
+    if(pCharge < 4){
+      pCharge+= 0.2;
+      player.rmana -= 0.2;
+    }
+    if(pCharge < 1.5){
+      blaster.tint = 0x00ff00;
+    }
+    else if(pCharge < 3){
+      blaster.tint = 0xffff00;
+    }
+    else if(pCharge < 4){
+      blaster.tint = 0xff0000;
+    }
+    if(player.casting) chargingBlast();
 }
 
 //---------------------------------------------------------
@@ -325,7 +285,6 @@ function makeBlast(){
   blaster.body.x = player.body.x + 100*player.direction;
   blaster.body.y = player.body.y;
   blaster.end = false;
-  blaster.body.ptype = 'blast';
   game.world.bringToTop(bg2);
   repositionEnergy();
 }
@@ -372,7 +331,7 @@ function shootBlaster(){
 
   blaster.body.setMaterial(magicMaterial);
   blaster.timeAt = pTime + 10;
-  //blaster.body.onBeginContact.add(hitBox, blaster);
+  blaster.body.onBeginContact.add(hitBox, blaster);
   blaster.body.onBeginContact.add(missleFinale, blaster);
   spells.push(blaster);
   player.casting = 0;
@@ -390,8 +349,7 @@ function hitBox(body1, body2){
 
 function missleFinale(body1, body2){
   blast = this;
-  console.log(body1);
-  if(body1 != null && (blast.end || blast.body.ptype == body1.ptype)) return;
+  if(blast.end) return;
   console.log(body1);
   blast.body.static = true;
   blastSound.play();
@@ -406,7 +364,6 @@ function missleFinale(body1, body2){
   blast.scale.setTo(3 * blast.pCharge, 3 * blast.pCharge);
   blast.body.setRectangle(blast.height, blast.width);
   blast.body.onBeginContact.add(hitBox, blast);
-  blast.body.data.shapes[0].sensor = true;
   //spells.splice(blast.spellID-1, 1);
 }
 
@@ -482,47 +439,26 @@ function levitationSwitch(){
 }
 
 function playerTeleport(){
-  if(player.rmana <= 0) return;
-  player.rmana -= 2;
   console.log("IM Teleporting");
 
   teleportSound.play();
 
   teleportBefore = game.add.sprite(player.body.x, player.body.y, 'teleport');
   teleportBefore.scale.setTo(3,3);
-  teleportBefore.animations.add('end', [0, 1, 2, 3, 4, 5, 6, 7], 50, true);
+  teleportBefore.animations.add('end', [0, 1, 2, 3, 4, 5, 6], 30, true);
   teleportBefore.animations.play('end', 25, false, true);
-  /*
-     if(player.moveRight){
-     player.reset(player.body.x+100,player.body.y);
-     }
-     else if(player.moveLeft){
-     player.reset(player.body.x-100,player.body.y);
-     }
-     else{
-     player.reset(player.body.x,player.body.y-100);
-     }*/
-  if(moveDown.isDown && (moveRight.isDown || moveLeft.isDown)){
-    console.log("So..");
-    player.body.reset(player.body.x + 75*player.direction, player.body.y + 50);
+
+  if(player.moveRight){
+    player.reset(player.body.x+100,player.body.y);
   }
-  else if(moveUp.isDown && (moveRight.isDown || moveLeft.isDown)){
-    console.log("So..");
-    player.body.reset(player.body.x + 75*player.direction, player.body.y - 50);
-  }
-  else if(moveDown.isDown){
-    player.body.reset(player.body.x, player.body.y+80);
-  }
-  else if(moveUp.isDown){
-    player.body.reset(player.body.x, player.body.y-80);
+  else if(player.moveLeft){
+    player.reset(player.body.x-100,player.body.y);
   }
   else{
-    player.body.reset(player.body.x + 75 * player.direction, player.body.y);
+    player.reset(player.body.x,player.body.y-100);
   }
-
   teleportAfter  = game.add.sprite(player.body.x, player.body.y, 'teleport');
-  teleportAfter.scale.setTo(3,3);
-  teleportAfter.animations.add('end', [7, 6, 5, 4, 3, 2, 1, 0], 50, true);
+  teleportAfter.animations.add('end', [0, 1, 2, 3, 4, 5, 6], 30, true);
   teleportAfter.animations.play('end', 25, false, true);
 }
 
@@ -674,7 +610,7 @@ function playerStopBarrier(){
   //endChargingTimer();
   activeBox.kill();
   activeBox = null;
-
+  
   player.casting = false;
   player.barrier = false;
 }

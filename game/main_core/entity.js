@@ -70,7 +70,7 @@ var boxAmounts = 0;
 
 function continueBlocks(blast){
   timer = game.time.create(false);
-  timer.loop(100000, makeBlock, this);
+  timer.loop(10000, makeBlock, this);
   timer.start();
 
   timer2 = game.time.create(false);

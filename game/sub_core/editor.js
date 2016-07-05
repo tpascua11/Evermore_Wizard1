@@ -1,5 +1,5 @@
 
-var gameWidth = 1200 ;var gameHeight = 240;
+var gameWidth = 800;var gameHeight = 480;
 var game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, 'Evermore: The Wizard Guide', { preload: preload, create: create, update: update } );
 //var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 var platforms;
@@ -24,14 +24,19 @@ function preload() {
   loadBoundaries();
   cursors = game.input.keyboard.createCursorKeys();
   preloadBackground();
+
+  //New-------
+  loadAISprite();
+  //-----------------
   game.time.advancedTiming = true; 
 }
 
 function create() {
-  //bg = game.add.tileSprite(0, 0, 1920, 1920, 'sky');
-  //game.world.setBounds(0, 0, 1920, 1920);
   bg = game.add.tileSprite(0, 0, 1920, 240, 'level1front');
   game.world.setBounds(0, 0, 1920, 240);
+
+  bg2 = game.add.tileSprite(0, 0, 1920, 240, 'level1back');
+  game.world.bringToTop(bg2);
 
   game.physics.startSystem(Phaser.Physics.P2JS);
   game.physics.p2.gravity.y = 1000;
@@ -54,24 +59,25 @@ function create() {
 
   game.stage.smoothed = false;
 
-  bg2 = game.add.tileSprite(0, 0, 1920, 240, 'level1back');
-  game.world.bringToTop(bg2);
-
-
   simple = game.add.audio('symbo');
   simple.play();
-  game.scale.stopFullScreen();
+
+  createAI();
 }
 
 function collision(){
 }
+//playerMana.text = player.rmana.toFixed(2);
+//playerMana.reset(player.body.x, player.body.y - 66);
+
 
 function update() {
   //console.log(game.time.fps);
   playerFPS.text = game.time.fps;
-  playerMana.text = player.rmana.toFixed(2);
-  playerMana.reset(player.body.x, player.body.y - 66);
   playerFPS.reset(player.body.x-33, player.body.y - 66);
   movement();
   updateSpells();
+  updateEnergyBalls();
+
+  game.world.bringToTop(bg2);
 }
