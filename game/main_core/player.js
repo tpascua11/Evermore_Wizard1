@@ -81,7 +81,9 @@ function loadPlayerSprite(){
   game.load.spritesheet('casting', '../assets/Casting.png', 16, 16);
   game.load.spritesheet('magicBlock', '../assets/spells/MagicBlock.png', 8, 16);
   game.load.spritesheet('magicShield', '../assets/spells/Shield_Up.png', 4, 16);
+  game.load.spritesheet('circleBarrier', '../assets/spells/circleBarrier.png', 20, 20);
   game.load.spritesheet('magicExpand', '../assets/spells/BlueExpand.png', 16, 16);
+  game.load.spritesheet('magicPush', '../assets/spells/barrierPush.png', 6, 16);
 
   //Sound 
   game.load.audio('blast', '../assets/sound_effect/Blast.wav');
@@ -129,10 +131,15 @@ function playerHUD(){
   //manaHUD.scale.setTo(2,2);
   manaHUD.fixedToCamera = true;
 
+
   hearts = game.add.sprite(heartWidth, heartHeight, 'hearts');
   //hearts.scale.setTo(2,2);
   hearts.frame = 2;
   hearts.fixedToCamera = true;
+
+  game.world.bringToTop(hearts);
+  game.world.bringToTop(manaHUD);
+
 }
 
 function updateEnergyBalls(){
@@ -204,7 +211,7 @@ function continuePlayerTimer(){
   playerTimer.start();
 }
 function incrementPlayerTimer(){
-  console.log(spells.length);
+  //console.log(spells.length);
   //if(spells.length == 0 && player.casting == 0) pTime = 0;
   if(spells.length == 0) pTime = 0;
   else pTime++;
@@ -386,9 +393,9 @@ function hitBox(body1, body2){
 
 function missleFinale(body1, body2){
   blast = this;
-  console.log(body1);
+  //console.log(body1);
   if(body1 != null && (blast.end || blast.body.ptype == body1.ptype)) return;
-  console.log(body1);
+  //console.log(body1);
   blast.body.static = true;
   blastSound.play();
   blast.end = true;
@@ -411,8 +418,8 @@ function missleFinaleD(blast){
   blastSound.play();
   //blast = this;
   blast.body.static = true;
-  console.log(pCharge);
-  console.log("You Shoot A Blast", blast.height, blast.width);
+  //console.log(pCharge);
+  //console.log("You Shoot A Blast", blast.height, blast.width);
   blast.end = true;
   blast.scale.setTo(3 * blast.pCharge, 3 * blast.pCharge);
   blast.loadTexture('magicExpand', 0, false);
@@ -442,7 +449,7 @@ function updateSpells(){
 
 function updateDeath(){
   if(player.body.health <= 0){
-    console.log("YOU ARE Busted");
+    //console.log("YOU ARE Busted");
   }
 }
 
@@ -550,30 +557,6 @@ function playerShoot(){
 }
 
 function playerTower(){
-  if(player.casting){
-    var direct = 0;
-    var box = game.add.sprite(player.body.x + (50 * player.direction), player.body.y - 20, 'magicShield');
-
-    box.scale.setTo(4,4);
-    game.physics.p2.enable(box);
-
-    box.animations.add('auto',
-        [0, 1, 2, 3], 25, true);
-    box.animations.play('auto', 15, true);
-
-    box.body.damping= 0;
-    box.body.mass = 0;
-
-    box.body.fixedRotation = true;
-    box.body.mass = 10;
-    box.body.health = 20;
-    box.body.velocity.x = 500 * player.direction;
-
-    box.body.static = true;
-    box.body.setMaterial(boxMaterial);
-    return;
-  }
-
   console.log("IM Defending");
   var direct = 0;
   var box = game.add.sprite(player.body.x, player.body.y - 10, 'magicBlock');
@@ -592,7 +575,7 @@ function playerTower(){
   box.body.health = 40;
   //box.body.velocity.y = -500;
 
-  box.body.static = false;
+  box.body.static = true;
   box.body.setMaterial(boxMaterial);
 
 
@@ -611,10 +594,14 @@ function playerBarrier(){
   if(player.energy){
     console.log("Barrier Push");
     barrierPower(); 
-    playerShoot();
+    //playerShoot();
+    blaster.kill();
+    player.casting = 0;
+    endChargingTimer();
+    //playerTower();
     return;
   }
-  wall();
+  //wall();
 }
 
 function wall(){
@@ -634,18 +621,26 @@ function wall(){
   box.body.mass = 6;
   box.body.health = 40;
 
-  box.body.static = true;
+  box.body.static = false;
+  box.body.data.gravityScale = 0.0;
+
   box.body.setMaterial(boxMaterial);
   activeBox = box;
   wallSound.play();
-  //repositionPlayerBarrier();
+  repositionPlayerBarrier();
+
+  //constraint = game.physics.p2.createRevoluteConstraint(activeBox.body, [0,0], player.body, [0,0], 10000);
+  //constraint = game.physics.p2.createLockConstraint(sprite2, player, [0, 50], 80);
+
 }
 function barrierPower(){
   console.log("Barrier Power");
 }
 function repositionPlayerBarrier(){
-  if(activeBox == null) return;
-  if(!player.jump){
+  if(activeBox == null){
+    console.log("DEATH");
+    return;
+  }
     if(moveDown.isDown && (moveRight.isDown || moveLeft.isDown)){
       activeBox.body.angle = 45*player.direction;
       activeBox.body.x = player.body.x + 45*player.direction;
@@ -660,25 +655,33 @@ function repositionPlayerBarrier(){
       activeBox.body.angle = 90;
       activeBox.body.x = player.body.x;
       activeBox.body.y = player.body.y + 55;
+
     }
     else if(moveUp.isDown){
       activeBox.body.angle = 90;
       activeBox.body.x = player.body.x;
       activeBox.body.y = player.body.y - 60;
+
+      //constraint = game.physics.p2.createLockConstraint
+      //  (activeBox.body, player.body, [0, -80], 90);
     }
     else{
       activeBox.body.angle = 0;
       activeBox.body.y = player.body.y;
       activeBox.body.x = player.body.x + 60 * player.direction;
+      //constraint = game.physics.p2.createLockConstraint
+      //  (activeBox.body, player.body, [60*player.direction, 0], 0);
     }
-  }
 }
 function playerStopBarrier(){
   if(!player.barrier) return;
   pCharge = 1;
   //endChargingTimer();
-  activeBox.kill();
-  activeBox = null;
+  //game.physics.p2.removeConstraint(constraint);
+  //constraint = null;
+
+  //activeBox.kill();
+  //activeBox = null;
 
   player.casting = false;
   player.barrier = false;
@@ -718,8 +721,11 @@ function playerSprintStop(){
   player.sprinting = 0;
 }
 function playerJump(){
+  console.log("before player jump: ", player.jump);
   if(player.jump >= 1 || player.casting) return;
+  console.log("im with top");
   player.jump++;
+  console.log("after player jump: ", player.jump);
   player.jumping = 1;
   jumpSound.play();
   console.log("Jumping\n");
@@ -733,10 +739,13 @@ function playerJumpStop(){
 // Player_Physics
 //--------------------------------
 function movement(){
-  if(checkIfCanJump()){
+ if(checkIfCanJump()){
+    console.log("Refresh");
     player.jump = 0;
     player.airCasted = 0;
   }
+  else player.jump = 1;
+
   if(player.levitation){
     playerLevitate();
   }
@@ -747,7 +756,7 @@ function movement(){
   else if (player.jumping){
     playerJumpMovement();
   }
-  else if (!checkIfCanJump()){
+  else if (player.jump){
     playerFallingMovement();
   }
   else if(player.moving >= 0){
@@ -771,8 +780,7 @@ function movement(){
   else{
     playerInactive();
   }
-  repositionPlayerBarrier();
-
+  //repositionPlayerBarrier();
 }
 
 function playerAirMovement(){
@@ -882,7 +890,7 @@ function playerMoveLeftMovement(){
 function casting(){
   player.body.velocity.y -= 5;
   player.animations.stop();
-  if(!checkIfCanJump()){ 
+  if(player.jump){ 
     jumpCasting();
     return;
   }
@@ -939,11 +947,11 @@ function jumpCasting(){
   else{
     player.stepsCount -= 1;
   }
+  //repositionPlayerBarrier();
 }
 
 
 function playerInactive(){
-  player.jump = 0;
   player.body.velocity.x = 0;
   player.animations.stop();
   if(player.direction ==  1) player.frame = 10;
