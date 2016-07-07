@@ -62,7 +62,7 @@ var aiDefaultStats = {
 };
 
 //---------------------------------------------------------
-// 2. Player_Building
+// 2. AI_Building
 //---------------------------------------------------------
 function loadAISprite(){
   game.load.spritesheet('slime', '../assets/monster/Slime.png', 16, 16);

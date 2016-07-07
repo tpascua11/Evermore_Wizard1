@@ -36,8 +36,8 @@ var playerStats = {
   rmana    : 25 ,
   maxRmana : 25 ,
   curSpd   : 0  ,
-  speed    : 200,
-  sprintSpd: 500,
+  speed    : 300,
+  sprintSpd: 400,
   sprinting: 0  ,
   acl      : 50 ,
   moveLeft : 0  ,
@@ -60,7 +60,7 @@ var playerStats = {
   damageModifier: 10,
   magic: 0 ,
   stepsCount: 25,
-  rechargeRate: 3,
+  rechargeRate: 1,
   resistance: "nothing",
   weak: "nothing"
 };
@@ -81,7 +81,7 @@ function loadPlayerSprite(){
   game.load.spritesheet('casting', '../assets/Casting.png', 16, 16);
   game.load.spritesheet('magicBlock', '../assets/spells/MagicBlock.png', 8, 16);
   game.load.spritesheet('magicShield', '../assets/spells/Shield_Up.png', 4, 16);
-  game.load.spritesheet('circleBarrier', '../assets/spells/circleBarrier.png', 20, 20);
+  game.load.spritesheet('circleBarrier', '../assets/spells/barrierv2.png', 20, 20);
   game.load.spritesheet('magicExpand', '../assets/spells/BlueExpand.png', 16, 16);
   game.load.spritesheet('magicPush', '../assets/spells/barrierPush.png', 6, 16);
 
@@ -123,23 +123,17 @@ function playerHUD(){
   var manaHeight = 25;
   var heartWidth = 40;
   var heartHeight = 10;
-
-  //var heightCenter = gameHeight - 150;
   manaHUD = game.add.sprite(manaWidth, manaHeight, 'manaballs');
   manaHUD.scale.setTo(1.5,1.5);
   manaHUD.fixedToCamera = true;
-  //manaHUD.scale.setTo(2,2);
   manaHUD.fixedToCamera = true;
 
-
   hearts = game.add.sprite(heartWidth, heartHeight, 'hearts');
-  //hearts.scale.setTo(2,2);
   hearts.frame = 2;
   hearts.fixedToCamera = true;
 
   game.world.bringToTop(hearts);
   game.world.bringToTop(manaHUD);
-
 }
 
 function updateEnergyBalls(){
@@ -151,6 +145,7 @@ function updateEnergyBalls(){
 function playerBody(){
   //Remember: Set Scale Then apply Phyisics
   player = game.add.sprite(300, 100, 'dino');
+
   player.scale.setTo(3,3);
   game.physics.p2.enable(player);
   player.body.fixedRotation = true;
@@ -161,6 +156,14 @@ function playerBody(){
   for(var attrname in playerStats){player[attrname] = playerStats[attrname]}
   player.body.health = player.health;
   console.log("Health", player.health);
+
+  circleBarrier = game.add.sprite(300, 100, 'circleBarrier');
+  circleBarrier.scale.setTo(3.2, 3.2);
+  circleBarrier.alpha = 0;
+  circleBarrier.frame = 0;
+  circleBarrier.animations.add('run', [0, 1, 2, 3, 4, 5], true);
+  circleBarrier.animations.add('end', [8, 9, 10, 11, 12, 13, 14, 15, 16], false);
+  circleBarrier.play('run', 10, true);
 }
 
 function playerSounds(){
@@ -177,10 +180,11 @@ function playerControl(){
   moveDown = game.input.keyboard.addKey(Phaser.Keyboard.S);
 
   doJump = game.input.keyboard.addKey(Phaser.Keyboard.W);
+  doJump = game.input.keyboard.addKey(Phaser.Keyboard.J);
 
   magicMissle = game.input.keyboard.addKey(Phaser.Keyboard.K);
   magicBarrier = game.input.keyboard.addKey(Phaser.Keyboard.L);
-  teleport = game.input.keyboard.addKey(Phaser.Keyboard.J);
+  //teleport = game.input.keyboard.addKey(Phaser.Keyboard.J);
   magicLevitate = game.input.keyboard.addKey(Phaser.Keyboard.COLON);
 }
 
@@ -265,6 +269,7 @@ function incrementChargeTimer(){
     blaster.tint = 0xff0000;
   }
   if(player.casting) chargingBlast();
+  chargeSound.play();
 }
 
 //---------------------------------------------------------
@@ -311,6 +316,7 @@ function placeFrontOfPlayer(magicObject){
 //  Magic Blast
 //______________________________
 function makeBlast(){
+  chargeSound.play();
   pCharge = 1;
   player.rmana-= 1;
   blaster = game.add.sprite(player.body.x + 100*player.direction, player.body.y, 'energyBall');
@@ -383,6 +389,28 @@ function shootBlaster(){
   shootSound.play();
 }
 
+function shootShield(){
+  if(!player.casting || player.rmana <= 0) return;
+  console.log("did it work");
+  player.rmana-= 5;
+  wall = game.add.sprite(player.body.x + 100*player.direction, player.body.y, 'magicPush');
+  wall.scale.setTo(6,6);
+  game.physics.p2.enable(wall);
+  wall.body.fixedRotation = true;
+  wall.animations.add('run', [0, 1, 2], true);
+  wall.animations.play('run', 15, true);
+  wall.end = false;
+
+  placeFrontOfPlayer(wall);
+  wall.body.setMaterial(magicMaterial);
+  wall.timeAt = pTime + 1000;
+
+  spells.push(wall);
+  player.casting = 0;
+  shootSound.play();
+}
+
+
 function hitBox(body1, body2){
   if(body1 == null) return;
   if(body1.indestructible) return;
@@ -445,6 +473,12 @@ function updateSpells(){
     }
   }
   updateDeath();
+  updateBarrier();
+}
+
+function updateBarrier(){
+  circleBarrier.x = player.body.x-30;
+  circleBarrier.y = player.body.y-30;
 }
 
 function updateDeath(){
@@ -477,7 +511,7 @@ function playerDefaultMovement(){
 
   magicLevitate.onDown.add(levitationSwitch, this);
 
-  teleport.onDown.add(playerTeleport, this);
+  //teleport.onDown.add(playerTeleport, this);
 }
 
 function levitationSwitch(){
@@ -488,9 +522,7 @@ function playerTeleport(){
   if(player.rmana <= 0) return;
   player.rmana -= 2;
   console.log("IM Teleporting");
-
   teleportSound.play();
-
   teleportBefore = game.add.sprite(player.body.x, player.body.y, 'teleport');
   teleportBefore.scale.setTo(3,3);
   teleportBefore.animations.add('end', [0, 1, 2, 3, 4, 5, 6, 7], 50, true);
@@ -532,6 +564,7 @@ function playerTeleport(){
 function charging(){
   if(player.barrier){
     console.log("Barrier Blast");
+    shootShield();
     playerStopBarrier();
     return;
   }
@@ -601,6 +634,13 @@ function playerBarrier(){
     //playerTower();
     return;
   }
+  circleBarrier.play('run', 10, true);
+  circleBarrier.alpha = 0.8;
+  player.barrier = true;
+  player.casting = 1;
+  player.rmana -= 3;
+
+  wallSound.play();
   //wall();
 }
 
@@ -626,7 +666,6 @@ function wall(){
 
   box.body.setMaterial(boxMaterial);
   activeBox = box;
-  wallSound.play();
   repositionPlayerBarrier();
 
   //constraint = game.physics.p2.createRevoluteConstraint(activeBox.body, [0,0], player.body, [0,0], 10000);
@@ -681,7 +720,8 @@ function playerStopBarrier(){
   //constraint = null;
 
   //activeBox.kill();
-  //activeBox = null;
+  //activeBox = null;kk
+  circleBarrier.play('end', 20, false);
 
   player.casting = false;
   player.barrier = false;
@@ -780,7 +820,6 @@ function movement(){
   else{
     playerInactive();
   }
-  //repositionPlayerBarrier();
 }
 
 function playerAirMovement(){
@@ -814,7 +853,9 @@ function playerJumpMovement(){
 }
 
 function playerFallingMovement(){
-  if(player.airCasted == 1) return;
+  if(player.barrier){
+  }
+  else if(player.airCasted == 1) return;
   //player.animations.stop();
   player.animations.currentAnim.speed = 7;
   if(player.direction == 1) player.animations.play('rightJump');
@@ -911,7 +952,6 @@ function casting(){
   //else player.frame = 3;
 
   if(player.stepsCount <= 0){
-    chargeSound.play();
     player.stepsCount= 30;
   }
   else{
@@ -941,7 +981,6 @@ function jumpCasting(){
     else player.frame = 55;
   }
   if(player.stepsCount <= 0){
-    chargeSound.play();
     player.stepsCount= 30;
   }
   else{
@@ -949,7 +988,6 @@ function jumpCasting(){
   }
   //repositionPlayerBarrier();
 }
-
 
 function playerInactive(){
   player.body.velocity.x = 0;
