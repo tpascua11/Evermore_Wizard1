@@ -52,7 +52,7 @@ function create() {
 
   var worldMaterial = game.physics.p2.createMaterial('worldMaterial');
   boxMaterial = game.physics.p2.createMaterial('worldMaterial');
-  continueBlocks();
+  //continueBlocks();
 
   game.physics.p2.setWorldMaterial(worldMaterial, true, true, true, true); 
   var groundBoxesCM = game.physics.p2.createContactMaterial(worldMaterial, boxMaterial, { friction: 0.7 , restitution: 0.0 });
@@ -78,4 +78,5 @@ function update() {
   updateSpells();
   updateEnergyBalls();
   game.world.bringToTop(bg2);
+  aiRuning();
 }

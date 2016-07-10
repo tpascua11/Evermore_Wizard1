@@ -11,11 +11,12 @@
  |  /   V        ))       V   \  |
  |/     `       //        '     \|
 
-//1. Player_Information
-//2. Player_Building
-//3. Spell_Building
-//4. Player_Actions
-//5. Player_Physics
+// 1. Player_Information
+// 2. Player_Building
+// 3. Player_Timers
+// 5. Spell_Building
+// 6. Player_Actions
+// 7. Player_Physics
 */
 
 //---------------------------------------------------------
@@ -57,10 +58,12 @@ var playerStats = {
   energy   : 0 ,
   barrier  : 0 , 
   levitation: 0 ,
+  invincible: 0, 
   damageModifier: 10,
   magic: 0 ,
   stepsCount: 25,
   rechargeRate: 1,
+  alliance: 1, 
   resistance: "nothing",
   weak: "nothing"
 };
@@ -93,6 +96,7 @@ function loadPlayerSprite(){
   game.load.audio('wall', '../assets/sound_effect/Wall.wav');
   game.load.audio('steps', '../assets/step.wav');
   game.load.audio('jumpSound', '../assets/Jump19.wav');
+  game.load.audio('hurt', '../assets/sound_effect/hurt.wav');
 }
 
 function createPlayer(){
@@ -103,6 +107,7 @@ function createPlayer(){
   createPlayerSpells();
   continuePlayerTimer();
   startRegenTimer();
+  buildInvicible();
   //playerMana = game.add.text(player.body.x, player.body.y, game.time.fps, {fontSize: '32px', fill: '#66ffcc'});
   playerFPS = game.add.text(10, 10, game.time.fps, {fontSize: '25px', fill: '#ffff00'});
   playerFPS.fixedToCamera = true;
@@ -113,12 +118,6 @@ function createPlayer(){
 var manaHUD;
 var hearts;
 function playerHUD(){
-  /*
-  var manaWidth = gameWidth/3;
-  var manaHeight = gameHeight - 125;
-  var heartWidth = gameWidth/2 - 30;
-  var heartHeight = gameHeight - 155;
-  */
   var manaWidth = 40;
   var manaHeight = 25;
   var heartWidth = 40;
@@ -169,6 +168,7 @@ function playerBody(){
 function playerSounds(){
   steps = game.add.audio('steps'); steps.volume = 0.5;
   jumpSound = game.add.audio('jumpSound'); jumpSound.volume = 0.5; 
+  hurt = game.add.audio('hurt');
 }
 
 function playerControl(){
@@ -198,7 +198,7 @@ function createPlayerAnimations(){
 }
 
 //--------------------------------------------------------
-// Player_Timers
+// 3. Player_Timers
 //--------------------------------------------------------
 var playerTimer;
 var chargeTimer;
@@ -206,26 +206,21 @@ var regenTimer;
 var pTime = 0;
 var pCharge = 0.2;
 
-//---------------
+//_______________
 // Main Timer
-//---------------
+//_______________
 function continuePlayerTimer(){
   playerTimer = game.time.create(false);
   playerTimer.loop(100, incrementPlayerTimer, this);
   playerTimer.start();
 }
 function incrementPlayerTimer(){
-  //console.log(spells.length);
-  //if(spells.length == 0 && player.casting == 0) pTime = 0;
   if(spells.length == 0) pTime = 0;
   else pTime++;
+
   //Do Other Stuff While Incrementing
-  if(player.energy){
-    repositionEnergy();
-  }
-  if(player.moving >= 0){
-    player.moving--;
-  }
+  if(player.energy) repositionEnergy();
+  if(player.moving >= 0) player.moving--;
 }
 //__________
 // Regain
@@ -238,11 +233,8 @@ function startRegenTimer(){
 function regainMana(){
   if(player.levitation) player.rmana -= 2;
   else if (player.maxRmana <= player.rmana || player.casting) return;
-  else{
-    player.rmana += player.rechargeRate;
-  }
+  else player.rmana += player.rechargeRate;
 }
-
 //__________
 // Charging
 //__________
@@ -271,9 +263,28 @@ function incrementChargeTimer(){
   if(player.casting) chargingBlast();
   chargeSound.play();
 }
+//______________
+// Invincible
+//______________
+var invc;
+function buildInvicible(){
+  invc = Phaser.Timer.SECOND;
+}
+
+function startInvincible(){
+  if(player.invincible) return;
+  player.alpha = 0.5;
+  player.invincible = true;
+  game.time.events.add(invc, stopInvincible, this);
+}
+
+function stopInvincible(){
+  player.alpha = 1;
+  player.invincible = false;
+}
 
 //---------------------------------------------------------
-// 3. Spell_Building
+// 5. Spell_Building
 //---------------------------------------------------------
 var spells = [];
 var blast = [];
@@ -410,7 +421,6 @@ function shootShield(){
   shootSound.play();
 }
 
-
 function hitBox(body1, body2){
   if(body1 == null) return;
   if(body1.indestructible) return;
@@ -472,19 +482,12 @@ function updateSpells(){
       } 
     }
   }
-  updateDeath();
   updateBarrier();
 }
 
 function updateBarrier(){
   circleBarrier.x = player.body.x-30;
   circleBarrier.y = player.body.y-30;
-}
-
-function updateDeath(){
-  if(player.body.health <= 0){
-    //console.log("YOU ARE Busted");
-  }
 }
 
 //---------------------------
@@ -527,16 +530,6 @@ function playerTeleport(){
   teleportBefore.scale.setTo(3,3);
   teleportBefore.animations.add('end', [0, 1, 2, 3, 4, 5, 6, 7], 50, true);
   teleportBefore.animations.play('end', 25, false, true);
-  /*
-     if(player.moveRight){
-     player.reset(player.body.x+100,player.body.y);
-     }
-     else if(player.moveLeft){
-     player.reset(player.body.x-100,player.body.y);
-     }
-     else{
-     player.reset(player.body.x,player.body.y-100);
-     }*/
   if(moveDown.isDown && (moveRight.isDown || moveLeft.isDown)){
     console.log("So..");
     player.body.reset(player.body.x + 75*player.direction, player.body.y + 50);
@@ -790,7 +783,10 @@ function movement(){
     playerLevitate();
   }
 
-  if(player.casting){
+  if(player.invincible){
+    console.log("HURTED");
+  }
+  else if(player.casting){
     casting();
   }
   else if (player.jumping){
@@ -847,7 +843,6 @@ function playerJumpMovement(){
   player.animations.stop();
   if(player.direction == 1) player.frame = 14;
   else player.frame = 5;
-
 
   playerAirMovement();
 }
@@ -995,6 +990,11 @@ function playerInactive(){
   if(player.direction ==  1) player.frame = 10;
   else player.frame = 1;
 
+}
+
+function harmPlayer(body, damage){
+  body.health -= damage;
+  console.log("Health", body.health);
 }
 
 //--------------
