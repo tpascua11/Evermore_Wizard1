@@ -163,6 +163,8 @@ function playerBody(){
   circleBarrier.animations.add('run', [0, 1, 2, 3, 4, 5], true);
   circleBarrier.animations.add('end', [8, 9, 10, 11, 12, 13, 14, 15, 16], false);
   circleBarrier.play('run', 10, true);
+
+
 }
 
 function playerSounds(){
@@ -322,7 +324,6 @@ function placeFrontOfPlayer(magicObject){
     magicObject.body.velocity.x = 500 * player.direction;
   }
 }
-
 //______________________________
 //  Magic Blast
 //______________________________
@@ -514,11 +515,17 @@ function playerDefaultMovement(){
 
   magicLevitate.onDown.add(levitationSwitch, this);
 
+  //magicLevitate.onDown.add(grow, this);
+
   //teleport.onDown.add(playerTeleport, this);
 }
 
 function levitationSwitch(){
   player.levitation = !player.levitation;
+}
+
+function grow(){
+  player.body.setRectangle(60, 60);
 }
 
 function playerTeleport(){
@@ -768,6 +775,7 @@ function playerJumpStop(){
   player.jumping  = 0;
   player.jumpAtY = 0;
 }
+
 //--------------------------------
 // Player_Physics
 //--------------------------------
@@ -989,7 +997,6 @@ function playerInactive(){
   player.animations.stop();
   if(player.direction ==  1) player.frame = 10;
   else player.frame = 1;
-
 }
 
 function harmPlayer(body, damage){
@@ -1003,21 +1010,14 @@ function harmPlayer(body, damage){
 var yAxis = p2.vec2.fromValues(0, 1);
 function checkIfCanJump() {
   var result = false;
-  for (var i=0; i < game.physics.p2.world.narrowphase.contactEquations.length; i++)
-  {
+  for (var i=0; i < game.physics.p2.world.narrowphase.contactEquations.length; i++){
     var c = game.physics.p2.world.narrowphase.contactEquations[i];
-
-    if (c.bodyA === player.body.data || c.bodyB === player.body.data)
-    {
+    if (c.bodyA === player.body.data || c.bodyB === player.body.data){
       var d = p2.vec2.dot(c.normalA, yAxis);
-
-      if (c.bodyA === player.body.data)
-      {
+      if (c.bodyA === player.body.data){
         d *= -1;
       }
-
-      if (d > 0.5)
-      {
+      if (d > 0.5){
         result = true;
       }
     }
