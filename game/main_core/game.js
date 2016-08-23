@@ -65,6 +65,7 @@ function update() {
   playerMana.reset(player.body.x, player.body.y - 66);
   playerFPS.reset(player.body.x-33, player.body.y - 66);
   movement();
+  updatePlayerFrame();
   updateSpells();
   game.world.bringToTop(bg2);
 }

@@ -60,7 +60,7 @@ function create() {
   game.stage.smoothed = false;
 
   simple = game.add.audio('simple');
-  simple.play();
+  //simple.play();
 
   createAI();
 }
@@ -77,6 +77,7 @@ function update() {
   movement();
   updateSpells();
   updateEnergyBalls();
+  updatePlayerFrame();
   game.world.bringToTop(bg2);
   aiRuning();
 }

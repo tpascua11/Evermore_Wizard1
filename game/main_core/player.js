@@ -29,6 +29,9 @@ var groundPlayerCM;
 var playerFPS = 0;
 var playerMana = 0;
 
+var manaHUD;
+var hearts;
+
 var playerStats = {
   health   : 100,
   maxHealth: 100,
@@ -73,7 +76,10 @@ var playerStats = {
 //---------------------------------------------------------
 function loadPlayerSprite(){
   //SpriteSheet
-  game.load.spritesheet('dino', '../assets/player/Vark_v42.png', 20, 20);
+  //game.load.spritesheet('dino', '../assets/player/Vark_v42.png', 20, 20);
+  game.load.spritesheet('dino', '../assets/player/Vark_TemplateGreen.png', 20, 20);
+  game.load.spritesheet('visualDino', '../assets/player/Vark_v42.png', 20, 20);
+
   game.load.spritesheet('hearts', '../assets/player/hearts.png', 48, 16);
   game.load.spritesheet('emptyball', '../assets/player/emptyBall.png', 16, 16);
   game.load.spritesheet('manaballs', '../assets/player/manaBalls.png', 200, 8);
@@ -115,8 +121,6 @@ function createPlayer(){
   playerHUD();
 }
 
-var manaHUD;
-var hearts;
 function playerHUD(){
   var manaWidth = 40;
   var manaHeight = 25;
@@ -144,8 +148,12 @@ function updateEnergyBalls(){
 function playerBody(){
   //Remember: Set Scale Then apply Phyisics
   player = game.add.sprite(300, 100, 'dino');
+  visual = game.add.sprite(300, 100, 'visualDino');
 
   player.scale.setTo(3,3);
+  visual.scale.setTo(3,3);
+  visual.frame = 1;
+
   game.physics.p2.enable(player);
   player.body.fixedRotation = true;
   player.body.damping = 0.5;
@@ -163,8 +171,6 @@ function playerBody(){
   circleBarrier.animations.add('run', [0, 1, 2, 3, 4, 5], true);
   circleBarrier.animations.add('end', [8, 9, 10, 11, 12, 13, 14, 15, 16], false);
   circleBarrier.play('run', 10, true);
-
-
 }
 
 function playerSounds(){
@@ -197,6 +203,13 @@ function createPlayerAnimations(){
   player.animations.add('rightJump', [68, 69, 70, 71], 10, true);
   player.animations.add('leftSprint', [41, 42, 43, 44], 10, true);
   player.animations.add('rightSprint', [50, 51, 52, 53], 10, true);
+
+  visual.animations.add('right', [28, 29, 30, 31, 32, 33], 25, true);
+  visual.animations.add('left', [19, 20, 21, 22, 23, 24], 25, true);
+  visual.animations.add('leftJump', [59, 60, 61, 62], 10, true);
+  visual.animations.add('rightJump', [68, 69, 70, 71], 10, true);
+  visual.animations.add('leftSprint', [41, 42, 43, 44], 10, true);
+  visual.animations.add('rightSprint', [50, 51, 52, 53], 10, true);
 }
 
 //--------------------------------------------------------
@@ -276,12 +289,14 @@ function buildInvicible(){
 function startInvincible(){
   if(player.invincible) return;
   player.alpha = 0.5;
+  visual.alpha = 0.5;
   player.invincible = true;
   game.time.events.add(invc, stopInvincible, this);
 }
 
 function stopInvincible(){
   player.alpha = 1;
+  visual.alpha = 1;
   player.invincible = false;
 }
 
@@ -483,12 +498,30 @@ function updateSpells(){
       } 
     }
   }
+  //TODO placement elsewhere
+  //visual.x = player.body.x-30;
+  //visual.y = player.body.y-30;
   updateBarrier();
 }
 
 function updateBarrier(){
   circleBarrier.x = player.body.x-30;
   circleBarrier.y = player.body.y-30;
+}
+
+function updatePlayerFrame(){
+  visual.x = player.body.x-30;
+  visual.y = player.body.y-30;
+}
+
+function updatePlayerFrameAt(x, y){
+  visual.x = x;
+  visual.y = y;
+}
+function playerHitBoxResize(height, weight){
+  visual.x = x;
+  visual.y = y;
+
 }
 
 //---------------------------
@@ -824,6 +857,7 @@ function movement(){
   else{
     playerInactive();
   }
+  //visual.reset(player.body.x - 25, player.body.y - 30);
 }
 
 function playerAirMovement(){
@@ -849,8 +883,14 @@ function playerJumpMovement(){
   }
 
   player.animations.stop();
-  if(player.direction == 1) player.frame = 14;
-  else player.frame = 5;
+  if(player.direction == 1){
+    player.frame = 14;
+    visual.frane = 14;
+  }
+  else{
+    player.frame = 5;
+    visual.frane = 5;
+  }
 
   playerAirMovement();
 }
@@ -861,8 +901,15 @@ function playerFallingMovement(){
   else if(player.airCasted == 1) return;
   //player.animations.stop();
   player.animations.currentAnim.speed = 7;
-  if(player.direction == 1) player.animations.play('rightJump');
-  else player.animations.play('leftJump');
+  visual.animations.currentAnim.speed = 7;
+  if(player.direction == 1){
+    player.animations.play('rightJump');
+    visual.animations.play('rightJump');
+  }
+  else{
+    player.animations.play('leftJump');
+    visual.animations.play('leftJump');
+  }
 
   //if(player.direction == 1) player.frame = 16;
   //else player.frame = 7;
@@ -884,6 +931,9 @@ function playerSprintingRightMovement(){
   player.animations.currentAnim.speed = 15;
   player.body.velocity.x = 500;
 
+  visual.animations.play('rightSprint');
+  visual.animations.currentAnim.speed = 15;
+
   if(player.stepsCount <= 0){
     steps.play();
     player.stepsCount = 10;
@@ -895,9 +945,11 @@ function playerSprintingRightMovement(){
 
 function playerSprintingLeftMovement(){
   player.animations.play('leftSprint');
-
   player.animations.currentAnim.speed = 15;
   player.body.velocity.x = -500;
+
+  visual.animations.play('leftSprint');
+  visual.animations.currentAnim.speed = 15;
   if(player.stepsCount <= 0){
     steps.play();
     player.stepsCount = 5;
@@ -911,6 +963,10 @@ function playerMoveRightMovement(){
   player.animations.currentAnim.speed = 10;
   player.body.velocity.x = player.speed;
   player.animations.play('right');
+
+  visual.animations.currentAnim.speed = 10;
+  visual.animations.play('right');
+
   if(player.stepsCount <= 0){
     steps.play();
     player.stepsCount = 17;
@@ -923,6 +979,10 @@ function playerMoveLeftMovement(){
   player.animations.currentAnim.speed = 10;
   player.body.velocity.x = -player.speed;
   player.animations.play('left');
+
+  visual.animations.currentAnim.speed = 10;
+  visual.animations.play('left');
+
   if(player.stepsCount <= 0){
     steps.play();
     player.stepsCount= 17;
@@ -934,6 +994,7 @@ function playerMoveLeftMovement(){
 function casting(){
   player.body.velocity.y -= 5;
   player.animations.stop();
+  visual.animations.stop();
   if(player.jump){ 
     jumpCasting();
     return;
@@ -942,15 +1003,25 @@ function casting(){
   if(moveLeft.isDown && moveUp.isDown) player.frame = 4;
   else if(moveRight.isDown && moveUp.isDown) player.frame = 13;
   else if(player.direction == 1){
-    if(moveUp.isDown) player.frame = 11;
-    else player.frame = 12;
+    if(moveUp.isDown){
+      player.frame = 11;
+      visual.frame = 11;
+    }
+    else{
+      player.frame = 12;
+      visual.frame = 12;
+    }
   }
   else{
-    if(moveUp.isDown) player.frame = 2;
-    else player.frame = 3;
+    if(moveUp.isDown){
+      player.frame = 2;
+      visual.frame = 2;
+    }
+    else{
+      player.frame = 3;
+      visual.frame = 3;
+    }
   }
-
-
   //else if(moveUp.isDown) player.frame = 4;
   //else player.frame = 3;
 
@@ -968,6 +1039,7 @@ function jumpCasting(){
   player.airCasted = 1;
   player.body.velocity.x -= player.direction*1;
   player.animations.stop();
+  visual.animations.stop();
   //if(moveRight.isDown && moveUp.isDown) player.frame = 13;
   if(moveLeft.isDown && moveUp.isDown) player.frame = 74;
   else if(moveRight.isDown && moveUp.isDown) player.frame = 83;
@@ -995,8 +1067,14 @@ function jumpCasting(){
 function playerInactive(){
   player.body.velocity.x = 0;
   player.animations.stop();
-  if(player.direction ==  1) player.frame = 10;
-  else player.frame = 1;
+  if(player.direction ==  1){
+    player.frame = 10;
+    visual.frame = 10;
+  }
+  else{
+    player.frame = 1;
+    visual.frame = 1;
+  }
 }
 
 function harmPlayer(body, damage){
