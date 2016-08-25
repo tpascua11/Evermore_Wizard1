@@ -59,8 +59,8 @@ function create() {
 
   game.stage.smoothed = false;
 
-  simple = game.add.audio('simple');
-  //simple.play();
+  simple = game.add.audio('boden');
+  simple.play();
 
   createAI();
 }

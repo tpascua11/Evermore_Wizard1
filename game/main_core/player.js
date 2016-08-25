@@ -11,16 +11,20 @@
  |  /   V        ))       V   \  |
  |/     `       //        '     \|
 
-// 1. Player_Information
-// 2. Player_Building
-// 3. Player_Timers
-// 5. Spell_Building
-// 6. Player_Actions
-// 7. Player_Physics
+  Player_Information
+  Player_Preload
+  Player_Building
+  Player_Timers
+  Player_Updates
+  Spell_Building
+  Player_Actions
+  Player_Physics
+  Player_Sounds
+
 */
 
 //---------------------------------------------------------
-// 1. Player_Information
+// Player_Information
 //---------------------------------------------------------
 var player;
 var playerMaterial;
@@ -31,6 +35,7 @@ var playerMana = 0;
 
 var manaHUD;
 var hearts;
+var invc;
 
 var playerStats = {
   health   : 100,
@@ -59,23 +64,21 @@ var playerStats = {
   airCasted: 0  ,
   charged  : 0  ,
   energy   : 0 ,
-  barrier  : 0 , 
+  barrier  : 0 ,
   levitation: 0 ,
-  invincible: 0, 
+  invincible: 0,
   damageModifier: 10,
   magic: 0 ,
   stepsCount: 25,
   rechargeRate: 1,
-  alliance: 1, 
+  alliance: 1,
   resistance: "nothing",
   weak: "nothing"
 };
-
 //---------------------------------------------------------
-// 2. Player_Building
+// Player_Preload
 //---------------------------------------------------------
 function loadPlayerSprite(){
-  //SpriteSheet
   //game.load.spritesheet('dino', '../assets/player/Vark_v42.png', 20, 20);
   game.load.spritesheet('dino', '../assets/player/Vark_TemplateGreen.png', 20, 20);
   game.load.spritesheet('visualDino', '../assets/player/Vark_v42.png', 20, 20);
@@ -94,7 +97,6 @@ function loadPlayerSprite(){
   game.load.spritesheet('magicExpand', '../assets/spells/BlueExpand.png', 16, 16);
   game.load.spritesheet('magicPush', '../assets/spells/barrierPush.png', 6, 16);
 
-  //Sound 
   game.load.audio('blast', '../assets/sound_effect/Blast.wav');
   game.load.audio('charge', '../assets/sound_effect/Charge.wav');
   game.load.audio('shoot', '../assets/sound_effect/Shoot.wav');
@@ -105,6 +107,9 @@ function loadPlayerSprite(){
   game.load.audio('hurt', '../assets/sound_effect/hurt.wav');
 }
 
+//---------------------------------------------------------
+// Player_Building
+//---------------------------------------------------------
 function createPlayer(){
   playerBody();
   playerSounds();
@@ -114,36 +119,10 @@ function createPlayer(){
   continuePlayerTimer();
   startRegenTimer();
   buildInvicible();
-  //playerMana = game.add.text(player.body.x, player.body.y, game.time.fps, {fontSize: '32px', fill: '#66ffcc'});
-  playerFPS = game.add.text(10, 10, game.time.fps, {fontSize: '25px', fill: '#ffff00'});
-  playerFPS.fixedToCamera = true;
   setupSpells();
   playerHUD();
 }
 
-function playerHUD(){
-  var manaWidth = 40;
-  var manaHeight = 25;
-  var heartWidth = 40;
-  var heartHeight = 10;
-  manaHUD = game.add.sprite(manaWidth, manaHeight, 'manaballs');
-  manaHUD.scale.setTo(1.5,1.5);
-  manaHUD.fixedToCamera = true;
-  manaHUD.fixedToCamera = true;
-
-  hearts = game.add.sprite(heartWidth, heartHeight, 'hearts');
-  hearts.frame = 2;
-  hearts.fixedToCamera = true;
-
-  game.world.bringToTop(hearts);
-  game.world.bringToTop(manaHUD);
-}
-
-function updateEnergyBalls(){
-  if(player.rmana < 0) manaHUD.frame = 0;
-  else if(player.rmana >= 25) manaHUD.frame = 25;
-  else manaHUD.frame = player.rmana;
-}
 
 function playerBody(){
   //Remember: Set Scale Then apply Phyisics
@@ -164,6 +143,7 @@ function playerBody(){
   player.body.health = player.health;
   console.log("Health", player.health);
 
+  //TODO: Put this somewhere else.
   circleBarrier = game.add.sprite(300, 100, 'circleBarrier');
   circleBarrier.scale.setTo(3.2, 3.2);
   circleBarrier.alpha = 0;
@@ -204,16 +184,70 @@ function createPlayerAnimations(){
   player.animations.add('leftSprint', [41, 42, 43, 44], 10, true);
   player.animations.add('rightSprint', [50, 51, 52, 53], 10, true);
 
-  visual.animations.add('right', [28, 29, 30, 31, 32, 33], 25, true);
-  visual.animations.add('left', [19, 20, 21, 22, 23, 24], 25, true);
-  visual.animations.add('leftJump', [59, 60, 61, 62], 10, true);
-  visual.animations.add('rightJump', [68, 69, 70, 71], 10, true);
+  visual.animations.add('standLeft' , [5], 25, true);
+  visual.animations.add('standRight', [14], 25, true);
+
+  visual.animations.add('walkRight', [28, 29, 30, 31, 32, 33], 25, true);
+  visual.animations.add('walkLeft', [19, 20, 21, 22, 23, 24], 25, true);
+
+  visual.animations.add('jumpRight', [68, 69, 70, 71], 10, true);
+  visual.animations.add('jumpLeft', [59, 60, 61, 62], 10, true);
+
   visual.animations.add('leftSprint', [41, 42, 43, 44], 10, true);
   visual.animations.add('rightSprint', [50, 51, 52, 53], 10, true);
 }
 
+function playerHUD(){
+  playerFPS = game.add.text(10, 10, game.time.fps, {fontSize: '25px', fill: '#ffff00'});
+  playerFPS.fixedToCamera = true;
+
+  var manaWidth = 40;
+  var manaHeight = 25;
+  var heartWidth = 40;
+  var heartHeight = 10;
+  manaHUD = game.add.sprite(manaWidth, manaHeight, 'manaballs');
+  manaHUD.scale.setTo(1.5,1.5);
+  manaHUD.fixedToCamera = true;
+  manaHUD.fixedToCamera = true;
+
+  hearts = game.add.sprite(heartWidth, heartHeight, 'hearts');
+  hearts.frame = 2;
+  hearts.fixedToCamera = true;
+
+  game.world.bringToTop(hearts);
+  game.world.bringToTop(manaHUD);
+}
+
 //--------------------------------------------------------
-// 3. Player_Timers
+//  Player_Updates
+//--------------------------------------------------------
+function updateEnergyBalls(){
+  if(player.rmana < 0) manaHUD.frame = 0;
+  else if(player.rmana >= 25) manaHUD.frame = 25;
+  else manaHUD.frame = player.rmana;
+}
+
+function updateBarrier(){
+  circleBarrier.x = player.body.x-30;
+  circleBarrier.y = player.body.y-30;
+}
+
+function updatePlayerFrame(){
+  visual.x = player.body.x-30;
+  visual.y = player.body.y-30;
+}
+
+function updatePlayerFrameAt(x, y){
+  visual.x = x;
+  visual.y = y;
+}
+function playerHitBoxResize(height, weight){
+  visual.x = x;
+  visual.y = y;
+}
+
+//--------------------------------------------------------
+// Player_Timers
 //--------------------------------------------------------
 var playerTimer;
 var chargeTimer;
@@ -281,7 +315,6 @@ function incrementChargeTimer(){
 //______________
 // Invincible
 //______________
-var invc;
 function buildInvicible(){
   invc = Phaser.Timer.SECOND;
 }
@@ -498,34 +531,11 @@ function updateSpells(){
       } 
     }
   }
-  //TODO placement elsewhere
-  //visual.x = player.body.x-30;
-  //visual.y = player.body.y-30;
   updateBarrier();
 }
 
-function updateBarrier(){
-  circleBarrier.x = player.body.x-30;
-  circleBarrier.y = player.body.y-30;
-}
-
-function updatePlayerFrame(){
-  visual.x = player.body.x-30;
-  visual.y = player.body.y-30;
-}
-
-function updatePlayerFrameAt(x, y){
-  visual.x = x;
-  visual.y = y;
-}
-function playerHitBoxResize(height, weight){
-  visual.x = x;
-  visual.y = y;
-
-}
-
 //---------------------------
-// 3. Player_Actions
+// Player_Actions
 //---------------------------
 function playerDefaultMovement(){
   doJump.onDown.add(playerJump, this);
@@ -857,7 +867,6 @@ function movement(){
   else{
     playerInactive();
   }
-  //visual.reset(player.body.x - 25, player.body.y - 30);
 }
 
 function playerAirMovement(){
@@ -896,23 +905,15 @@ function playerJumpMovement(){
 }
 
 function playerFallingMovement(){
-  if(player.barrier){
-  }
+  if(player.barrier){}
   else if(player.airCasted == 1) return;
-  //player.animations.stop();
-  player.animations.currentAnim.speed = 7;
   visual.animations.currentAnim.speed = 7;
   if(player.direction == 1){
-    player.animations.play('rightJump');
-    visual.animations.play('rightJump');
+    visual.animations.play('jumpRight');
   }
   else{
-    player.animations.play('leftJump');
-    visual.animations.play('leftJump');
+    visual.animations.play('jumpLeft');
   }
-
-  //if(player.direction == 1) player.frame = 16;
-  //else player.frame = 7;
   playerAirMovement();
 }
 
@@ -926,71 +927,55 @@ function playerBreakingMovement(){
   else 
     player.body.velocity.x = 0;
 }
+
 function playerSprintingRightMovement(){
-  player.animations.play('rightSprint');
   player.animations.currentAnim.speed = 15;
   player.body.velocity.x = 500;
 
   visual.animations.play('rightSprint');
   visual.animations.currentAnim.speed = 15;
 
-  if(player.stepsCount <= 0){
-    steps.play();
-    player.stepsCount = 10;
-  }
-  else{
-    player.stepsCount -= 1;
-  }
+  playSteps(8);
+
 }
 
 function playerSprintingLeftMovement(){
-  player.animations.play('leftSprint');
   player.animations.currentAnim.speed = 15;
   player.body.velocity.x = -500;
 
   visual.animations.play('leftSprint');
   visual.animations.currentAnim.speed = 15;
-  if(player.stepsCount <= 0){
-    steps.play();
-    player.stepsCount = 5;
-  }
-  else{
-    player.stepsCount -= 1;
-  }
+ 
+  playSteps(8);
 }
 
 function playerMoveRightMovement(){
-  player.animations.currentAnim.speed = 10;
   player.body.velocity.x = player.speed;
-  player.animations.play('right');
-
   visual.animations.currentAnim.speed = 10;
-  visual.animations.play('right');
+  visual.animations.play('walkRight');
 
-  if(player.stepsCount <= 0){
-    steps.play();
-    player.stepsCount = 17;
-  }
-  else{
-    player.stepsCount -= 1;
-  }
+  playSteps(17);
 }
+
 function playerMoveLeftMovement(){
-  player.animations.currentAnim.speed = 10;
   player.body.velocity.x = -player.speed;
-  player.animations.play('left');
-
   visual.animations.currentAnim.speed = 10;
-  visual.animations.play('left');
+  visual.animations.play('walkLeft');
 
+  playSteps(17);
+
+}
+
+function playSteps(count){
   if(player.stepsCount <= 0){
     steps.play();
-    player.stepsCount= 17;
+    player.stepsCount= count;
   }
   else{
     player.stepsCount -= 1;
   }
 }
+
 function casting(){
   player.body.velocity.y -= 5;
   player.animations.stop();
@@ -999,39 +984,16 @@ function casting(){
     jumpCasting();
     return;
   }
-  //if(moveRight.isDown && moveUp.isDown) player.frame = 13;
-  if(moveLeft.isDown && moveUp.isDown) player.frame = 4;
-  else if(moveRight.isDown && moveUp.isDown) player.frame = 13;
+  if(moveLeft.isDown && moveUp.isDown) visual.frame = 4;
+  else if(moveRight.isDown && moveUp.isDown) visual.frame = 13;
   else if(player.direction == 1){
-    if(moveUp.isDown){
-      player.frame = 11;
-      visual.frame = 11;
-    }
-    else{
-      player.frame = 12;
-      visual.frame = 12;
-    }
+    if(moveUp.isDown) visual.frame = 11;
+    else visual.frame = 12;
   }
   else{
-    if(moveUp.isDown){
-      player.frame = 2;
-      visual.frame = 2;
-    }
-    else{
-      player.frame = 3;
-      visual.frame = 3;
-    }
+    if(moveUp.isDown) visual.frame = 2;
+    else visual.frame = 3;
   }
-  //else if(moveUp.isDown) player.frame = 4;
-  //else player.frame = 3;
-
-  if(player.stepsCount <= 0){
-    player.stepsCount= 30;
-  }
-  else{
-    player.stepsCount -= 1;
-  }
-
 }
 
 function jumpCasting(){
@@ -1061,7 +1023,24 @@ function jumpCasting(){
   else{
     player.stepsCount -= 1;
   }
-  //repositionPlayerBarrier();
+  jumpCastingVisual();
+}
+
+function jumpCastingVisual(){
+  if(moveLeft.isDown && moveUp.isDown) visual.frame = 74;
+  else if(moveRight.isDown && moveUp.isDown) visual.frame = 83;
+  else if(moveRight.isDown && moveDown.isDown) visual.frame = 84;
+  else if(moveLeft.isDown && moveDown.isDown) visual.frame = 75;
+  else if(player.direction == 1){
+    if(moveUp.isDown) visual.frame = 67;
+    else if(moveDown.isDown) visual.frame = 66;
+    else visual.frame = 64;
+  }
+  else{
+    if(moveUp.isDown) visual.frame = 58;
+    else if(moveDown.isDown) visual.frame = 56;
+    else visual.frame = 55;
+  }
 }
 
 function playerInactive(){
