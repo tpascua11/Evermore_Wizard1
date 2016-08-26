@@ -23,28 +23,14 @@ function preload() {
 function create() {
   createWorldAlpha();
   createPlayer();   
+  playerActions();
   setupSpells();
 
   setupMouse();
-  game.camera.follow(player);
-  playerDefaultMovement();
   toolControls();
-
-  var worldMaterial = game.physics.p2.createMaterial('worldMaterial');
-  boxMaterial = game.physics.p2.createMaterial('worldMaterial');
-  //continueBlocks();
-
-  game.physics.p2.setWorldMaterial(worldMaterial, true, true, true, true); 
-  var groundBoxesCM = game.physics.p2.createContactMaterial(worldMaterial, boxMaterial, { friction: 0.7 , restitution: 0.0 });
-
-  game.stage.smoothed = false;
-
-  simple = game.add.audio('boden');
-  simple.play();
 
   createAI();
 
-  playerActions();
 }
 
 function update() {

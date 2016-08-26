@@ -23,4 +23,16 @@ function createWorldAlpha(){
   game.physics.p2.world.setGlobalStiffness(1e5);
   game.physics.p2.setImpactEvents(true);
 
+  var worldMaterial = game.physics.p2.createMaterial('worldMaterial');
+  boxMaterial = game.physics.p2.createMaterial('worldMaterial');
+
+  game.physics.p2.setWorldMaterial(worldMaterial, true, true, true, true); 
+  var groundBoxesCM = game.physics.p2.createContactMaterial(worldMaterial, boxMaterial, { friction: 0.7 , restitution: 0.0 });
+
+  game.stage.smoothed = false;
+
+  simple = game.add.audio('symbo');
+  simple.play();
+
+
 }

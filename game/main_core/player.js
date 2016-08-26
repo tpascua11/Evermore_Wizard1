@@ -204,6 +204,8 @@ function playerHUD(){
 
   game.world.bringToTop(hearts);
   game.world.bringToTop(manaHUD);
+
+  game.camera.follow(player);
 }
 
 //--------------------------------------------------------
@@ -324,30 +326,6 @@ function stopInvincible(){
 //---------------------------
 // Player_Actions
 //---------------------------
-function playerDefaultMovement(){
-  /*
-  doJump.onDown.add(playerJump, this);
-  doJump.onUp.add(playerJumpStop, this);
-
-  moveLeft.onDown.add(playerMoveLeft, this);
-  moveLeft.onUp.add(playerStopLeft, this);
-
-  moveRight.onDown.add(playerMoveRight, this);
-  moveRight.onUp.add(playerStopRight, this);
-
-  sprint.onDown.add(playerSprint, this);
-  sprint.onUp.add(playerSprintStop, this);
-
-  magicMissle.onDown.add(charging, this);
-  magicMissle.onUp.add(playerShoot, this);
-
-  magicBarrier.onDown.add(playerBarrier, this);
-  magicBarrier.onUp.add(playerStopBarrier, this);
-
-  magicLevitate.onDown.add(levitationSwitch, this);
-  */
-}
-
 function levitationSwitch(){
   player.levitation = !player.levitation;
 }
