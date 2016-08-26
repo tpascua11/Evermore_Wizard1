@@ -9,3 +9,18 @@ function loadMapAlpha(){
   game.load.spritesheet('teleport', '../assets/White-Teleport-Sheet.png', 16, 16);
   game.load.spritesheet('shock', '../assets/Shock.png', 16, 16);
 }
+
+function createWorldAlpha(){
+  bg = game.add.tileSprite(0, 0, 1920, 240, 'level1front');
+  game.world.setBounds(0, 0, 1920, 240);
+
+  bg2 = game.add.tileSprite(0, 0, 1920, 240, 'level1back');
+  game.world.bringToTop(bg2);
+
+  game.physics.startSystem(Phaser.Physics.P2JS);
+  game.physics.p2.gravity.y = 1000;
+  game.physics.p2.world.defaultContactMaterial.friction = 0.3;
+  game.physics.p2.world.setGlobalStiffness(1e5);
+  game.physics.p2.setImpactEvents(true);
+
+}

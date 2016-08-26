@@ -132,12 +132,14 @@ var spells = [];
 var blast = [];
 var blastMaterial;
 
-function createPlayerSpells(){
+function createMagicMaterial(){
   magicMaterial = game.physics.p2.createMaterial('magicMaterial');
   blastMaterial = game.physics.p2.createMaterial('blastMaterial');
 }
 
 function setupSpells(){
+  createMagicMaterial();
+
   blastSound  = game.add.audio('blast');  blastSound.volume = 0.2;
   chargeSound = game.add.audio('charge'); chargeSound.volume = 0.2;
   shootSound  = game.add.audio('shoot');  shootSound.volume = 0.2;
