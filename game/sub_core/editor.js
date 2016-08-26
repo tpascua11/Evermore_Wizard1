@@ -1,4 +1,7 @@
-
+//--------------------------------------------------
+// Main Core
+//--------------------------------------------------
+//
 var gameWidth = 800;var gameHeight = 480;
 var game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, 'Evermore: The Wizard Guide', { preload: preload, create: create, update: update } );
 //var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
@@ -6,28 +9,14 @@ var platforms;
 
 function preload() {
   game.stage.smoothed = false;
-  game.load.image('sky', '../assets/sky.png');
-  game.load.image('level1back', '../assets/Map/Level1-1back.png');
-  game.load.image('level1front', '../assets/Map/Level1-1Front.png');
 
-  game.load.image('ground', '../assets/platform.png');
-  game.load.image('star', '../assets/star.png');
-  game.load.spritesheet('dude', '../assets/dude.png', 32, 48);
-  game.load.spritesheet('teleport', '../assets/White-Teleport-Sheet.png', 16, 16);
-  game.load.spritesheet('shock', '../assets/Shock.png', 16, 16);
-  game.load.audio('boden', ['../assets/meltdown.mp3']);
-  game.load.audio('simple', ['../assets/UncleBibby_The_Simple_Complex.mp3']);
-  game.load.audio('symbo', ['../assets/music/Ketsa_04_Symbiosis.mp3']);
-  game.load.audio('coin', '../assets/coin.wav');
+  loadMapAlpha();     // Preset Default Level
+  preloadBackground();// Preset Background Default Level
+  loadPlayerSprite(); // The Player
+  loadMusic();        // The Music
+  loadBoundaries();   // Physics Existance
+  loadAISprite();     // The NPC
 
-  loadPlayerSprite();
-  loadBoundaries();
-  cursors = game.input.keyboard.createCursorKeys();
-  preloadBackground();
-
-  //New-------
-  loadAISprite();
-  //-----------------
   game.time.advancedTiming = true; 
 }
 
@@ -45,6 +34,9 @@ function create() {
   game.physics.p2.setImpactEvents(true);
 
   createPlayer();
+  createPlayerSpells();
+  setupSpells();
+
   setupMouse();
   game.camera.follow(player);
   playerDefaultMovement();
@@ -63,13 +55,9 @@ function create() {
   simple.play();
 
   createAI();
-}
 
-function collision(){
+  playerActions();
 }
-//playerMana.text = player.rmana.toFixed(2);
-//playerMana.reset(player.body.x, player.body.y - 66);
-
 
 function update() {
   playerFPS.text = game.time.fps;
@@ -81,3 +69,6 @@ function update() {
   game.world.bringToTop(bg2);
   aiRuning();
 }
+
+
+//cursors = game.input.keyboard.createCursorKeys();
