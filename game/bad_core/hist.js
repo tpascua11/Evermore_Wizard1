@@ -195,8 +195,6 @@ function shootBlaster(){
   shootSound.play();
 }
 
-
-
 function missleFinale(body1, body2){
   blast = this;
   //console.log(body1);

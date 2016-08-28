@@ -75,6 +75,7 @@ var playerStats = {
   resistance: "nothing",
   weak: "nothing"
 };
+
 //---------------------------------------------------------
 // Player_Preload
 //---------------------------------------------------------
@@ -324,33 +325,6 @@ function stopInvincible(){
 //---------------------------
 // Player_Actions
 //---------------------------
-function charging(){
-  if(player.barrier){
-    console.log("Barrier Blast");
-    shootShield();
-    playerStopBarrier();
-    return;
-  }
-  player.casting = 1;
-  player.charged = pTime;
-  chargingTimer();
-  makeBlast();
-
-  player.energy = true;
-}
-
-function playerShoot(){
-  if(!player.casting || player.energy <= 0) return;
-  shootBlaster();
-  player.jumping = 0;
-  player.jumpAtY = 0;
-  player.moving = 2;
-  endChargingTimer();
-  game.world.bringToTop(bg2);
-
-  player.casting = false;
-  player.energy = false;
-}
 
 function barrierPower(){
   console.log("Barrier Power");

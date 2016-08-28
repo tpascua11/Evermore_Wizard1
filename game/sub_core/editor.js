@@ -2,8 +2,8 @@
 // Main Core
 //--------------------------------------------------
 var game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, 'Evermore: The Wizard Guide', { preload: preload, create: create, update: update } );
-var gameWidth = 800;
-var gameHeight = 480;
+var gameWidth = 1000;
+var gameHeight = 500;
 
 function preload() {
   game.stage.smoothed = false;

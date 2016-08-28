@@ -412,6 +412,7 @@ function playerLevitate(){
     player.levitation = false;
     return;
   }
+  console.log("testing");
   player.body.velocity.y = 0;
 
 }

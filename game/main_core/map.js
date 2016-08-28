@@ -33,6 +33,4 @@ function createWorldAlpha(){
 
   simple = game.add.audio('symbo');
   simple.play();
-
-
 }
