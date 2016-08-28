@@ -10,12 +10,18 @@
  |    /\ /      \\       \ /\    |
  |  /   V        ))       V   \  |
  |/     `       //        '     \|
+
+Player_Key_Inputs
+Player_Actions_List
+Player_Physical_Action
+Player_Spell_Setup
+Magic_Bomb
 */
 var state = "normal";
 var activeBox;
 
 //-----------------------------------------------------
-// Player Key Inputs
+// Player_Key_Inputs
 //-----------------------------------------------------
 function playerActions(){
   doJump.onDown.add(input, {action: "jump"});
@@ -46,9 +52,8 @@ function playerActions(){
   magicMissle.onUp.add(input, {action: "bombStop"});
 }
 //----------------------------------------------------
-//  Player Action List
+//  Player_Action_List
 //----------------------------------------------------
-
 //TODO JUST USE THE ACTION VARIABLES for the CALL FUNCTION
 //    or maybe not
 function input(){
@@ -94,7 +99,7 @@ function input(){
 }
 
 //-----------------------------------------------
-//  Player Physical Action
+//  Player_Physical_Action
 //-----------------------------------------------
 function playerMoveLeft(){
   player.direction = -1;
@@ -137,7 +142,7 @@ function playerJumpStop(){
 }
 
 //-----------------------------------------------
-//  Player Magic  Action
+//  Player_Spell_Setup
 //-----------------------------------------------
 var spells = [];
 var magicBombs = [];
@@ -213,7 +218,6 @@ function moveFrontOfPlayer(magicObject){
   }
 }
 
-
 function updateSpells(){
   updateMagicBombs();
   updateBarrier();
@@ -224,7 +228,7 @@ function updateMagicBombs(){
   console.log("Total Spells", spells.length);
   for(var i = spells.length -1; i >= 0; i--){
     if(spells[i].timeAt < pTime){
-      if(!spells[i].end) bombFinale(spells[i]);
+      if(!spells[i].end) window[spells[i].castEnd](spells[i]);
       else{
         spells[i].kill();
         spells.splice(i, 1);
@@ -232,11 +236,18 @@ function updateMagicBombs(){
     }
   }
 }
+
+function hitBox(body1, body2){
+  if(body1 == null) return;
+  if(body1.indestructible) return;
+  tester = this;
+  body1.health -= tester.damage;
+  if(body1.health <= 0) body1.sprite.kill();
+}
 //--------------------------------------
-//  MagicBomb
+//  Magic_Bomb
 //--------------------------------------
 var magicBombTimer;
-//var magicBomb;
 
 function startMagicBombTimer(){
   magicBombTimer = game.time.create(false);
@@ -246,6 +257,19 @@ function startMagicBombTimer(){
 
 function endMagicBombTimer(){
   magicBombTimer.stop();
+}
+
+function chargeMagicBomb(){
+ if(pCharge <= 4){
+    pCharge+= 0.3;
+    player.rmana -= 1;
+ }
+ if(player.casting){
+  magicBomb.pCharge = pCharge;
+  magicBomb.scale.setTo(pCharge, pCharge);
+ }
+
+ chargeSound.play();
 }
 
 function makeMagicBomb(){
@@ -279,18 +303,6 @@ function makeMagicBomb(){
   game.world.bringToTop(bg2);
 }
 
-function chargeMagicBomb(){
- if(pCharge <= 4){
-    pCharge+= 0.3;
-    player.rmana -= 1;
- }
- if(player.casting){
-  magicBomb.pCharge = pCharge;
-  magicBomb.scale.setTo(pCharge, pCharge);
- }
-
- chargeSound.play();
-}
 
 function shootMagicBomb(){
   if(!player.casting || player.energy <= 0) return;
@@ -298,6 +310,7 @@ function shootMagicBomb(){
   if(pCharge > 1.2) magicBomb.damage = 0.5 + pCharge*10;
   else magicBomb.damage = 1;
   //console.log('Blaster damage', blaster.damage);
+  magicBomb.castEnd = "bombFinale";
   magicBomb.body.static = false;
   magicBomb.body.fixedRotation = true;
   magicBomb.body.data.gravityScale = 0;
@@ -326,21 +339,20 @@ function shootMagicBomb(){
 }
 
 function bombFinale(blast){
-  blastSound.play(); 
-  //blast = this;
   blast.body.static = true;
-
+  blastSound.play();
   blast.end = true;
-  blast.scale.setTo(3 * blast.pCharge, 3 * blast.pCharge);
   blast.loadTexture('magicExpand', 0, false);
   blast.animations.play('end', 25, false, true);
   blast.body.velocity.x = 0;
+  blast.body.velocity.y = 0;
   blast.body.damping = 1;
   blast.body.mass= 1.1;
-  blast.timeAt = pTime+15;
+  blast.timeAt = pTime+10;
+  blast.scale.setTo(3 * blast.pCharge, 3 * blast.pCharge);
   blast.body.setRectangle(blast.height, blast.width);
-  blast.body.onEndContact.add(hitBox, blast);
-  //blast.body.onBeginContact.add(missleFinale, blast);
+  blast.body.onBeginContact.add(hitBox, blast);
+  blast.body.data.shapes[0].sensor = true;
 }
 
 function bombFinaleContact(body1, body2){
@@ -360,159 +372,11 @@ function bombFinaleContact(body1, body2){
   blast.body.setRectangle(blast.height, blast.width);
   blast.body.onBeginContact.add(hitBox, blast);
   blast.body.data.shapes[0].sensor = true;
-  //spells.splice(blast.spellID-1, 1);
 }
 
-//______________________________
-//  Magic Blast
-//______________________________
-function makeBlast(){
-  chargeSound.play();
-  pCharge = 1;
-  player.rmana-= 1;
-  blaster = game.add.sprite(player.body.x + 100*player.direction, player.body.y, 'energyBall');
-  blaster.scale.setTo(0.3,0.3);
-  game.physics.p2.enable(blaster);
-  blaster.body.alliance = 0;
-  blaster.body.static = true;
-  blaster.body.enableBody = false;
-  blaster.pCharge = pCharge;
-  blaster.scale.setTo(pCharge,pCharge);
-  blaster.gravityScale = 0;
-  blaster.body.fixedRotation = true;
-  blaster.animations.add('run', [0, 1, 2, 3, 4,5], true);
-  blaster.animations.add('end', [0, 1, 2, 3, 4, 5, 6], 30, true);
-  blaster.animations.play('run', 15, true);
-  blaster.body.x = player.body.x + 100*player.direction;
-  blaster.body.y = player.body.y;
-  blaster.end = false;
-  blaster.body.ptype = 'blast';
-  game.world.bringToTop(bg2);
-  repositionEnergy();
-}
-
-function chargingBlast(){
-  blaster.pCharge = pCharge;
-  blaster.scale.setTo(pCharge, pCharge);
-}
-
-function repositionEnergy(){
-  if(moveDown.isDown && (moveRight.isDown || moveLeft.isDown)){
-    blaster.body.x = player.body.x + 75*player.direction;
-    blaster.body.y = player.body.y + 50;
-  }
-  else if(moveUp.isDown && (moveRight.isDown || moveLeft.isDown)){
-    blaster.body.x = player.body.x + 75*player.direction;
-    blaster.body.y = player.body.y - 50;
-  }
-  else if(moveDown.isDown){
-    blaster.body.x = player.body.x;
-    blaster.body.y = player.body.y + 60;
-  }
-  else if(moveUp.isDown){
-    blaster.body.x = player.body.x;
-    blaster.body.y = player.body.y - 60;
-  }
-  else{
-    blaster.body.y = player.body.y;
-    blaster.body.x = player.body.x + 75 * player.direction;
-  }
-}
-
-function playerShoot(){
-  if(!player.casting || player.energy <= 0) return;
-  shootBlaster();
-  player.jumping = 0;
-  player.jumpAtY = 0;
-  player.moving = 2;
-  endChargingTimer();
-  game.world.bringToTop(bg2);
-
-  player.casting = false;
-  player.energy = false;
-}
-
-function charging(){
-  player.casting = 1;
-  //player.charged = pTime;
-  chargingTimer();
-  makeBlast();
-  player.energy = true;
-}
-
-function shootBlaster(){
-  if(pCharge > 1.2) blaster.damage = 0.5 + pCharge*10;
-  else blaster.damage = 1;
-  //console.log('Blaster damage', blaster.damage);
-  blaster.body.static = false;
-  blaster.body.fixedRotation = true;
-  blaster.body.data.gravityScale = 0;
-  blaster.body.damping = 0;
-  blaster.body.velocity.y = 0;
-  blaster.body.force = 3000;
-  placeFrontOfPlayer(blaster);
-
-  blaster.body.setMaterial(magicMaterial);
-  blaster.timeAt = pTime + 10;
-  //blaster.body.onBeginContact.add(hitBox, blaster);
-  blaster.body.onBeginContact.add(missleFinale, blaster);
-  spells.push(blaster);
-  player.casting = 0;
-  shootSound.play();
-}
-
-
-function hitBox(body1, body2){
-  if(body1 == null) return;
-  if(body1.indestructible) return;
-  tester = this;
-  body1.health -= tester.damage;
-  if(body1.health <= 0) body1.sprite.kill();
-}
-
-function missleFinale(body1, body2){
-  blast = this;
-  //console.log(body1);
-  if(body1 != null && (blast.end || blast.body.ptype == body1.ptype)) return;
-  //console.log(body1);
-  blast.body.static = true;
-  blastSound.play();
-  blast.end = true;
-  blast.loadTexture('magicExpand', 0, false);
-  blast.animations.play('end', 25, false, true);
-  blast.body.velocity.x = 0;
-  blast.body.velocity.y = 0;
-  blast.body.damping = 1;
-  blast.body.mass= 1.1;
-  blast.timeAt = pTime+10;
-  blast.scale.setTo(3 * blast.pCharge, 3 * blast.pCharge);
-  blast.body.setRectangle(blast.height, blast.width);
-  blast.body.onBeginContact.add(hitBox, blast);
-  blast.body.data.shapes[0].sensor = true;
-  //spells.splice(blast.spellID-1, 1);
-}
-
-function missleFinaleD(blast){
-  //if(blaster.end) return;
-  blastSound.play();
-  //blast = this;
-  blast.body.static = true;
-  //console.log(pCharge);
-  //console.log("You Shoot A Blast", blast.height, blast.width);
-  blast.end = true;
-  blast.scale.setTo(3 * blast.pCharge, 3 * blast.pCharge);
-  blast.loadTexture('magicExpand', 0, false);
-  blast.animations.play('end', 25, false, true);
-  blast.body.velocity.x = 0;
-  blast.body.damping = 1;
-  blast.body.mass= 1.1;
-  blast.timeAt = pTime+15;
-  blast.body.setRectangle(blast.height, blast.width);
-  blast.body.onEndContact.add(hitBox, blast);
-  //blast.body.onBeginContact.add(missleFinale, blast);
-}
-
-
+//-----------------------------
+//  Magic Barrier
+//-----------------------------
 function updateBarrier(){
   circleBarrier.x = player.body.x-30;
   circleBarrier.y = player.body.y-30;
@@ -529,6 +393,20 @@ function playerStopBarrier(){
   player.jumpAtY = 0;
 }
 
+function playerBarrier(){
+  if(player.rmana <= 0) return;
+  circleBarrier.play('run', 10, true);
+  circleBarrier.alpha = 0.8;
+  player.barrier = true;
+  player.casting = 1;
+  player.rmana -= 3;
+
+  wallSound.play();
+}
+
+//-----------------------------
+//  Magic Levitation
+//-----------------------------
 function playerLevitate(){
   if(player.rmana <= 0){
     player.levitation = false;
@@ -537,32 +415,6 @@ function playerLevitate(){
   player.body.velocity.y = 0;
 
 }
-
-function playerBarrier(){
-  if(player.rmana <= 0) return;
-  if(player.energy){
-    console.log("Barrier Push");
-    barrierPower(); 
-    //playerShoot();
-    blaster.kill();
-    player.casting = 0;
-    endChargingTimer();
-    //playerTower();
-    return;
-  }
-  circleBarrier.play('run', 10, true);
-  circleBarrier.alpha = 0.8;
-  player.barrier = true;
-  player.casting = 1;
-  player.rmana -= 3;
-
-  wallSound.play();
-  //wall();
-}
-
-
-
-
 
 function levitationSwitch(){
   player.levitation = !player.levitation;

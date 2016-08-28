@@ -153,5 +153,123 @@ function shootShield(){
 }
 
 
+function playerShoot(){
+  if(!player.casting || player.energy <= 0) return;
+  shootBlaster();
+  player.jumping = 0;
+  player.jumpAtY = 0;
+  player.moving = 2;
+  endChargingTimer();
+  game.world.bringToTop(bg2);
+
+  player.casting = false;
+  player.energy = false;
+}
+
+function charging(){
+  player.casting = 1;
+  //player.charged = pTime;
+  chargingTimer();
+  makeBlast();
+  player.energy = true;
+}
+
+function shootBlaster(){
+  if(pCharge > 1.2) blaster.damage = 0.5 + pCharge*10;
+  else blaster.damage = 1;
+  //console.log('Blaster damage', blaster.damage);
+  blaster.body.static = false;
+  blaster.body.fixedRotation = true;
+  blaster.body.data.gravityScale = 0;
+  blaster.body.damping = 0;
+  blaster.body.velocity.y = 0;
+  blaster.body.force = 3000;
+  placeFrontOfPlayer(blaster);
+
+  blaster.body.setMaterial(magicMaterial);
+  blaster.timeAt = pTime + 10;
+  //blaster.body.onBeginContact.add(hitBox, blaster);
+  blaster.body.onBeginContact.add(missleFinale, blaster);
+  spells.push(blaster);
+  player.casting = 0;
+  shootSound.play();
+}
+
+
+
+function missleFinale(body1, body2){
+  blast = this;
+  //console.log(body1);
+  if(body1 != null && (blast.end || blast.body.ptype == body1.ptype)) return;
+  //console.log(body1);
+  blast.body.static = true;
+  blastSound.play();
+  blast.end = true;
+  blast.loadTexture('magicExpand', 0, false);
+  blast.animations.play('end', 25, false, true);
+  blast.body.velocity.x = 0;
+  blast.body.velocity.y = 0;
+  blast.body.damping = 1;
+  blast.body.mass= 1.1;
+  blast.timeAt = pTime+10;
+  blast.scale.setTo(3 * blast.pCharge, 3 * blast.pCharge);
+  blast.body.setRectangle(blast.height, blast.width);
+  blast.body.onBeginContact.add(hitBox, blast);
+  blast.body.data.shapes[0].sensor = true;
+  //spells.splice(blast.spellID-1, 1);
+}
+
+function missleFinaleD(blast){
+  //if(blaster.end) return;
+  blastSound.play();
+  //blast = this;
+  blast.body.static = true;
+  //console.log(pCharge);
+  //console.log("You Shoot A Blast", blast.height, blast.width);
+  blast.end = true;
+  blast.scale.setTo(3 * blast.pCharge, 3 * blast.pCharge);
+  blast.loadTexture('magicExpand', 0, false);
+  blast.animations.play('end', 25, false, true);
+  blast.body.velocity.x = 0;
+  blast.body.damping = 1;
+  blast.body.mass= 1.1;
+  blast.timeAt = pTime+15;
+  blast.body.setRectangle(blast.height, blast.width);
+  blast.body.onEndContact.add(hitBox, blast);
+  //blast.body.onBeginContact.add(missleFinale, blast);
+}
+
+//______________________________
+//  Magic Blast
+//______________________________
+function makeBlast(){
+  chargeSound.play();
+  pCharge = 1;
+  player.rmana-= 1;
+  blaster = game.add.sprite(player.body.x + 100*player.direction, player.body.y, 'energyBall');
+  blaster.scale.setTo(0.3,0.3);
+  game.physics.p2.enable(blaster);
+  blaster.body.alliance = 0;
+  blaster.body.static = true;
+  blaster.body.enableBody = false;
+  blaster.pCharge = pCharge;
+  blaster.scale.setTo(pCharge,pCharge);
+  blaster.gravityScale = 0;
+  blaster.body.fixedRotation = true;
+  blaster.animations.add('run', [0, 1, 2, 3, 4,5], true);
+  blaster.animations.add('end', [0, 1, 2, 3, 4, 5, 6], 30, true);
+  blaster.animations.play('run', 15, true);
+  blaster.body.x = player.body.x + 100*player.direction;
+  blaster.body.y = player.body.y;
+  blaster.end = false;
+  blaster.body.ptype = 'blast';
+  game.world.bringToTop(bg2);
+  repositionEnergy();
+}
+
+function chargingBlast(){
+  blaster.pCharge = pCharge;
+  blaster.scale.setTo(pCharge, pCharge);
+}
 
 
