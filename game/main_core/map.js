@@ -32,5 +32,6 @@ function createWorldAlpha(){
   game.stage.smoothed = false;
 
   simple = game.add.audio('symbo');
-  simple.play();
+  //makeBlock();
+  //simple.play();
 }

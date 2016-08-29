@@ -127,6 +127,7 @@ function setupMouseAlt(){
 }
 
 function click(pointer) {
+  addPoint(pointer);
   mouse.body.onBeginContact.add(grabBody, mouse);
   console.log("before XY", pointer.x, pointer.y);
   console.log("after XY", pointer.x, pointer.y);
@@ -182,5 +183,41 @@ function moveWith(pointer) {
     targetBody.y = mouse.body.y;
     targetBody.velocity.x = 0;
     targetBody.velocity.y = 0;
+  }
+}
+
+//---------------------------
+// Adding Collisions
+//--------------------------
+var squarePoint = [];
+var topLeft;
+var topRight;
+var bottomLeft;
+var bottomRight;
+
+function addPoint(pointer){
+  var pointway = [];
+  pointway.x = pointer.x + game.camera.x;
+  pointway.y = pointer.y + game.camera.y;
+  squarePoint.push(pointway);
+  console.log("ADD IN", squarePoint);
+}
+
+function squareTruth(point1, point2){
+  if(point1.x >= point2.x){
+    if(point1.y >= point2.y){
+      bottomRight = point1;
+    }
+    else{
+      topRight= point1;
+    }
+  }
+  else{
+   if(point1.y >= point2.y){
+      bottomLeft = point1;
+    }
+    else{
+      topLeft= point1;
+    }
   }
 }

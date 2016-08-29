@@ -26,6 +26,7 @@ function preload() {
   preloadBackground();
   game.time.advancedTiming = true; 
 }
+
 function create() {
   bg = game.add.tileSprite(0, 0, 1920, 240, 'level1front');
   bg2 = game.add.tileSprite(0, 0, 1920, 240, 'level1back');
@@ -53,6 +54,7 @@ function create() {
   var groundBoxesCM = game.physics.p2.createContactMaterial(worldMaterial, boxMaterial, { friction: 0.7 , restitution: 0.0 });
 
   game.stage.smoothed = false;
+  makeBlock();
 }
 
 function collision(){

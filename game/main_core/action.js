@@ -225,7 +225,7 @@ function updateSpells(){
 }
 
 function updateMagicBombs(){
-  console.log("Total Spells", spells.length);
+  //console.log("Total Spells", spells.length);
   for(var i = spells.length -1; i >= 0; i--){
     if(spells[i].timeAt < pTime){
       if(!spells[i].end) window[spells[i].castEnd](spells[i]);

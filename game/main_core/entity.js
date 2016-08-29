@@ -35,17 +35,20 @@ function makeBlock(){
     box.body.setMaterial(boxMaterial);
   }*/
 if(boxAmounts > 150) return;
-for (var i = 0; i < 5; i++){
-  var box = game.add.sprite(100 + i*100, 645, 'level1');
+for (var i = 0; i < 100; i++){
+  var box = game.add.sprite(100 + i*5, 200, 'level1');
   //var size = game.rnd.integerInRange(1, 5);
   size = 3;
+
 
   box.scale.setTo(size,size+1);
   game.physics.p2.enable(box);
 
+/*
   box.animations.add('auto',
       [0, 1, 2, 3, 4, 5, 6], 25, true);
   box.animations.play('auto', 15, true);
+  */
 
   box.body.fixedRotation = true;
   box.body.mass = 6;
