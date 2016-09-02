@@ -46,7 +46,7 @@ var playerStats = {
   maxRmana : 25 ,
   curSpd   : 0  ,
   speed    : 300,
-  sprintSpd: 400,
+  sprintSpd: 500,
   sprinting: 0  ,
   acl      : 50 ,
   moveLeft : 0  ,
@@ -67,7 +67,7 @@ var playerStats = {
   barrier  : 0 ,
   levitation: 0 ,
   invincible: 0,
-  damageModifier: 10,
+  damageModifier: 1,
   magic: 0 ,
   stepsCount: 25,
   rechargeRate: 1,
@@ -439,7 +439,7 @@ function playerBreakingMovement(){
 
 function playerSprintingRightMovement(){
   player.animations.currentAnim.speed = 15;
-  player.body.velocity.x = 500;
+  player.body.velocity.x = player.sprintSpd;
 
   visual.animations.play('rightSprint');
   visual.animations.currentAnim.speed = 15;
@@ -449,7 +449,7 @@ function playerSprintingRightMovement(){
 
 function playerSprintingLeftMovement(){
   player.animations.currentAnim.speed = 15;
-  player.body.velocity.x = -500;
+  player.body.velocity.x = -player.sprintSpd;
 
   visual.animations.play('leftSprint');
   visual.animations.currentAnim.speed = 15;

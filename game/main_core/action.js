@@ -241,10 +241,16 @@ function movePlayer(x, y){
   }
 }
 
+//TODO: We might need to make a new section called status effect
+function updateStatusEffect(){
+
+}
+
 function updateSpells(){
   updateMagicBombs();
   updateBarrier();
   if(player.energy) placeFrontOfPlayer(magicBomb);
+  if(player.rmana <= 0) magicBoostEnd();
 }
 
 function updateMagicBombs(){
@@ -426,6 +432,30 @@ function playerBarrier(){
   player.rmana -= 3;
 
   wallSound.play();
+}
+
+//-----------------------------
+// Magic Boost
+//-----------------------------
+var saveSpeed;
+var saveSprint;
+var saveDamageMod;
+var magicBoostOn = false;
+
+function magicBoost(){
+  if(player.rmana <= 0) return;
+  saveSpeed = saveSprint = 0;
+  saveSpeed = player.speed;
+  saveDamageMod = player.damageModifier;
+  saveSprint = player.sprintSpd;
+  player.speed = 350;
+  player.sprintSpd = 700;
+  player.damageModifier = 2;
+}
+
+function magicBoostEnd(){
+  player.speed = saveSpeed;
+  player.sprintSpd = saveSprint;
 }
 
 //-----------------------------
