@@ -218,6 +218,29 @@ function moveFrontOfPlayer(magicObject){
   }
 }
 
+function movePlayer(x, y){
+  if(moveDown.isDown && (moveRight.isDown || moveLeft.isDown)){
+    player.body.velocity.x = x*player.direction;
+    player.body.velocity.y = y;
+  }
+  else if(moveUp.isDown && (moveRight.isDown || moveLeft.isDown)){
+    player.body.velocity.x = x*player.direction;
+    player.body.velocity.y = -y;
+  }
+  else if(moveDown.isDown){
+    player.body.velocity.x = 0;
+    player.body.velocity.y = y;
+  }
+  else if(moveUp.isDown){
+    player.body.velocity.x = 0;
+    player.body.velocity.y = -y;
+  }
+  else{
+    player.body.velocity.x = x*player.direction;
+    player.body.velocity.y = 0;
+  }
+}
+
 function updateSpells(){
   updateMagicBombs();
   updateBarrier();
@@ -336,6 +359,7 @@ function shootMagicBomb(){
 
   player.casting = false;
   player.energy = false;
+  if(pCharge >= 4) movePlayer(-600, -600);
 }
 
 function bombFinale(blast){
