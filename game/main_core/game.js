@@ -25,6 +25,7 @@ function preload() {
   cursors = game.input.keyboard.createCursorKeys();
   preloadBackground();
   game.time.advancedTiming = true; 
+  //dependOnTest();
 }
 
 function create() {

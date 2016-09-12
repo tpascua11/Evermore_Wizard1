@@ -334,7 +334,6 @@ function barrierPower(){
 //--------------------------------
 function movement(){
  if(checkIfCanJump()){
-    console.log("Refresh");
     player.jump = 0;
     player.airCasted = 0;
   }

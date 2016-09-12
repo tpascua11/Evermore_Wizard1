@@ -35,7 +35,7 @@ function makeBlock(){
     box.body.setMaterial(boxMaterial);
   }*/
 if(boxAmounts > 150) return;
-for (var i = 0; i < 100; i++){
+for (var i = 0; i < 1000; i++){
   var box = game.add.sprite(100 + i*5, 200, 'level1');
   //var size = game.rnd.integerInRange(1, 5);
   size = 3;
@@ -56,7 +56,7 @@ for (var i = 0; i < 100; i++){
   //box.body.restitution= 0;
   //box.body.velocity.y = -500;
 
-  box.body.static = false;
+  box.body.static = true;
   box.body.setMaterial(boxMaterial);
 
 }

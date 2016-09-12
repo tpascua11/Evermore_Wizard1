@@ -28,11 +28,15 @@ function create() {
 
   setupMouse();
   toolControls();
+
+  dependOnTest();
+  //makeBlock();
 }
 
 function update() {
   movement();
   updateSpells();
+  updateStatusEffect();
   updateHUD();
   aiRuning();
 

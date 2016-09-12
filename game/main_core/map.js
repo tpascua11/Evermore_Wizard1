@@ -35,3 +35,14 @@ function createWorldAlpha(){
   //makeBlock();
   //simple.play();
 }
+
+function dependOnTest(){
+  var request = new XMLHttpRequest();
+  request.open("GET", "../level/TestLevel3.json", false);
+  request.send(null);
+  var my_JSON_object = JSON.parse(request.responseText);
+  //console.log(my_JSON_object);
+
+  var currentLevel = JSON.parse(request.responseText);
+  console.log(currentLevel.layers[0].data);
+}
