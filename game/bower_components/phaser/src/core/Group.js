@@ -318,6 +318,13 @@ Phaser.Group.RETURN_TOTAL = 1;
 Phaser.Group.RETURN_CHILD = 2;
 
 /**
+* A returnType value, as specified in {@link #iterate} eg.
+* @constant
+* @type {integer}
+*/
+Phaser.Group.RETURN_ALL = 3;
+
+/**
 * A sort ordering value, as specified in {@link #sort} eg.
 * @constant
 * @type {integer}
@@ -389,7 +396,7 @@ Phaser.Group.prototype.add = function (child, silent, index) {
         this.addToHash(child);
     }
 
-    if (this.inputEnableChildren && !child.inputEnabled)
+    if (this.inputEnableChildren && (!child.input || child.inputEnabled))
     {
         child.inputEnabled = true;
     }
@@ -678,7 +685,7 @@ Phaser.Group.prototype.updateZ = function () {
 * the `alignTo` method in order to be positioned by this call. All default Phaser Game Objects have
 * this.
 *
-* The grid dimensions are determined by the first four arguments. The `rows` and `columns` arguments
+* The grid dimensions are determined by the first four arguments. The `width` and `height` arguments
 * relate to the width and height of the grid respectively.
 *
 * For example if the Group had 100 children in it:
@@ -692,13 +699,13 @@ Phaser.Group.prototype.updateZ = function () {
 *
 * This will align the children into a grid of 25x4, again using 32 pixels per grid cell.
 *
-* You can choose to set _either_ the `rows` or `columns` value to -1. Doing so tells the method
+* You can choose to set _either_ the `width` or `height` value to -1. Doing so tells the method
 * to keep on aligning children until there are no children left. For example if this Group had
 * 48 children in it, the following:
 *
 * `Group.align(-1, 8, 32, 32)`
 *
-* ... will align the children so that there are 8 columns vertically (the second argument), 
+* ... will align the children so that there are 8 children vertically (the second argument), 
 * and each row will contain 6 sprites, except the last one, which will contain 5 (totaling 48)
 *
 * You can also do:
@@ -716,26 +723,27 @@ Phaser.Group.prototype.updateZ = function () {
 * The final argument; `offset` lets you start the alignment from a specific child index.
 *
 * @method Phaser.Group#align
-* @param {integer} rows - The number of rows, or width, of the grid. Set to -1 for a dynamic width.
-* @param {integer} columns - The number of columns, or height, of the grid. Set to -1 for a dynamic height.
+* @param {integer} width - The width of the grid in items (not pixels). Set to -1 for a dynamic width. If -1 then you must set an explicit height value.
+* @param {integer} height - The height of the grid in items (not pixels). Set to -1 for a dynamic height. If -1 then you must set an explicit width value.
 * @param {integer} cellWidth - The width of each grid cell, in pixels.
 * @param {integer} cellHeight - The height of each grid cell, in pixels.
 * @param {integer} [position] - The position constant. One of `Phaser.TOP_LEFT` (default), `Phaser.TOP_CENTER`, `Phaser.TOP_RIGHT`, `Phaser.LEFT_CENTER`, `Phaser.CENTER`, `Phaser.RIGHT_CENTER`, `Phaser.BOTTOM_LEFT`, `Phaser.BOTTOM_CENTER` or `Phaser.BOTTOM_RIGHT`.
 * @param {integer} [offset=0] - Optional index to start the alignment from. Defaults to zero, the first child in the Group, but can be set to any valid child index value.
+* @return {boolean} True if the Group children were aligned, otherwise false.
 */
-Phaser.Group.prototype.align = function (rows, columns, cellWidth, cellHeight, position, offset) {
+Phaser.Group.prototype.align = function (width, height, cellWidth, cellHeight, position, offset) {
 
     if (position === undefined) { position = Phaser.TOP_LEFT; }
     if (offset === undefined) { offset = 0; }
 
-    if (this.children.length === 0 || offset > this.children.length || (rows === -1 && columns === -1))
+    if (this.children.length === 0 || offset > this.children.length || (width === -1 && height === -1))
     {
-        return;
+        return false;
     }
 
     var r = new Phaser.Rectangle(0, 0, cellWidth, cellHeight);
-    var w = (rows * cellWidth);
-    var h = (columns * cellHeight);
+    var w = (width * cellWidth);
+    var h = (height * cellHeight);
 
     for (var i = offset; i < this.children.length; i++)
     {
@@ -750,7 +758,7 @@ Phaser.Group.prototype.align = function (rows, columns, cellWidth, cellHeight, p
             continue;
         }
 
-        if (rows === -1)
+        if (width === -1)
         {
             //  We keep laying them out horizontally until we've done them all
             r.y += cellHeight;
@@ -761,7 +769,7 @@ Phaser.Group.prototype.align = function (rows, columns, cellWidth, cellHeight, p
                 r.y = 0;
             }
         }
-        else if (columns === -1)
+        else if (height === -1)
         {
             //  We keep laying them out vertically until we've done them all
             r.x += cellWidth;
@@ -775,6 +783,8 @@ Phaser.Group.prototype.align = function (rows, columns, cellWidth, cellHeight, p
         else
         {
             //  We keep laying them out until we hit the column limit
+            r.x += cellWidth;
+
             if (r.x === w)
             {
                 r.x = 0;
@@ -783,11 +793,13 @@ Phaser.Group.prototype.align = function (rows, columns, cellWidth, cellHeight, p
                 if (r.y === h)
                 {
                     //  We've hit the column limit, so return, even if there are children left
-                    return;
+                    return true;
                 }
             }
         }
     }
+
+    return true;
 
 };
 
@@ -1168,34 +1180,34 @@ Phaser.Group.prototype.setProperty = function (child, key, value, operation, for
     if (len === 1)
     {
         if (operation === 0) { child[key[0]] = value; }
-        else if (operation == 1) { child[key[0]] += value; }
-        else if (operation == 2) { child[key[0]] -= value; }
-        else if (operation == 3) { child[key[0]] *= value; }
-        else if (operation == 4) { child[key[0]] /= value; }
+        else if (operation === 1) { child[key[0]] += value; }
+        else if (operation === 2) { child[key[0]] -= value; }
+        else if (operation === 3) { child[key[0]] *= value; }
+        else if (operation === 4) { child[key[0]] /= value; }
     }
     else if (len === 2)
     {
         if (operation === 0) { child[key[0]][key[1]] = value; }
-        else if (operation == 1) { child[key[0]][key[1]] += value; }
-        else if (operation == 2) { child[key[0]][key[1]] -= value; }
-        else if (operation == 3) { child[key[0]][key[1]] *= value; }
-        else if (operation == 4) { child[key[0]][key[1]] /= value; }
+        else if (operation === 1) { child[key[0]][key[1]] += value; }
+        else if (operation === 2) { child[key[0]][key[1]] -= value; }
+        else if (operation === 3) { child[key[0]][key[1]] *= value; }
+        else if (operation === 4) { child[key[0]][key[1]] /= value; }
     }
     else if (len === 3)
     {
         if (operation === 0) { child[key[0]][key[1]][key[2]] = value; }
-        else if (operation == 1) { child[key[0]][key[1]][key[2]] += value; }
-        else if (operation == 2) { child[key[0]][key[1]][key[2]] -= value; }
-        else if (operation == 3) { child[key[0]][key[1]][key[2]] *= value; }
-        else if (operation == 4) { child[key[0]][key[1]][key[2]] /= value; }
+        else if (operation === 1) { child[key[0]][key[1]][key[2]] += value; }
+        else if (operation === 2) { child[key[0]][key[1]][key[2]] -= value; }
+        else if (operation === 3) { child[key[0]][key[1]][key[2]] *= value; }
+        else if (operation === 4) { child[key[0]][key[1]][key[2]] /= value; }
     }
     else if (len === 4)
     {
         if (operation === 0) { child[key[0]][key[1]][key[2]][key[3]] = value; }
-        else if (operation == 1) { child[key[0]][key[1]][key[2]][key[3]] += value; }
-        else if (operation == 2) { child[key[0]][key[1]][key[2]][key[3]] -= value; }
-        else if (operation == 3) { child[key[0]][key[1]][key[2]][key[3]] *= value; }
-        else if (operation == 4) { child[key[0]][key[1]][key[2]][key[3]] /= value; }
+        else if (operation === 1) { child[key[0]][key[1]][key[2]][key[3]] += value; }
+        else if (operation === 2) { child[key[0]][key[1]][key[2]][key[3]] -= value; }
+        else if (operation === 3) { child[key[0]][key[1]][key[2]][key[3]] *= value; }
+        else if (operation === 4) { child[key[0]][key[1]][key[2]][key[3]] /= value; }
     }
 
     return true;
@@ -1486,40 +1498,37 @@ Phaser.Group.prototype.callbackFromArray = function (child, callback, length) {
 
     //  Kinda looks like a Christmas tree
 
-    if (length == 1)
+    if (length === 1)
     {
         if (child[callback[0]])
         {
             return child[callback[0]];
         }
     }
-    else if (length == 2)
+    else if (length === 2)
     {
         if (child[callback[0]][callback[1]])
         {
             return child[callback[0]][callback[1]];
         }
     }
-    else if (length == 3)
+    else if (length === 3)
     {
         if (child[callback[0]][callback[1]][callback[2]])
         {
             return child[callback[0]][callback[1]][callback[2]];
         }
     }
-    else if (length == 4)
+    else if (length === 4)
     {
         if (child[callback[0]][callback[1]][callback[2]][callback[3]])
         {
             return child[callback[0]][callback[1]][callback[2]][callback[3]];
         }
     }
-    else
+    else if (child[callback])
     {
-        if (child[callback])
-        {
-            return child[callback];
-        }
+        return child[callback];
     }
 
     return false;
@@ -1994,12 +2003,24 @@ Phaser.Group.prototype.descendingSortHandler = function (a, b) {
 */
 Phaser.Group.prototype.iterate = function (key, value, returnType, callback, callbackContext, args) {
 
-    if (returnType === Phaser.Group.RETURN_TOTAL && this.children.length === 0)
+    if (this.children.length === 0)
     {
-        return 0;
+        if (returnType === Phaser.Group.RETURN_TOTAL)
+        {
+            return 0;
+        }
+        else if (returnType === Phaser.Group.RETURN_ALL)
+        {
+            return [];
+        }
     }
 
     var total = 0;
+
+    if (returnType === Phaser.Group.RETURN_ALL)
+    {
+        var output = [];
+    }
 
     for (var i = 0; i < this.children.length; i++)
     {
@@ -2024,6 +2045,10 @@ Phaser.Group.prototype.iterate = function (key, value, returnType, callback, cal
             {
                 return this.children[i];
             }
+            else if (returnType === Phaser.Group.RETURN_ALL)
+            {
+                output.push(this.children[i]);
+            }
         }
     }
 
@@ -2031,9 +2056,15 @@ Phaser.Group.prototype.iterate = function (key, value, returnType, callback, cal
     {
         return total;
     }
-
-    // RETURN_CHILD or RETURN_NONE
-    return null;
+    else if (returnType === Phaser.Group.RETURN_ALL)
+    {
+        return output;
+    }
+    else
+    {
+        //  RETURN_CHILD or RETURN_NONE
+        return null;
+    }
 
 };
 
@@ -2205,17 +2236,24 @@ Phaser.Group.prototype.getBottom = function () {
 };
 
 /**
-* Get the closest child to given Object.
+* Get the closest child to given Object, with optional callback to filter children.
 *
 * This can be a Sprite, Group, Image or any object with public x and y properties.
 *
 * 'close' is determined by the distance from the objects `x` and `y` properties compared to the childs `x` and `y` properties.
 *
+* You can use the optional `callback` argument to apply your own filter to the distance checks.
+* If the child is closer then the previous child, it will be sent to `callback` as the first argument,
+* with the distance as the second. The callback should return `true` if it passes your 
+* filtering criteria, otherwise it should return `false`.
+*
 * @method Phaser.Group#getClosestTo
 * @param {any} object - The object used to determine the distance. This can be a Sprite, Group, Image or any object with public x and y properties.
-* @return {any} The child closest to given object, or null if no child was found.
+* @param {function} [callback] - The function that each child will be evaluated against. Each child of the group will be passed to it as its first parameter, with the distance as the second. It should return `true` if the child passes the matching criteria.
+* @param {object} [callbackContext] - The context in which the function should be called (usually 'this').
+* @return {any} The child closest to given object, or `null` if no child was found.
 */
-Phaser.Group.prototype.getClosestTo = function (object) {
+Phaser.Group.prototype.getClosestTo = function (object, callback, callbackContext) {
 
     var distance = Number.MAX_VALUE;
     var tempDistance = 0;
@@ -2229,7 +2267,7 @@ Phaser.Group.prototype.getClosestTo = function (object) {
         {
             tempDistance = Math.abs(Phaser.Point.distance(object, child));
 
-            if (tempDistance < distance)
+            if (tempDistance < distance && (!callback || callback.call(callbackContext, child, tempDistance)))
             {
                 distance = tempDistance;
                 result = child;
@@ -2242,17 +2280,24 @@ Phaser.Group.prototype.getClosestTo = function (object) {
 };
 
 /**
-* Get the child furthest away from the given Object.
+* Get the child furthest away from the given Object, with optional callback to filter children.
 *
 * This can be a Sprite, Group, Image or any object with public x and y properties.
 *
 * 'furthest away' is determined by the distance from the objects `x` and `y` properties compared to the childs `x` and `y` properties.
 *
+* You can use the optional `callback` argument to apply your own filter to the distance checks.
+* If the child is closer then the previous child, it will be sent to `callback` as the first argument,
+* with the distance as the second. The callback should return `true` if it passes your 
+* filtering criteria, otherwise it should return `false`.
+*
 * @method Phaser.Group#getFurthestFrom
 * @param {any} object - The object used to determine the distance. This can be a Sprite, Group, Image or any object with public x and y properties.
-* @return {any} The child furthest from the given object, or null if no child was found.
+* @param {function} [callback] - The function that each child will be evaluated against. Each child of the group will be passed to it as its first parameter, with the distance as the second. It should return `true` if the child passes the matching criteria.
+* @param {object} [callbackContext] - The context in which the function should be called (usually 'this').
+* @return {any} The child furthest from the given object, or `null` if no child was found.
 */
-Phaser.Group.prototype.getFurthestFrom = function (object) {
+Phaser.Group.prototype.getFurthestFrom = function (object, callback, callbackContext) {
 
     var distance = 0;
     var tempDistance = 0;
@@ -2266,7 +2311,7 @@ Phaser.Group.prototype.getFurthestFrom = function (object) {
         {
             tempDistance = Math.abs(Phaser.Point.distance(object, child));
 
-            if (tempDistance > distance)
+            if (tempDistance > distance && (!callback || callback.call(callbackContext, child, tempDistance)))
             {
                 distance = tempDistance;
                 result = child;
@@ -2306,21 +2351,80 @@ Phaser.Group.prototype.countDead = function () {
 * Returns a random child from the group.
 *
 * @method Phaser.Group#getRandom
-* @param {integer} [startIndex=0] - Offset from the front of the front of the group (lowest child).
+* @param {integer} [startIndex=0] - Offset from the front of the group (lowest child).
 * @param {integer} [length=(to top)] - Restriction on the number of values you want to randomly select from.
 * @return {any} A random child of this Group.
 */
 Phaser.Group.prototype.getRandom = function (startIndex, length) {
 
-    if (this.children.length === 0)
+    if (startIndex === undefined) { startIndex = 0; }
+    if (length === undefined) { length = this.children.length; }
+
+    if (length === 0)
     {
         return null;
     }
 
-    startIndex = startIndex || 0;
-    length = length || this.children.length;
-
     return Phaser.ArrayUtils.getRandomItem(this.children, startIndex, length);
+
+};
+
+/**
+* Returns a random child from the Group that has `exists` set to `true`.
+*
+* Optionally you can specify a start and end index. For example if this Group had 100 children,
+* and you set `startIndex` to 0 and `endIndex` to 50, it would return a random child from only
+* the first 50 children in the Group.
+*
+* @method Phaser.Group#getRandomExists
+* @param {integer} [startIndex=0] - The first child index to start the search from.
+* @param {integer} [endIndex] - The last child index to search up to.
+* @return {any} A random child of this Group that exists.
+*/
+Phaser.Group.prototype.getRandomExists = function (startIndex, endIndex) {
+
+    var list = this.getAll('exists', true, startIndex, endIndex);
+
+    return this.game.rnd.pick(list);
+
+};
+
+/**
+* Returns all children in this Group.
+*
+* You can optionally specify a matching criteria using the `property` and `value` arguments.
+*
+* For example: `getAll('exists', true)` would return only children that have their exists property set.
+*
+* Optionally you can specify a start and end index. For example if this Group had 100 children,
+* and you set `startIndex` to 0 and `endIndex` to 50, it would return a random child from only
+* the first 50 children in the Group.
+*
+* @method Phaser.Group#getAll
+* @param {string} [property] - An optional property to test against the value argument.
+* @param {any} [value] - If property is set then Child.property must strictly equal this value to be included in the results.
+* @param {integer} [startIndex=0] - The first child index to start the search from.
+* @param {integer} [endIndex] - The last child index to search up until.
+* @return {any} A random existing child of this Group.
+*/
+Phaser.Group.prototype.getAll = function (property, value, startIndex, endIndex) {
+
+    if (startIndex === undefined) { startIndex = 0; }
+    if (endIndex === undefined) { endIndex = this.children.length; }
+
+    var output = [];
+
+    for (var i = startIndex; i < endIndex; i++)
+    {
+        var child = this.children[i];
+
+        if (property && child[property] === value)
+        {
+            output.push(child);
+        }
+    }
+
+    return output;
 
 };
 
@@ -2597,6 +2701,259 @@ Object.defineProperty(Phaser.Group.prototype, "angle", {
     }
 
 });
+
+/**
+* The center x coordinate of this Group.
+*
+* It is derived by calling `getBounds`, calculating the Groups dimensions based on its
+* visible children.
+* 
+* @name Phaser.Group#centerX
+* @property {number} centerX
+*/
+Object.defineProperty(Phaser.Group.prototype, "centerX", {
+
+    get: function () {
+
+        return this.getBounds(this.parent).centerX;
+
+    },
+
+    set: function (value) {
+
+        var r = this.getBounds(this.parent);
+        var offset = this.x - r.x;
+
+        this.x = (value + offset) - r.halfWidth;
+
+    }
+
+});
+
+/**
+* The center y coordinate of this Group.
+*
+* It is derived by calling `getBounds`, calculating the Groups dimensions based on its
+* visible children.
+* 
+* @name Phaser.Group#centerY
+* @property {number} centerY
+*/
+Object.defineProperty(Phaser.Group.prototype, "centerY", {
+
+    get: function () {
+
+        return this.getBounds(this.parent).centerY;
+
+    },
+
+    set: function (value) {
+
+        var r = this.getBounds(this.parent);
+        var offset = this.y - r.y;
+
+        this.y = (value + offset) - r.halfHeight;
+
+    }
+
+});
+
+/**
+* The left coordinate of this Group.
+*
+* It is derived by calling `getBounds`, calculating the Groups dimensions based on its
+* visible children.
+* 
+* @name Phaser.Group#left
+* @property {number} left
+*/
+Object.defineProperty(Phaser.Group.prototype, "left", {
+
+    get: function () {
+
+        return this.getBounds(this.parent).left;
+
+    },
+
+    set: function (value) {
+
+        var r = this.getBounds(this.parent);
+        var offset = this.x - r.x;
+
+        this.x = value + offset;
+
+    }
+
+});
+
+/**
+* The right coordinate of this Group.
+*
+* It is derived by calling `getBounds`, calculating the Groups dimensions based on its
+* visible children.
+*
+* @name Phaser.Group#right
+* @property {number} right
+*/
+Object.defineProperty(Phaser.Group.prototype, "right", {
+
+    get: function () {
+
+        return this.getBounds(this.parent).right;
+
+    },
+
+    set: function (value) {
+
+        var r = this.getBounds(this.parent);
+        var offset = this.x - r.x;
+
+        this.x = (value + offset) - r.width;
+
+    }
+
+});
+
+/**
+* The top coordinate of this Group.
+*
+* It is derived by calling `getBounds`, calculating the Groups dimensions based on its
+* visible children.
+*
+* @name Phaser.Group#top
+* @property {number} top
+*/
+Object.defineProperty(Phaser.Group.prototype, "top", {
+
+    get: function () {
+
+        return this.getBounds(this.parent).top;
+
+    },
+
+    set: function (value) {
+
+        var r = this.getBounds(this.parent);
+        var offset = this.y - r.y;
+
+        this.y = (value + offset);
+
+    }
+
+});
+
+/**
+* The bottom coordinate of this Group.
+*
+* It is derived by calling `getBounds`, calculating the Groups dimensions based on its
+* visible children.
+* 
+* @name Phaser.Group#bottom
+* @property {number} bottom
+*/
+Object.defineProperty(Phaser.Group.prototype, "bottom", {
+
+    get: function () {
+
+        return this.getBounds(this.parent).bottom;
+
+    },
+
+    set: function (value) {
+
+        var r = this.getBounds(this.parent);
+        var offset = this.y - r.y;
+
+        this.y = (value + offset) - r.height;
+
+    }
+
+});
+
+/**
+* Aligns this Group within another Game Object, or Rectangle, known as the
+* 'container', to one of 9 possible positions.
+*
+* The container must be a Game Object, or Phaser.Rectangle object. This can include properties
+* such as `World.bounds` or `Camera.view`, for aligning Groups within the world 
+* and camera bounds. Or it can include other Sprites, Images, Text objects, BitmapText,
+* TileSprites or Buttons.
+*
+* Please note that aligning a Group to another Game Object does **not** make it a child of
+* the container. It simply modifies its position coordinates so it aligns with it.
+* 
+* The position constants you can use are:
+* 
+* `Phaser.TOP_LEFT`, `Phaser.TOP_CENTER`, `Phaser.TOP_RIGHT`, `Phaser.LEFT_CENTER`, 
+* `Phaser.CENTER`, `Phaser.RIGHT_CENTER`, `Phaser.BOTTOM_LEFT`, 
+* `Phaser.BOTTOM_CENTER` and `Phaser.BOTTOM_RIGHT`.
+*
+* Groups are placed in such a way that their _bounds_ align with the
+* container, taking into consideration rotation and scale of its children.
+* This allows you to neatly align Groups, irrespective of their position value.
+*
+* The optional `offsetX` and `offsetY` arguments allow you to apply extra spacing to the final
+* aligned position of the Group. For example:
+*
+* `group.alignIn(background, Phaser.BOTTOM_RIGHT, -20, -20)`
+*
+* Would align the `group` to the bottom-right, but moved 20 pixels in from the corner.
+* Think of the offsets as applying an adjustment to the containers bounds before the alignment takes place.
+* So providing a negative offset will 'shrink' the container bounds by that amount, and providing a positive
+* one expands it.
+*
+* @method Phaser.Group#alignIn
+* @param {Phaser.Rectangle|Phaser.Sprite|Phaser.Image|Phaser.Text|Phaser.BitmapText|Phaser.Button|Phaser.Graphics|Phaser.TileSprite} container - The Game Object or Rectangle with which to align this Group to. Can also include properties such as `World.bounds` or `Camera.view`.
+* @param {integer} [position] - The position constant. One of `Phaser.TOP_LEFT` (default), `Phaser.TOP_CENTER`, `Phaser.TOP_RIGHT`, `Phaser.LEFT_CENTER`, `Phaser.CENTER`, `Phaser.RIGHT_CENTER`, `Phaser.BOTTOM_LEFT`, `Phaser.BOTTOM_CENTER` or `Phaser.BOTTOM_RIGHT`.
+* @param {integer} [offsetX=0] - A horizontal adjustment of the Containers bounds, applied to the aligned position of the Game Object. Use a negative value to shrink the bounds, positive to increase it.
+* @param {integer} [offsetY=0] - A vertical adjustment of the Containers bounds, applied to the aligned position of the Game Object. Use a negative value to shrink the bounds, positive to increase it.
+* @return {Phaser.Group} This Group.
+*/
+
+//  This function is set at the bottom of src/gameobjects/components/Bounds.js
+
+/**
+* Aligns this Group to the side of another Game Object, or Rectangle, known as the
+* 'parent', in one of 11 possible positions.
+*
+* The parent must be a Game Object, or Phaser.Rectangle object. This can include properties
+* such as `World.bounds` or `Camera.view`, for aligning Groups within the world 
+* and camera bounds. Or it can include other Sprites, Images, Text objects, BitmapText,
+* TileSprites or Buttons.
+*
+* Please note that aligning a Group to another Game Object does **not** make it a child of
+* the parent. It simply modifies its position coordinates so it aligns with it.
+* 
+* The position constants you can use are:
+* 
+* `Phaser.TOP_LEFT` (default), `Phaser.TOP_CENTER`, `Phaser.TOP_RIGHT`, `Phaser.LEFT_TOP`, 
+* `Phaser.LEFT_CENTER`, `Phaser.LEFT_BOTTOM`, `Phaser.RIGHT_TOP`, `Phaser.RIGHT_CENTER`, 
+* `Phaser.RIGHT_BOTTOM`, `Phaser.BOTTOM_LEFT`, `Phaser.BOTTOM_CENTER` 
+* and `Phaser.BOTTOM_RIGHT`.
+*
+* Groups are placed in such a way that their _bounds_ align with the
+* parent, taking into consideration rotation and scale of the children.
+* This allows you to neatly align Groups, irrespective of their position value.
+*
+* The optional `offsetX` and `offsetY` arguments allow you to apply extra spacing to the final
+* aligned position of the Group. For example:
+*
+* `group.alignTo(background, Phaser.BOTTOM_RIGHT, -20, -20)`
+*
+* Would align the `group` to the bottom-right, but moved 20 pixels in from the corner.
+* Think of the offsets as applying an adjustment to the parents bounds before the alignment takes place.
+* So providing a negative offset will 'shrink' the parent bounds by that amount, and providing a positive
+* one expands it.
+*
+* @method Phaser.Group#alignTo
+* @param {Phaser.Rectangle|Phaser.Sprite|Phaser.Image|Phaser.Text|Phaser.BitmapText|Phaser.Button|Phaser.Graphics|Phaser.TileSprite} parent - The Game Object or Rectangle with which to align this Group to. Can also include properties such as `World.bounds` or `Camera.view`.
+* @param {integer} [position] - The position constant. One of `Phaser.TOP_LEFT`, `Phaser.TOP_CENTER`, `Phaser.TOP_RIGHT`, `Phaser.LEFT_TOP`, `Phaser.LEFT_CENTER`, `Phaser.LEFT_BOTTOM`, `Phaser.RIGHT_TOP`, `Phaser.RIGHT_CENTER`, `Phaser.RIGHT_BOTTOM`, `Phaser.BOTTOM_LEFT`, `Phaser.BOTTOM_CENTER` or `Phaser.BOTTOM_RIGHT`.
+* @param {integer} [offsetX=0] - A horizontal adjustment of the Containers bounds, applied to the aligned position of the Game Object. Use a negative value to shrink the bounds, positive to increase it.
+* @param {integer} [offsetY=0] - A vertical adjustment of the Containers bounds, applied to the aligned position of the Game Object. Use a negative value to shrink the bounds, positive to increase it.
+* @return {Phaser.Group} This Group.
+*/
+
+//  This function is set at the bottom of src/gameobjects/components/Bounds.js
 
 /**
 * A display object is any object that can be rendered in the Phaser/pixi.js scene graph.

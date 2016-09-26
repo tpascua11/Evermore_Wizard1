@@ -51,8 +51,6 @@ declare module PIXI {
     export var glContexts: WebGLRenderingContext[];
     export var instances: any[];
 
-    export var BaseTextureCache: { [key: string]: BaseTexture };
-    export var TextureCache: { [key: string]: Texture };
     export var TextureSilentFail: boolean;
     export var BitmapText: { fonts: {} };
 
@@ -254,7 +252,6 @@ declare module PIXI {
 
     export class BaseTexture implements Mixin {
 
-        static fromImage(imageUrl: string, crossorigin?: boolean, scaleMode?: scaleModes): BaseTexture;
         static fromCanvas(canvas: HTMLCanvasElement, scaleMode?: scaleModes): BaseTexture;
 
         constructor(source: HTMLImageElement, scaleMode: scaleModes);
@@ -281,7 +278,6 @@ declare module PIXI {
         forceLoaded(width: number, height: number): void;
         destroy(): void;
         dirty(): void;
-        updateSourceImage(newSrc: string): void;
         unloadFromGPU(): void;
 
     }
@@ -488,9 +484,7 @@ declare module PIXI {
         y: number;
 
         click(e: InteractionData): void;
-        displayObjectUpdateTransform(): void;
-        getBounds(matrix?: Matrix): Rectangle;
-        getLocalBounds(): Rectangle;
+        displayObjectUpdateTransform(parent?: DisplayObjectContainer): void;
         generateTexture(resolution?: number, scaleMode?: number, renderer?: PixiRenderer | number): RenderTexture;
         mousedown(e: InteractionData): void;
         mouseout(e: InteractionData): void;
@@ -510,7 +504,7 @@ declare module PIXI {
         touchendoutside(e: InteractionData): void;
         touchstart(e: InteractionData): void;
         touchmove(e: InteractionData): void;
-        updateTransform(parent?: PIXI.DisplayObjectContainer): void;
+        updateTransform(parent?: DisplayObjectContainer): void;
 
     }
 
@@ -525,7 +519,7 @@ declare module PIXI {
 
         addChild(child: DisplayObject): DisplayObject;
         addChildAt(child: DisplayObject, index: number): DisplayObject;
-        getBounds(): Rectangle;
+        getBounds(targetCoordinateSpace?: DisplayObject | Matrix): Rectangle;
         getChildAt(index: number): DisplayObject;
         getChildIndex(child: DisplayObject): number;
         getLocalBounds(): Rectangle;
@@ -535,6 +529,7 @@ declare module PIXI {
         removeStageReference(): void;
         setChildIndex(child: DisplayObject, index: number): void;
         swapChildren(child: DisplayObject, child2: DisplayObject): void;
+        contains(child: DisplayObject): boolean;
 
     }
 
@@ -768,28 +763,6 @@ declare module PIXI {
 
     }
 
-    export class MovieClip extends Sprite {
-
-        static fromFrames(frames: string[]): MovieClip;
-        static fromImages(images: HTMLImageElement[]): HTMLImageElement;
-
-        constructor(textures: Texture[]);
-
-        animationSpeed: number;
-        currentFrame: number;
-        loop: boolean;
-        playing: boolean;
-        textures: Texture[];
-        totalFrames: number;
-
-        gotoAndPlay(frameNumber: number): void;
-        gotoAndStop(frameNumber: number): void;
-        onComplete(): void;
-        play(): void;
-        stop(): void;
-
-    }
-
     export class NoiseFilter extends AbstractFilter {
 
         noise: number;
@@ -1018,9 +991,6 @@ declare module PIXI {
 
     export class Sprite extends DisplayObjectContainer {
 
-        static fromFrame(frameId: string): Sprite;
-        static fromImage(url: string, crossorigin?: boolean, scaleMode?: scaleModes): Sprite;
-
         constructor(texture: Texture);
 
         anchor: Point;
@@ -1097,10 +1067,6 @@ declare module PIXI {
         static emptyTexture: Texture;
 
         static fromCanvas(canvas: HTMLCanvasElement, scaleMode?: scaleModes): Texture;
-        static fromFrame(frameId: string): Texture;
-        static fromImage(imageUrl: string, crossorigin?: boolean, scaleMode?: scaleModes): Texture;
-        static addTextureToCache(texture: Texture, id: string): void;
-        static removeTextureFromCache(id: string): Texture;
 
         constructor(baseTexture: BaseTexture, frame?: Rectangle, crop?: Rectangle, trim?: Rectangle);
 

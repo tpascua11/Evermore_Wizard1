@@ -40,7 +40,7 @@ function create() {
   game.physics.p2.setImpactEvents(true);
 
   simple = game.add.audio('simple');
-  //simple.play();
+  simple.play();
 
   createPlayer();
   game.camera.follow(player);

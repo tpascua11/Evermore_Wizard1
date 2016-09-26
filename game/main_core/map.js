@@ -32,17 +32,34 @@ function createWorldAlpha(){
   game.stage.smoothed = false;
 
   simple = game.add.audio('symbo');
-  //makeBlock();
   //simple.play();
 }
 
-function dependOnTest(){
-  var request = new XMLHttpRequest();
-  request.open("GET", "../level/TestLevel3.json", false);
-  request.send(null);
-  var my_JSON_object = JSON.parse(request.responseText);
-  //console.log(my_JSON_object);
+function loadJSON(callback) {   
+  var xobj = new XMLHttpRequest();
+  xobj.overrideMimeType("application/json");
+  xobj.open('GET', 'my_data.json', true); // Replace 'my_data' with the path to your file
+  xobj.onreadystatechange = function () {
+    if (xobj.readyState == 4 && xobj.status == "200") {
+      // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
+      callback(xobj.responseText);
+    }
+  };
+  xobj.send(null);  
+}
 
-  var currentLevel = JSON.parse(request.responseText);
-  console.log(currentLevel.layers[0].data);
+
+function dependOnTest(){
+    game.load.text('someData', '../level/TestLevel3.json');
+    var jsonData = JSON.parse(game.cache.getText('someData'));
+/*
+     var request = new XMLHttpRequest();
+     request.open("GET", "../level/TestLevel3.json", false);
+     request.send(null);
+     var my_JSON_object = JSON.parse(request.responseText);
+     console.log(my_JSON_object);
+
+     var currentLevel = JSON.parse(request.responseText);
+     console.log(currentLevel.layers[0].data);
+*/
 }

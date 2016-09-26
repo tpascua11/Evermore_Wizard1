@@ -425,7 +425,7 @@ module.exports = function (grunt) {
 
     });
 
-    grunt.registerTask('build', 'Compile all Phaser versions just to the dist folder', function() {
+    grunt.registerTask('build', 'Compile all Phaser versions just to the temporary dist folder', function() {
 
         grunt.option('exclude', 'ninja,creature');
         grunt.option('filename', 'phaser');
@@ -483,6 +483,18 @@ module.exports = function (grunt) {
         grunt.option('sourcemap', false);
         grunt.option('copy', false);
         grunt.option('uglify', false);
+
+        grunt.task.run('custom');
+
+    });
+
+    grunt.registerTask('uglytest', 'Phaser Test Build (all libs)', function() {
+
+        grunt.option('exclude', 'ninja,creature');
+        grunt.option('filename', 'phaser-test');
+        grunt.option('sourcemap', false);
+        grunt.option('copy', false);
+        grunt.option('uglify', true);
 
         grunt.task.run('custom');
 

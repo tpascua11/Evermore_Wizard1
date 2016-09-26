@@ -38,17 +38,13 @@ Grab the source and join in the fun!
 
 <div align="center"><img src="http://phaser.io/images/github/news.jpg"></div>
 
-> 17th June 2016
+> 26th August 2016
 
-Phaser 2.5.0 is the latest release of Phaser, and represents another significant milestone in the evolution of the framework in 2016. It was previously released as 2.4.9. However we appreciate that we haven't been following the [semver](http://semver.org/) code strictly enough, and that this version (and most before it!) actually contains some significant MINOR level functionality, not just PATCH level. So we've bumped the version number accordingly.
+Summer is nearly over, the nights are drawing in, and the Phaser releases continue. After enjoying a short break in August, we're back with Phaser 2.6.2. This is mostly a maintenance release, with a lot of attention paid to clearing bugs, and improving features. There's also some significant updates to our fork of Pixi, setting the scene for the next iteration of Phaser.
 
-As well as fixing a number of issues, there are some genuinely useful new features added in this release. Not least of which includes the new Weapons Plugin, making creating bullet pools a couple lines of code. Don't worry, it's also easy to exclude from custom builds too.
+Check the [Change Log](#change-log) for the complete list of what's new and updated.
 
-There are also some subtle but significant updates to Groups. The `createMultiple` method has had a nice overhaul, now able to take Arrays of image keys and frames. `Group.align` allows you to align the children of a Group in a grid formation, with the dimensions and spacing of the grid under your control.
-
-Continuing from that theme: all Game Objects (such as Sprites and Text) now have a two new methods. `alignIn` allows you to easily align Game Objects within another Game Object or Rectangle. This is a great way to easily align a Sprite into the corner of the world, or another Sprite. To go with this is `alignTo`. It works in a similar way, but lets you align Game Objects next to each other.
-
-It's small changes like this that reduce the overall code of your game, and let you focus on just building it quicker. Of course there are _lots_ of other enhancements in this release, so be sure to check the [Change Log](#change-log) to see what else is in store.
+With 2.6.2 out, we'll now turn our attention to merging in all of the renderer updates we've built over the past few months. They are going to form the basis of the Phaser 3.0 release. The bump in version number due to the dramatic internal changes we're making. Follow our progress in the Phaser World newsletter for details. It's going to be an exciting September for sure :)
 
 As always, keep you eyes on the Phaser web site, and subscribe to our weekly [newsletter](#newsletter). You can also follow me on [Twitter](https://twitter.com/photonstorm) or chat to me in the Phaser [Slack](http://phaser.io/community/slack) channel.
 
@@ -75,18 +71,6 @@ If you have found Phaser useful in your development life. Or have made income as
 * Companies can sponsor a release of Phaser, or an issue of our newsletter.
  
 It all helps cover our running costs, and genuinely contributes towards future development.
-
-### Phaser Sponsors
-
-Phaser is sponsored by the following great companies:
-
-![qici](http://www.phaser.io/images/sponsors/qici-100.png)
-
-QICI Engine: [A powerful one-stop integrated Phaser game editor](http://www.qiciengine.com/)
-
-![zenva](http://www.phaser.io/images/sponsors/zenva-100.png)
-
-Zenva Academy: [Online courses on Phaser, HTML5 and native app development](https://academy.zenva.com/?zva_src=phaserpatreon)
 
 If you would like to sponsor Phaser then please [get in touch](mailto:support@phaser.io). We have sponsorship options available on our GitHub repo, web site, and newsletter. All of which receive tens of thousands of eyeballs per day.
 
@@ -125,15 +109,15 @@ Using Browserify? Please [read this](#browserify).
 
 [jsDelivr](http://www.jsdelivr.com/#!phaser) is a "super-fast CDN for developers". Include the following in your html:
 
-`<script src="//cdn.jsdelivr.net/phaser/2.5.0/phaser.js"></script>`
+`<script src="//cdn.jsdelivr.net/phaser/2.6.2/phaser.js"></script>`
 
 or the minified version:
 
-`<script src="//cdn.jsdelivr.net/phaser/2.5.0/phaser.min.js"></script>`
+`<script src="//cdn.jsdelivr.net/phaser/2.6.2/phaser.min.js"></script>`
 
 [cdnjs.com](https://cdnjs.com/libraries/phaser) also offers a free CDN service. They have all versions of Phaser and even the custom builds:
 
-`<script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.5.0/phaser.js"></script>`
+`<script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.js"></script>`
 
 ### Phaser Sandbox
 
@@ -174,7 +158,7 @@ As well as the [book](http://phaser.io/interphase) you get all the source code, 
 
 ### Phaser Editor - A complete Phaser Editor
 
-[Phaser Editor](http://phasereditor.boniatillo.com/) is a brand new Eclipse based editor that offers lots of built-in tools specifically for Phaser developers. Handy features include Smart code auto-completion, built-in web server, documentation search, asset management, texture atlas creator, audio sprite creator, asset previews and lots more.
+[Phaser Editor](http://phaser.io/shop/apps/phaser-editor) is a brand new Eclipse based editor that offers lots of built-in tools specifically for Phaser developers. Handy features include Smart code auto-completion, built-in web server, documentation search, asset management, texture atlas creator, audio sprite creator, asset previews and lots more.
 
 ### Game Mechanic Explorer
 
@@ -323,86 +307,69 @@ You can read all about the philosophy behind Lazer [here](http://phaser.io/news/
 ![Change Log](http://phaser.io/images/github/div-change-log.png "Change Log")
 <a name="change-log"></a>
 
-## Version 2.5.0 - "Four Kings" - 17th June 2016
+## Version 2.6.2 - "Kore Springs" - 26th August 2016
 
 ### New Features
 
-* Phaser.Line.intersectsRectangle checks for intersection between a Line and a Rectangle, or any Rectangle-like object such as a Sprite or Body.
-* Group.getClosestTo will return the child closest to the given point (thanks @Nuuf #2504)
-* Group.getFurthestFrom will return the child farthest away from the given point (thanks @Nuuf #2504)
-* Animation.reverse will reverse the currently playing animation direction (thanks @gotenxds #2505)
-* Animation.reverseOnce will reverse the animation direction for the current, or next animation only (thanks @gotenxds #2505)
-* The way the display list updates and Camera movements are handled has been completely revamped, which should result is significantly smoother motion when the Camera is following tweened or physics controlled sprites. The `Stage.postUpdate` function is now vastly reduced in complexity. It takes control over updating the display list (calling `updateTransform` on itself), rather than letting the Canvas or WebGL renderers do this. Because of this change, the `Camera.updateTarget` function uses the Sprites `worldPosition` property instead, which is now frame accurate (thanks @whig @Upperfoot @Whoisnt @hexus #2482)
-* Game Objects including Sprite, Image, Particle, TilemapLayer, Text, BitmapText and TileSprite have a new property called `data`. This is an empty Object that Phaser will never touch internally, but your own code, or Phaser Plugins, can store Game Object specific data within it. This allows you to associate data with a Game Object without having to pollute or change its class shape.
-* TilemapLayers will now collide properly when they have a position that isn't set to 0x0. For example if you're stitching together several maps, one after the other, and manually adjust their `scrollX/Y` properties (thanks @Upperfoot #2522)
-* There are a bunch of new Phaser consts available to help with setting the angle of a Game Object. They are `Phaser.ANGLE_UP`, `ANGLE_DOWN`, `ANGLE_LEFT`, `ANGLE_RIGHT`, `ANGLE_NORTH_EAST`, `ANGLE_NORTH_WEST`, `ANGLE_SOUTH_EAST` and `ANGLE_SOUTH_WEST`.
-* Math.between will return a value between the given `min` and `max` values.
-* InputHandler.dragDistanceThreshold gives you more fine control over when a Sprite Drag event will start. It allows you to specify a distance, in pixels, that the pointer must have moved before the drag will begin.
-* InputHandler.dragTimeThreshold gives you more fine control over when a Sprite Drag event will start. It allows you to specify a time, in ms that the pointer must have been held down for, before the drag will begin.
-* InputHandler.downPoint is a new Point object that contains the coordinates of the Pointer when it was first pressed down on the Sprite.
-* There are two new Phaser consts available, for help with orientation of games or Game Objects. They are `Phaser.HORIZONTAL`, `Phaser.VERTICAL`, `Phaser.LANDSCAPE` and `Phaser.PORTRAIT`.
-* InputHandler.dragStopBlocksInputUp is a boolean that allows you to control what happens with the input events. If `false` (the default) then both the `onInputUp` and `onDragStop` events will get dispatched when a Sprite stops being dragged. If `true` then only the `onDragStop` event is dispatched, and the `onInputUp` is skipped.
-* Group.inputEnableChildren is a new property. If set to `true` will automatically call `inputEnabled = true` on any children _added_ to, or _created_ by, the Group.
-* PIXI.DisplayObjectContainer.ignoreChildInput is a new property. If `true` then the children will _not_ be considered as valid for Input events. Because this has been applied to `DisplayObjectContainer` it means it's available in Group, Sprite and any other display level object. Using this boolean you can disable input events for all children in an entire Group, without having to iterate anything or deep-set flags.
-* InputHandler._pointerOverHandler and _pointerOutHandler have new arguments `silent` - if `true` then they will not dispatch any Signals from the parent Sprite.
-* Pointer.interactiveCandidates is a new Array that is erased and re-populated every time this Pointer is updated. It contains references to all of the Game Objects that were considered as being valid for processing by this Pointer, during the most recent update. To be valid they must have suitable a `priorityID`, be Input enabled, be visible and actually have the Pointer over them. You can check the contents of this array in events such as `onInputDown`, but beware: it is reset every update.
-* Pointer.swapTarget allows you to change the `Pointer.targetObject` object to be the one provided. This allows you to have fine-grained control over which object the Pointer is targeting.
-* Input.setInteractiveCandidateHandler allows you to add a callback that is fired every time `Pointer.processInteractiveObjects` is called. The purpose of `processInteractiveObjects` is to work out which Game Object the Pointer is going to interact with. It works by polling all of the valid game objects, and then slowly discounting those that don't meet the criteria (i.e. they aren't under the Pointer, are disabled, invisible, etc). Eventually a short-list of 'candidates' is created. These are all of the Game Objects which are valid for input and overlap with the Pointer. If you need fine-grained control over which of the items is selected then you can use this callback to do so. The callback will be sent 3 parameters: 1) A reference to the Phaser.Pointer object that is processing the Items. 2) An array containing all potential interactive candidates. This is an array of `InputHandler` objects, not Sprites. 3) The current 'favorite' candidate, based on its priorityID and position in the display list. Your callback MUST return one of the candidates sent to it.
-* Group.onChildInputDown is a new Signal that you can listen to. It will be dispatched whenever any immediate child of the Group emits an `onInputDown` signal itself. This allows you to listen for a Signal from the Group, rather than every Sprite within it.
-* Group.onChildInputUp is a new Signal that you can listen to. It will be dispatched whenever any immediate child of the Group emits an `onInputUp` signal itself. This allows you to listen for a Signal from the Group, rather than every Sprite within it.
-* Group.onChildInputOver is a new Signal that you can listen to. It will be dispatched whenever any immediate child of the Group emits an `onInputOver` signal itself. This allows you to listen for a Signal from the Group, rather than every Sprite within it.
-* Group.onChildInputOut is a new Signal that you can listen to. It will be dispatched whenever any immediate child of the Group emits an `onInputOut` signal itself. This allows you to listen for a Signal from the Group, rather than every Sprite within it.
-* Phaser.Weapon is a brand new plugin that provides the ability to easily create a bullet pool and manager. Weapons fire Phaser.Bullet objects, which are essentially Sprites with a few extra properties. The Bullets are enabled for Arcade Physics. They do not currently work with P2 Physics. The Bullets are created inside of `Weapon.bullets`, which is a Phaser.Group instance. Anything you can usually do with a Group, such as move it around the display list, iterate it, etc can be done to the bullets Group too. Bullets can have textures and even animations. You can control the speed at which they are fired, the firing rate, the firing angle, and even set things like gravity for them. Please see the Documentation for more details, or view the [Weapon examples](https://github.com/photonstorm/phaser-examples/tree/master/examples/weapon) in the Examples repo.
-* BitmapData.smoothProperty is a new property that holds the string based prefix needed to set image scaling on the BitmapData context.
-* BitmapData.copyTransform allows you to draw a Game Object to the BitmapData, using its `worldTransform` property to control the location, scaling and rotation of the object. You can optionally provide 
-* BitmapData.drawGroup now uses the new `copyTransform` method, to provide for far more accurate results. Previously nested Game Objects wouldn't render correctly, nor would Sprites added via `addChild` to another Sprite. BitmapText objects also rendered without rotation taken into account, and the Sprites smoothing property was ignored. All of these things are now covered by the new drawGroup method, which also handles full deep iteration down the display list.
-* Added the following new constants: `Phaser.TOP_LEFT`, `Phaser.TOP_CENTER`, `Phaser.TOP_RIGHT`, `Phaser.LEFT_TOP`, `Phaser.LEFT_CENTER`, `Phaser.LEFT_BOTTOM`, `Phaser.CENTER`, `Phaser.RIGHT_TOP`, `Phaser.RIGHT_CENTER`, `Phaser.RIGHT_BOTTOM`, `Phaser.BOTTOM_LEFT`, `Phaser.BOTTOM_CENTER` and `Phaser.BOTTOM_RIGHT`.
-* Rectangle.getPoint is a new method that returns a point based on the given position constant, such as `Phaser.BOTTOM_LEFT`. It returns the same result as calling `Rectangle.bottomLeft` (etc) but unlike those getters you are able to provide your own Point object.
-* The Game Object Bounds component has been updated to include two new properties: `centerX` and `centerY`. This means you can, for example, now get the horizontal center of a Sprite by called `Sprite.centerX`. These properties are also setters, so you can position the Game Objects, and it will take scale and anchor into consideration.
-* All Game Objects with the Bounds component; which includes Sprites, Images, Text, BitmapText, TileSprites and anything that extend these, now have the new method `alignIn`. It allows you to align the Game Object within another Game Object, or a Rectangle. You can specify one of 9 positions which are the new position constants such as: `Phaser.TOP_LEFT` or `Phaser.CENTER` (see above for the complete list). The Game Objects are positioned based on their Bounds, which takes rotation, scaling and anchor into consideration. You can easily place Sprites into the corners of the screen, or game world, or align them within other Sprites, using this method.
-* All Game Objects with the Bounds component; which includes Sprites, Images, Text, BitmapText, TileSprites and anything that extend these, now have the new method `alignTo`. It allows you to align a Game Object to the side of another Game Object, or a Rectangle. You can specify one of 11 positions which are the new position constants such as: `Phaser.TOP_LEFT` or `Phaser.LEFT_BOTTOM` (see above for the complete list). The Game Objects are positioned based on their Bounds, which takes rotation, scaling and anchor into consideration. You can easily align Sprites next to other Sprites using this method.
-* Group.align is a new method that allows you to layout all the children of the Group in a grid formation. You can specify the dimensions of the grid, including the width, height and cell size. You can also control where children are positioned within each grid cell. The grid width and height values can also be set to -1, making them fluid, so the grid expands until all children are aligned. Finally an optional child index argument can be set. This is a great way to quickly and comprehensively align Group children, and has lots of use cases.
-* The Arcade Physics Body has two new experimental methods: `moveTo` and `moveFrom`. These allow you to move a Physics Body for a given distance, or duration, after which it will stop and emit the `onMoveComplete` Signal. It is still capable of colliding and rebounding like usual.
+* Group.getRandomExists will return a random child from the Group that has exists set to true.
+* Group.getAll will return all children in the Group, or a section of the Group, with the optional ability to test if the child has a property matching the given value or not.
+* Group.iterate has a new `returnType`: `RETURN_ALL`. This allows you to return all children that pass the iteration test in an array.
+* The property `checkCollision.none` in the ArcadePhysics.Body class was available, but never used internally. It is now used and checked by the `separate` method. By setting `checkCollision.none = true` you can disable all collision and overlap checks on a Body, but still retain its motion updates (thanks @samme #2661)
+* Math.rotateToAngle takes two angles (in radians), and an interpolation value, and returns a new angle, based on the shortest rotational distance between the two.
+* Math.getShortestAngle will return the shortest angle between the two given angles. Angles are in the range -180 to 180, which is what `Sprite.angle` uses. So you can happily feed this method two sprite angles, and get the shortest angle back between them (#2494)
 
 ### Updates
 
-* TypeScript definitions fixes and updates (thanks @wingyplus @monagames @marineorganism @obamor @BaroqueEngine @danzel)
-* Docs typo fixes (thanks @seanirby @johnrees)
-* The TypeScript defs ambient declaration has been updated to make it compatible with the SystemJS loader (thanks @monagames)
-* You can no longer intersect check a Body against itself (thanks @VitaZheltyakov #2514)
-* The mobile template has been updated (thanks @cryptographer #2518)
-* Video.onComplete wouldn't fire on iOS if the user hit the 'Done' button before the video had finished playing. It now uses the `webkitendfullscreen` event to detect this, and dispatches the `onComplete` signal should that event fire (thanks @kelu-smiley #2498)
-* Sound.addMarker now has a default value for the `duration` argument (1 second) to avoid the DOM Exception 11 error if you accidentally miss it out (thanks @mari8i #2508)
-* Removed the `Stage.updateTransform` calls from the main game loop, because it happens automatically as part of `Game.updateLogic` anyway, so was duplicating the workload for no reason.
-* TilemapLayer.postUpdate could potentially be called several times per frame (depending on device frame rate), which would cause multiple texture redraws, even though only the last texture is used during rendering. This has now been modified so that the local TilemapLayer canvas is only re-rendered once per frame, during the rendering phase, and not during the logic update phase.
-* Group.preUpdate now iterate through the display list forwards, instead of in reverse, to match it with how `Stage.preUpdate` works.
-* Stage.postUpdate is now a lot smaller, with no conditional branching if there is a Camera Target or not.
-* Within RequestAnimationFrame both `updateRAF` and `updateSetTimeout` now only call `game.update` if `isRunning` is true. This should avoid asynchronous Game destroy errors under environments like Angular (thanks @flogvit #2521)
-* Group.removeAll has a new argument `destroyTexture` which allows you to optionally destroy the BaseTexture of each child, as it is removed from the Group (thanks @stoneman1 #2487)
-* PluginManager.remove has a new argument `destroy` (defaults to `true`) which will let you optionally called the `destroy` method of the Plugin being removed.
-* Cache.getJSON used to incorrectly bring back a deep-copy of the Phaser.Utils object, instead of just a clone of the JSON object requested (thanks @drhayes #2524 #2526)
-* The `DisplayObject.renderOrderID` used to run in reverse. I.e. in a display list with 10 sprites on it, the first sprite (at the bottom of the list, rendering behind all the others) would have a `renderOrderID` of 9, where-as the top-most sprite, rendering above all others, would have a `renderOrderID` of 0. While this didn't cause any side-effects internally, it's arguably illogical. So the process has been reversed, and `renderOrderID`s are now accumulative, starting at zero each frame, and increasing as it iterates down the display list. So the higher the ID, the more "on-top" of the output the object is.
-* `InputHandler.validForInput` and `Pointer.processInteractiveObjects` have been updated to reflect the new `renderOrderID` sequence (see above).
-* Group.add has a new optional argument `index` which controls the index within the group to insert the child to. Where 0 is the bottom of the Group.
-* Group.addAt has been refactored to be a simple call to `Group.add`, removing lots of duplicate code in the process.
-* Group.create has a new optional argument `index` which controls the index within the group to insert the child to. Where 0 is the bottom of the Group. It also now makes proper use of `Group.add`, cutting down on more duplicate code.
-* Group.createMultiple now returns an Array containing references to all of the children that the method created.
-* Cache.getJSON will now return an Array if the `key` you provided points to an array instead of an Object (thanks @drhayes #2552 #2551)
-* Phaser.Matrix if passed a 0 value would consider it falsy, and replace it with the default by mistake. It now checks if the arguments are `undefined` or `null` and only then sets the defaults (thanks mmcs)
-* Group.createMultiple can now accept Arrays for both the `key` and `frame` arguments. This allows you to create multiple sprites using each key and/or frame in the arrays, which is a great and quick way to build diverse Groups. See the JSDocs for complete details and code examples.
-* The Game Object Bounds component has been updated so that it now provides setters for all of the properties, as well as getters. Previously `Sprite.left`, `Sprite.right`, `Sprite.top` and `Sprite.bottom` were read-only, but they are now available to be set as well, and take into consideration the anchor and scale of the Game Objects.
+* TypeScript definitions fixes and updates (thanks @calvindavis @AlvaroBarua)
+* Docs typo fixes (thanks @rroylance @Owumaro @boniatillo-com @samme @kjav)
+* The InputHandler.flagged property has been removed. It was never used internally, or exposed via the API, so was just overhead.
+* The src/system folder has been removed and all files relocated to the src/utils folder. This doesn't change anything from an API point of view, but did change the grunt build scripts slightly.
+* BitmapData.shadow and BitmapData.text now both `return this` keeping them in-line with the docs (thanks @greeny #2634)
+* Group.align has had its arguments changed so that it's now `(width, height, ...)` instead of `(rows, columns, ...)` (thanks @deargle #2643)
+* Group.align now returns `true` if the Group was aligned, or `false` if not.
+* The Loader.headers object has a new property `requestedWith`. By default this is set to `false`, but it can be used to set the `X-Requested-With` header to `XMLHttpRequest` (or any other value you need). To enable this do `this.load.headers.requestedWith = 'XMLHttpRequest'` before adding anything to the Loader.
+* ScaleManager.hasPhaserSetFullScreen is a new boolean that identifies if the browser is in full screen mode or not, and if Phaser was the one that requested it. As it's possible to enter full screen mode outside of Phaser, and it then gets confused about what bounding parent to use.
+* Phaser.Tileset has a new property `lastgid` which is populated automatically by the TilemapParser when importing Tiled map data, or can be set manually if building your own tileset.
+* Stage will now check if `document.hidden` is available first, and if it is then never even check for the prefixed versions. This stops warnings like "mozHidden and mozVisibilityState are deprecated" in newer versions of browsers and retain backward compatibility (thanks @leopoldobrines7 #2656)
+* As a result of changes in #2573 Graphics objects were calling `updateLocalBounds` on any shape change, which could cause dramatic performances drops in Graphics heavy situations (#2618). Graphics objects now have a new flag `_boundsDirty` which is used to detect if the bounds have been invalidated, i.e. by a Graphics being cleared or drawn to. If this is set to true then `updateLocalBounds` is called once in the `postUpdate` method (thanks @pengchuan #2618)
+* Phaser.Image now has the ScaleMinMax component.
+* Animations now allow for speeds greater than 0, rather than forcing them to be greater than 1. This allows you to have animation speeds slower than 1 frame per second (thanks @jayrobin #2664)
+* Weapon.fire and all related methods (fireAtXY, fireAtPointer, fireAtSprite) now all return the instance of the Phaser.Bullet that was fired, or `null` if nothing was fired. Previously it would return a boolean, but this change allows you to perform additional processing on the Bullet as required (thanks @JTronLabs #2696)
+* Sound.loopFull now returns the Sound instance that was looped (thanks @hilts-vaughan #2697)
+* ArcadePhysics Body.rotation now reads its initial value from sprite.angle instead of sprite.rotation. The property was immediately replaced with the correct value in Body.preUpdate regardless, but it keeps it consistent (thanks @samme #2708)
+* Weapon.fire now tracks rotation properly, when using an offset and tracking a sprite (thanks @bobonthenet #2672)
 
 ### Bug Fixes
 
-* Arcade Physics Body incorrectly positioned if the Sprite had a negative scale (see http://www.html5gamedevs.com/topic/22695-247-248-body-anchoring-any-migration-tips/) (thanks @SBCGames @icameron @Nuuf @EvolViper #2488 #2490)
-* InputHandler.checkPointerDown had an incorrect single pipe character |, instead of an OR check ||, and an `isDown` check, causing Button Over events to fail (thanks @pengchuan #2486)
-* BitmapText objects with lines greater than `maxWidth` now handle alignment values correctly, causing them to properly center align (thanks @kevinleedrum  #2499 @crippledcactus #2496)
-* Text has a new private method `measureLine` which is used to calculate the final Text line length, after factoring in color stops and other style changes. This should prevent characters from becoming truncated (thanks @TadejZupancic #2519 #2512)
-* Sometimes the browser would cause a race condition where any connected Game Pads were being detected before the callback had a chance to be established. Also sometimes the rawPad references would become stale, and are now checked constantly (thanks @cwleonard #2471)
-* Sound.isPlaying was set to false when doing an audio loop, but never set back to true if it's a sound not using a marker (thanks @TheJasonReynolds #2529)
-* Phaser.Rectangle.aabb would fail if the Rectangles used negative offsets. It now calculates the bounds accurately (thanks @fillmoreb #2545)
-* The `DisplayObject.worldRotation` value didn't sign the `wt.c` value correctly, meaning the rotation would be wrong.
-* The `DisplayObject.worldScale` value didn't multiply the local objects scale into the calculation, meaning the value wasn't a true representation of the objects world scale.
+* A Group with `inputEnableChildren` set would re-start the Input Handler on a Sprite, even if that handler had been disabled previously.
+* Weapon.autofire wouldn't fire after the first bullet, or until `fire` was called, neither of which are requirements. If you now set this boolean the Weapon will fire continuously until you toggle it back to false (thanks @alverLopez #2647)
+* ArcadePhysics.World.angleBetweenCenters now uses `centerX` and `centerY` properties to check for the angle between, instead of `center.x/y` as that property no longer exists (thanks @leopoldobrines7 #2654)
+* The Emitter.makeParticles `collide` argument didn't work, as a result of #2661, but is now properly respected thanks to that change (thanks @samme #2662)
+* Sound.play would throw the error "Uncaught DOMException: Failed to execute 'disconnect' on 'AudioNode': the given destination is not connected." in Chrome, if you tried to play an audio marker that didn't exist, while a valid marker was already playing.
+* Text bounds would incorrectly displace if the Text resolution was greater than 1 (thanks @valent-novem #2685)
+* TilemapParser would calculate widthInPixels and heightInPixels were being read incorrectly from JSON data (capitalisation of properties) (thanks @hexus #2691)
+* A tinted Texture in Canvas mode wouldn't be updated properly if it was also cropped, beyond the initial crop. Now a cropped texture will re-tint itself every time the crop is updated, and has changed (thanks @phoenixyjll #2688)
+* The Weapon.fireRateVariance property was never taken into account internally. It's now applied to the firing rate correctly (thanks @noseglid #2715)
+* Text.updateText now sets `Text.dirty = false`, which stops Text objects from having `updateText` called twice on them after creation.
+
+### Pixi Updates
+
+Please note that Phaser uses a custom build of Pixi and always has done. The following changes have been made to our custom build, not to Pixi in general.
+
+* This version contains significant fixes for `DisplayObject.getBounds` and `DisplayObjectContainer.getBounds`. The methods can now accept an optional argument `targetCoordinateSpace` which makes it much more flexible, allowing you to check the bounds against any target, not just local and global ones. If the `targetCoordinateSpace` is a valid DisplayObject:
+
+    - If it's a parent of the caller at some level it will return the bounds
+    relative to it.
+    - if it's not parenting the caller at all, it will get the global bounds of
+    it, and the caller and will calculate the x and y bounds of the caller
+    relative to the targetCoordinateSpace DisplayObject.
+
+As a result this also fixes how empty Groups are treated when they have no other children except Groups. So now calculations are correct.
+* DisplayObjectContainer.contains(child) is a new method which determines whether the specified display object is a child of the DisplayObjectContainer instance or the instance itself. This method is used in the new getBounds function.
+* Corrected DisplayObjects default `_bounds` rect from (0, 0, 1, 1) to (0, 0, 0, 0).
+* Thanks to @fmflame for his hard work on the above (#2639 #2627)
+* The methods `setStageReference` and `removeStageReference` have been removed from all Pixi classes. Objects no longer have `stage` properties, or references to the Stage object. This is because no reference to the Stage is required for any calculations, and Phaser can only have 1 Stage, so adding and removing references to it were superfluous actions.
+* The file pixi/utils/Polyk.js has been removed, as it was no longer used with Pixi or Phaser (we replaced it with EarCut a while ago)
 
 For changes in previous releases please see the extensive [Version History](https://github.com/photonstorm/phaser/blob/master/CHANGELOG.md).
 
@@ -423,9 +390,9 @@ Written something cool in Phaser? Please tell us about it in the [forum][forum],
 
 ![Created by](http://phaser.io/images/github/div-created-by.png "Created by")
 
-![storm](http://www.phaser.io/images/github/photonstorm-x2.png)
-
 Phaser is a [Photon Storm](http://www.photonstorm.com) production.
+
+![storm](http://www.phaser.io/images/github/photonstorm-x2.png)
 
 Created by [Richard Davey](mailto:rich@photonstorm.com). Powered by coffee, anime, pixels and love.
 
@@ -437,10 +404,10 @@ All rights reserved.
 
 [![Analytics](https://ga-beacon.appspot.com/UA-44006568-2/phaser/index)](https://github.com/igrigorik/ga-beacon)
 
-[get-js]: https://github.com/photonstorm/phaser/releases/download/v2.5.0/phaser.js
-[get-minjs]: https://github.com/photonstorm/phaser/releases/download/v2.5.0/phaser.min.js
-[get-zip]: https://github.com/photonstorm/phaser/archive/v2.5.0.zip
-[get-tgz]: https://github.com/photonstorm/phaser/archive/v2.5.0.tar.gz
+[get-js]: https://github.com/photonstorm/phaser/releases/download/v2.6.2/phaser.js
+[get-minjs]: https://github.com/photonstorm/phaser/releases/download/v2.6.2/phaser.min.js
+[get-zip]: https://github.com/photonstorm/phaser/archive/v2.6.2.zip
+[get-tgz]: https://github.com/photonstorm/phaser/archive/v2.6.2.tar.gz
 [clone-http]: https://github.com/photonstorm/phaser.git
 [clone-ssh]: git@github.com:photonstorm/phaser.git
 [clone-svn]: https://github.com/photonstorm/phaser
