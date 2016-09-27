@@ -1,3 +1,13 @@
+var currentLevel = {
+  width: 700,
+  height: 700,
+  size: 1, 
+  tileFrom: "nothing.json",
+  row: 0,
+  column: 0,
+  weekdays: [0, 1, 0]
+}
+
 function loadMapAlpha(){
   game.load.image('sky', '../assets/sky.png');
   game.load.image('level1back', '../assets/Map/Level1-1back.png');
