@@ -1,4 +1,4 @@
-# Evermore_Wizard1
+# EVERMORE, The Wizard Guide.
 
 ![Alt text](https://github.com/tpascua11/Evermore_Wizard1/blob/master/documents/DinosaurWizard.gif "Optional title")
 
