@@ -10,3 +10,16 @@ To Try it out, use the following link
 https://cdn.rawgit.com/tpascua11/Evermore_Wizard1/master/game/editor/index.html
 
 NOTE: it takes awhile to load.
+
+## Credits
+
+### Art
+
+Ted Pascua
+
+### Sound Effect
+
+  Ted Pascua, used BXRR editor
+
+
+
