@@ -1,6 +1,6 @@
 # Evermore, The Wizard Guide.
 
-![Alt text](https://github.com/tpascua11/Evermore_Wizard1/blob/master/document/DinosaurWizard.gif "Optional title")
+![Alt text](https://github.com/tpascua11/Evermore_Wizard1/blob/master/document/DinosaurWizardBetter.gif "Optional title")
 
 ## Game
 This is about a dinosaur/dragon who wants to become a wizard. He recently got a spellbook that allows him to cast spells. That spellbook also gives the user privilege to go to Wizard University. With that, he sets off on a journey to the Wizard Universtity to learn Wizardry. 
