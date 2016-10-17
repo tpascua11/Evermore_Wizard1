@@ -13,6 +13,10 @@ NOTE: it takes awhile to load.
 
 ## Credits
 
+### Code
+
+Ted Pascua
+
 ### Art
 
 Ted Pascua
