@@ -18,9 +18,11 @@ NOTE: it takes awhile to load.
 
 ## Credits
 
-### Code
+### Made With
 
-Made with using Javascript, HTML. Used the Phaser Engine.
+Phaser Engine. https://github.com/photonstorm/phaser
+Javascript, HTML5, HTML
+
 
 ## Coder
 
