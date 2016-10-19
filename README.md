@@ -7,7 +7,6 @@ This is about a dinosaur/dragon who wants to become a wizard. He recently got a 
 
 
 ## Code 
-Made with using Javascript, HTML. Used the Phaser Engine.
 
 
 
@@ -21,8 +20,12 @@ NOTE: it takes awhile to load.
 
 ### Code
 
-Ted Pascua
+Made with using Javascript, HTML. Used the Phaser Engine.
 
+## Coder
+
+Ted Pascua
+ 
 ### Art
 
 Ted Pascua
