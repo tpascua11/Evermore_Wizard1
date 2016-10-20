@@ -11,7 +11,8 @@ This is about a dinosaur/dragon who wants to become a wizard. He recently got a 
 
 
 ## Demo/Playtesting
-To Try it out, use the following link
+To Try it out, use the following links
+https://dragons-den-ad546.firebaseapp.com/
 https://cdn.rawgit.com/tpascua11/Evermore_Wizard1/master/game/editor/index.html
 
 NOTE: it takes awhile to load.
