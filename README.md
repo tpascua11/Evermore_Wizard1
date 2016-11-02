@@ -20,15 +20,15 @@ https://cdn.rawgit.com/tpascua11/Evermore_Wizard1/master/game/editor/index.html
 NOTE: it takes awhile to load.
 Controls:
 
-  WASD: movement
-  
-  Shift: sprinting
-  
-  J: jump
-  
-  K: magic bomb
-  
-  L: magic Barrier
+To move around use keys: WASD
+
+To sprint: hold shift
+
+to Shoot: K
+
+to bubble: L
+
+to Jump: J
 
 ## Credits
 
