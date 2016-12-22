@@ -46,7 +46,7 @@ var playerStats = {
   maxRmana : 25 ,
   curSpd   : 0  ,
   speed    : 300,
-  sprintSpd: 500,
+  sprintSpd: 400,
   sprinting: 0  ,
   acl      : 50 ,
   moveLeft : 0  ,
@@ -81,7 +81,8 @@ var playerStats = {
 //---------------------------------------------------------
 function loadPlayerResource(){
   game.load.spritesheet('dino', '../assets/player/Vark_TemplateGreen.png', 20, 20);
-  game.load.spritesheet('visualDino', '../assets/player/Vark_v42.png', 20, 20);
+  //game.load.spritesheet('visualDino', '../assets/player/Vark_v44caper.png', 20, 20);
+  game.load.spritesheet('visualDino', '../assets/player/Vark_v47.png', 20, 20);
 
   game.load.spritesheet('hearts', '../assets/player/hearts.png', 48, 16);
   game.load.spritesheet('emptyball', '../assets/player/emptyBall.png', 16, 16);
@@ -170,17 +171,24 @@ function createPlayerAnimations(){
   player.animations.add('leftSprint', [41, 42, 43, 44], 10, true);
   player.animations.add('rightSprint', [50, 51, 52, 53], 10, true);
 
-  visual.animations.add('standLeft' , [5], 25, true);
-  visual.animations.add('standRight', [14], 25, true);
+  //visual.animations.add('standLeft' , [5], 25, true);
+  //visual.animations.add('standRight', [14], 25, true);
 
   visual.animations.add('walkRight', [28, 29, 30, 31, 32, 33], 25, true);
   visual.animations.add('walkLeft', [19, 20, 21, 22, 23, 24], 25, true);
 
-  visual.animations.add('jumpRight', [68, 69, 70, 71], 10, true);
-  visual.animations.add('jumpLeft', [59, 60, 61, 62], 10, true);
+  visual.animations.add('jumpRight', [68, 69, 70, 71], 100, true);
+  visual.animations.add('jumpLeft', [59, 60, 61, 62], 100, true);
 
-  visual.animations.add('leftSprint', [41, 42, 43, 44], 10, true);
-  visual.animations.add('rightSprint', [50, 51, 52, 53], 10, true);
+  //visual.animations.add('leftSprint', [41, 42, 43, 44], 10, true);
+  //visual.animations.add('rightSprint', [50, 51, 52, 53], 10, true);
+
+  visual.animations.add('leftSprint', [19, 20, 21, 22, 23, 24], 50, true);
+  visual.animations.add('rightSprint', [28, 29, 30, 31, 32, 33], 50, true);
+
+  visual.animations.add('leftStand', [91, 92, 93, 94], 30, true);
+  visual.animations.add('rightStand', [100, 101, 102, 103], 30, true);
+
 }
 
 function playerHUD(){
@@ -317,7 +325,7 @@ function startInvincible(){
 }
 
 function stopInvincible(){
-  player.alpha = 1;
+  player.alpha = 0;
   visual.alpha = 1;
   player.invincible = false;
 }
@@ -415,7 +423,7 @@ function playerJumpMovement(){
 function playerFallingMovement(){
   if(player.barrier){}
   else if(player.airCasted == 1) return;
-  visual.animations.currentAnim.speed = 7;
+  visual.animations.currentAnim.speed = 15;
   if(player.direction == 1){
     visual.animations.play('jumpRight');
   }
@@ -443,7 +451,7 @@ function playerSprintingRightMovement(){
   visual.animations.play('rightSprint');
   visual.animations.currentAnim.speed = 15;
 
-  playSteps(8);
+  playSteps(12);
 }
 
 function playerSprintingLeftMovement(){
@@ -453,7 +461,7 @@ function playerSprintingLeftMovement(){
   visual.animations.play('leftSprint');
   visual.animations.currentAnim.speed = 15;
  
-  playSteps(8);
+  playSteps(12);
 }
 
 function playerMoveRightMovement(){
@@ -551,14 +559,16 @@ function jumpCastingVisual(){
 
 function playerInactive(){
   player.body.velocity.x = 0;
-  player.animations.stop();
+  //player.animations.stop();
   if(player.direction ==  1){
-    player.frame = 10;
-    visual.frame = 10;
+    visual.animations.play('rightStand');
+    //player.frame = 10;
+    //visual.frame = 10;
   }
   else{
-    player.frame = 1;
-    visual.frame = 1;
+  visual.animations.play('leftStand');
+    //player.frame = 1;
+    //visual.frame = 1;
   }
 }
 
