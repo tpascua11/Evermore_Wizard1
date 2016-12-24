@@ -39,8 +39,7 @@ function update() {
   updateStatusEffect();
   updateHUD();
   aiRuning();
-
-  game.world.bringToTop(bg2);
+  //game.world.bringToTop(bg2);
 }
 
 //cursors = game.input.keyboard.createCursorKeys();

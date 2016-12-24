@@ -124,16 +124,27 @@ function createPlayer(){
 }
 
 function playerBody(){
+  //ITS NOT THE SPRITE FOLLOWING
+  //ITS THE SPRIT MOVING THATS LAGGING
   //Remember: Set Scale Then apply Phyisics
   player = game.add.sprite(300, 100, 'dino');
-  visual = game.add.sprite(300, 100, 'visualDino');
+  visual = game.add.sprite(0, 0, 'visualDino');
+
   player.scale.setTo(3,3);
+  player.alpha = 0;
   visual.scale.setTo(3,3);
   game.physics.p2.enable(player);
   player.body.fixedRotation = true;
   player.body.damping = 0.5;
+  //player.alpha = 0;
   playerMaterial = game.physics.p2.createMaterial('playerMaterial', player.body);
   player.body.data.gravityScale = 1.00;
+  game.renderer.renderSession.roundPixels = true;
+  game.camera.roundPx = false;
+
+  //player.addChild(follower);
+  //player.addChild(visual);
+  //tester.scale.setTo(3,3);
 }
 
 function playerInfo(){
@@ -168,26 +179,35 @@ function createPlayerAnimations(){
   player.animations.add('left', [19, 20, 21, 22, 23, 24], 25, true);
   player.animations.add('leftJump', [59, 60, 61, 62], 10, true);
   player.animations.add('rightJump', [68, 69, 70, 71], 10, true);
-  player.animations.add('leftSprint', [41, 42, 43, 44], 10, true);
-  player.animations.add('rightSprint', [50, 51, 52, 53], 10, true);
+  //player.animations.add('leftSprint', [41, 42, 43, 44], 10, true);
+  //player.animations.add('rightSprint', [50, 51, 52, 53], 10, true);
 
   //visual.animations.add('standLeft' , [5], 25, true);
   //visual.animations.add('standRight', [14], 25, true);
 
-  visual.animations.add('walkRight', [28, 29, 30, 31, 32, 33], 25, true);
-  visual.animations.add('walkLeft', [19, 20, 21, 22, 23, 24], 25, true);
+  visual.animations.add('walkRight', [31, 32, 33, 34, 35, 36, 37], 15, true);
+  visual.animations.add('walkLeft', [41, 42, 43, 44, 45, 46, 47], 15, true);
+
+  visual.animations.add('sprintRight', [31, 32, 33, 34, 35, 36, 37], 30, true);
+  visual.animations.add('sprintLeft', [41, 42, 43, 44, 45, 46, 47], 30, true);
+
+  //visual.animations.add('rightSprint', [41, 42, 43, 44, 45, 46], 10, true);
+  //visual.animations.add('leftSprint', [66, 65, 64, 63, 62, 61], 10, true);
 
   visual.animations.add('jumpRight', [68, 69, 70, 71], 100, true);
   visual.animations.add('jumpLeft', [59, 60, 61, 62], 100, true);
 
-  //visual.animations.add('leftSprint', [41, 42, 43, 44], 10, true);
-  //visual.animations.add('rightSprint', [50, 51, 52, 53], 10, true);
 
-  visual.animations.add('leftSprint', [19, 20, 21, 22, 23, 24], 50, true);
-  visual.animations.add('rightSprint', [28, 29, 30, 31, 32, 33], 50, true);
+  visual.animations.add('leftStand', [1], 30, true);
+  visual.animations.add('rightStand', [3], 30, true);
 
-  visual.animations.add('leftStand', [91, 92, 93, 94], 30, true);
-  visual.animations.add('rightStand', [100, 101, 102, 103], 30, true);
+  visual.animations.add('castLeft', [11], 30, true);
+  visual.animations.add('castLeftSlant', [12], 30, true);
+  visual.animations.add('castLeftUp', [13], 30, true);
+
+  visual.animations.add('castRight', [21], 30, true);
+  visual.animations.add('castRightSlant', [22], 30, true);
+  visual.animations.add('castRightUp', [23], 30, true);
 
 }
 
@@ -383,6 +403,7 @@ function movement(){
   else{
     playerInactive();
   }
+  //updatePlayerFrame();
 }
 
 function playerAirMovement(){
@@ -448,8 +469,8 @@ function playerSprintingRightMovement(){
   player.animations.currentAnim.speed = 15;
   player.body.velocity.x = player.sprintSpd;
 
-  visual.animations.play('rightSprint');
-  visual.animations.currentAnim.speed = 15;
+  visual.animations.play('sprintRight');
+  //visual.animations.currentAnim.speed = 15;
 
   playSteps(12);
 }
@@ -458,15 +479,14 @@ function playerSprintingLeftMovement(){
   player.animations.currentAnim.speed = 15;
   player.body.velocity.x = -player.sprintSpd;
 
-  visual.animations.play('leftSprint');
-  visual.animations.currentAnim.speed = 15;
+  visual.animations.play('sprintLeft');
+  //visual.animations.currentAnim.speed = 15;
  
   playSteps(12);
 }
 
 function playerMoveRightMovement(){
   player.body.velocity.x = player.speed;
-  visual.animations.currentAnim.speed = 10;
   visual.animations.play('walkRight');
 
   playSteps(17);
@@ -474,7 +494,6 @@ function playerMoveRightMovement(){
 
 function playerMoveLeftMovement(){
   player.body.velocity.x = -player.speed;
-  visual.animations.currentAnim.speed = 10;
   visual.animations.play('walkLeft');
 
   playSteps(17);
@@ -498,15 +517,15 @@ function casting(){
     jumpCasting();
     return;
   }
-  if(moveLeft.isDown && moveUp.isDown) visual.frame = 4;
-  else if(moveRight.isDown && moveUp.isDown) visual.frame = 13;
+  if(moveLeft.isDown && moveUp.isDown) visual.frame = 12;
+  else if(moveRight.isDown && moveUp.isDown) visual.frame = 22;
   else if(player.direction == 1){
-    if(moveUp.isDown) visual.frame = 11;
-    else visual.frame = 12;
+    if(moveUp.isDown) visual.frame = 23;
+    else visual.frame = 21;
   }
   else{
-    if(moveUp.isDown) visual.frame = 2;
-    else visual.frame = 3;
+    if(moveUp.isDown) visual.frame = 13;
+    else visual.frame = 11;
   }
 }
 

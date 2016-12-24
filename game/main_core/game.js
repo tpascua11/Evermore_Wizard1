@@ -30,7 +30,7 @@ function preload() {
 
 function create() {
   bg = game.add.tileSprite(0, 0, 1920, 240, 'level1front');
-  bg2 = game.add.tileSprite(0, 0, 1920, 240, 'level1back');
+  //bg2 = game.add.tileSprite(0, 0, 1920, 240, 'level1back');
   game.world.setBounds(0, 0, 1920, 240);
 
   game.physics.startSystem(Phaser.Physics.P2JS);
@@ -70,5 +70,4 @@ function update() {
   movement();
   updatePlayerFrame();
   updateSpells();
-  game.world.bringToTop(bg2);
-}
+  //game.world.bringToTop(bg2)}

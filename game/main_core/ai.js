@@ -84,6 +84,7 @@ function loadAISprite(){
 
 function createAI(){
   var i = 0;
+  /*
   for(i = 0; i < 2; i++){
     slimey = game.add.sprite(i*100, 100, 'slime');
     slimey.scale.setTo(3,3);
@@ -100,6 +101,7 @@ function createAI(){
     console.log(slimey);
     activeAI.push(slimey);
   }
+  */
 }
 
 function createAIAnimations(){

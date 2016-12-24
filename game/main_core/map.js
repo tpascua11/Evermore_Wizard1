@@ -24,8 +24,8 @@ function createWorldAlpha(){
   bg = game.add.tileSprite(0, 0, 1920, 240, 'level1front');
   game.world.setBounds(0, 0, 1920, 240);
 
-  bg2 = game.add.tileSprite(0, 0, 1920, 240, 'level1back');
-  game.world.bringToTop(bg2);
+  //bg2 = game.add.tileSprite(0, 0, 1920, 240, 'level1back');
+  //game.world.bringToTop(bg2);
 
   game.physics.startSystem(Phaser.Physics.P2JS);
   game.physics.p2.gravity.y = 1000;
@@ -42,7 +42,7 @@ function createWorldAlpha(){
   game.stage.smoothed = false;
 
   simple = game.add.audio('symbo');
-  simple.play();
+  //simple.play();
 }
 
 function dependOnTest(){

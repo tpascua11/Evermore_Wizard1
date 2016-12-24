@@ -329,7 +329,7 @@ function makeMagicBomb(){
   placeFrontOfPlayer(magicBomb);
   player.energy = true;
 
-  game.world.bringToTop(bg2);
+  //game.world.bringToTop(bg2);
 }
 
 
@@ -361,7 +361,7 @@ function shootMagicBomb(){
   endMagicBombTimer();
 
   moveFrontOfPlayer(magicBomb);
-  game.world.bringToTop(bg2);
+  //game.world.bringToTop(bg2);
 
   player.casting = false;
   player.energy = false;
