@@ -193,6 +193,24 @@ function createPlayerAnimations(){
   visual.animations.add('castRightSlant', [22], 30, true);
   visual.animations.add('castRightUp', [23], 30, true);
 
+  visual.animations.add('castJumpRightN', [23], 30, true);
+  visual.animations.add('castJumpRightNE', [23], 30, true);
+  visual.animations.add('castJumpRightE', [23], 30, true);
+  visual.animations.add('castJumpRightSE', [23], 30, true);
+  visual.animations.add('castJumpRightS', [23], 30, true);
+  visual.animations.add('castJumpRightSW', [23], 30, true);
+  visual.animations.add('castJumpRightW', [23], 30, true);
+  visual.animations.add('castJumpRightNW', [23], 30, true);
+
+  visual.animations.add('castJumpLeftN', [23], 30, true);
+  visual.animations.add('castJumpLeftNE', [23], 30, true);
+  visual.animations.add('castJumpLeftE', [23], 30, true);
+  visual.animations.add('castJumpRightSE', [23], 30, true);
+  visual.animations.add('castJumpRightS', [23], 30, true);
+  visual.animations.add('castJumpRightSW', [23], 30, true);
+  visual.animations.add('castJumpRightW', [23], 30, true);
+  visual.animations.add('castJumpRightNW', [23], 30, true);
+
   //ill keep these for now
   player.animations.add('right', [28, 29, 30, 31, 32, 33], 25, true);
   player.animations.add('left', [19, 20, 21, 22, 23, 24], 25, true);
@@ -336,14 +354,6 @@ function stopInvincible(){
   visual.alpha = 1;
   player.invincible = false;
 }
-
-//---------------------------
-// Player_Actions
-//---------------------------
-
-function barrierPower(){
-  console.log("Barrier Power");
-}
 //--------------------------------
 // Player_Physics
 //--------------------------------
@@ -355,43 +365,16 @@ function movement(){
   }
   else player.jump = 1;
 
-  if(player.levitation){
-    playerLevitate();
-  }
-  if(player.invincible){
-    console.log("HURTED");
-  }
-  else if(player.casting){
-    casting();
-  }
-  else if (player.jumping){
-    playerJumpMovement();
-  }
-  else if (player.jump){
-    playerFallingMovement();
-  }
-  else if(player.moving >= 0){
-    casting();
-  }
-  else if(player.moveRight && player.moveLeft){
-    playerBreakingMovement();
-  }
-  else if(player.sprinting && player.moveRight){
-    playerSprintingRightMovement();
-  }
-  else if(player.sprinting && player.moveLeft){
-    playerSprintingLeftMovement();
-  }
-  else if(player.moveRight){
-    playerMoveRightMovement();
-  }
-  else if(player.moveLeft){
-    playerMoveLeftMovement();
-  }
-  else{
-    playerInactive();
-  }
-  //updatePlayerFrame();
+  if(player.casting) casting();
+  else if(player.jumping) playerJumpMovement();
+  else if(player.jump)    playerFallingMovement();
+  else if(player.moving >= 0) casting();
+  else if(player.moveRight && player.moveLeft)  playerBreakingMovement();
+  else if(player.sprinting && player.moveRight) playerSprintingRightMovement();
+  else if(player.sprinting && player.moveLeft)  playerSprintingLeftMovement();
+  else if(player.moveRight) playerMoveRightMovement();
+  else if(player.moveLeft)  playerMoveLeftMovement();
+  else playerInactive();
 }
 
 function playerAirMovement(){
@@ -425,51 +408,34 @@ function playerJumpMovement(){
     player.frame = 5;
     visual.frane = 5;
   }
-
   playerAirMovement();
 }
 
 function playerFallingMovement(){
   if(player.barrier){}
   else if(player.airCasted == 1) return;
-  //visual.animations.currentAnim.speed = 15;
-  if(player.direction == 1){
-    visual.animations.play('jumpRight');
-  }
-  else{
-    visual.animations.play('jumpLeft');
-  }
+  if(player.direction == 1) visual.animations.play('jumpRight');
+  else visual.animations.play('jumpLeft');
   playerAirMovement();
 }
 
 function playerBreakingMovement(){
-  if(player.body.velocity.x > 2){
-    player.body.velocity.x -= 10;
-  }
-  else if(player.body.velocity.x < -2){
-    player.body.velocity.x += 10;
-  }
-  else 
-    player.body.velocity.x = 0;
+  if(player.body.velocity.x > 2) player.body.velocity.x -= 10;
+  else if(player.body.velocity.x < -2) player.body.velocity.x += 10;
+  else player.body.velocity.x = 0;
 }
 
 function playerSprintingRightMovement(){
   player.animations.currentAnim.speed = 15;
   player.body.velocity.x = player.sprintSpd;
-
   visual.animations.play('sprintRight');
-  //visual.animations.currentAnim.speed = 15;
-
   playSteps(12);
 }
 
 function playerSprintingLeftMovement(){
   player.animations.currentAnim.speed = 15;
   player.body.velocity.x = -player.sprintSpd;
-
   visual.animations.play('sprintLeft');
-  //visual.animations.currentAnim.speed = 15;
- 
   playSteps(12);
 }
 
@@ -527,8 +493,6 @@ function jumpCasting(){
   visual.animations.stop();
   if(player.jumpDirection == 1) castedRight();
   else castedLeft();
-
-  //jumpCastingVisual();
 }
 
 function castedRight(){
@@ -548,8 +512,8 @@ function castedRight(){
   }
 }
 function castedLeft(){
-  if(moveLeft.isDown && moveUp.isDown) visual.frame = 61;//SouthWest
-  else if(moveLeft.isDown && moveDown.isDown) visual.frame = 65;//SouthWest
+  if(moveLeft.isDown && moveUp.isDown) visual.frame = 63;//North West
+  else if(moveLeft.isDown && moveDown.isDown) visual.frame = 61;//SouthWestk
   else if(moveRight.isDown && moveUp.isDown) visual.frame = 65;//NorthEast
   else if(moveRight.isDown && moveDown.isDown) visual.frame = 65;//SouthEast
   else if(player.direction == 1){
@@ -564,37 +528,10 @@ function castedLeft(){
   }
 }
 
-
-function jumpCastingVisual(){
-  if(moveLeft.isDown && moveUp.isDown) visual.frame = 74;
-  else if(moveRight.isDown && moveUp.isDown) visual.frame = 83;
-  else if(moveRight.isDown && moveDown.isDown) visual.frame = 84;
-  else if(moveLeft.isDown && moveDown.isDown) visual.frame = 75;
-  else if(player.direction == 1){
-    if(moveUp.isDown) visual.frame = 67;
-    else if(moveDown.isDown) visual.frame = 66;
-    else visual.frame = 64;
-  }
-  else{
-    if(moveUp.isDown) visual.frame = 58;
-    else if(moveDown.isDown) visual.frame = 56;
-    else visual.frame = 55;
-  }
-}
-
 function playerInactive(){
   player.body.velocity.x = 0;
-  //player.animations.stop();
-  if(player.direction ==  1){
-    visual.animations.play('standRight');
-    //player.frame = 10;
-    //visual.frame = 10;
-  }
-  else{
-  visual.animations.play('leftStand');
-    //player.frame = 1;
-    //visual.frame = 1;
-  }
+  if(player.direction ==  1) visual.animations.play('standRight');
+  else visual.animations.play('leftStand');
 }
 
 function harmPlayer(body, damage){
