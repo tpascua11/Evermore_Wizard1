@@ -37,6 +37,7 @@ function update() {
   movement();
   updateSpells();
   updateStatusEffect();
+  updatePlayerFrame();
   updateHUD();
   aiRuning();
   //game.world.bringToTop(bg2);

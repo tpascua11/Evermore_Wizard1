@@ -82,7 +82,6 @@ var playerStats = {
 //---------------------------------------------------------
 function loadPlayerResource(){
   game.load.spritesheet('dino', '../assets/player/Vark_TemplateGreen.png', 20, 20);
-  //game.load.spritesheet('visualDino', '../assets/player/Vark_v44caper.png', 20, 20);
   game.load.spritesheet('visualDino', '../assets/player/Vark_v47.png', 20, 20);
 
   game.load.spritesheet('hearts', '../assets/player/hearts.png', 48, 16);
@@ -125,8 +124,6 @@ function createPlayer(){
 }
 
 function playerBody(){
-  //ITS NOT THE SPRITE FOLLOWING
-  //ITS THE SPRIT MOVING THATS LAGGING
   //Remember: Set Scale Then apply Phyisics
   player = game.add.sprite(300, 100, 'dino');
   visual = game.add.sprite(0, 0, 'visualDino');
@@ -137,15 +134,12 @@ function playerBody(){
   game.physics.p2.enable(player);
   player.body.fixedRotation = true;
   player.body.damping = 0.5;
-  //player.alpha = 0;
   playerMaterial = game.physics.p2.createMaterial('playerMaterial', player.body);
   player.body.data.gravityScale = 1.00;
+
+  //These Below Fixes The Sprite Lagging when camera moves
   game.renderer.renderSession.roundPixels = true;
   game.camera.roundPx = false;
-
-  //player.addChild(follower);
-  //player.addChild(visual);
-  //tester.scale.setTo(3,3);
 }
 
 function playerInfo(){
@@ -176,24 +170,11 @@ function playerControl(){
 }
 
 function createPlayerAnimations(){
-  player.animations.add('right', [28, 29, 30, 31, 32, 33], 25, true);
-  player.animations.add('left', [19, 20, 21, 22, 23, 24], 25, true);
-  player.animations.add('leftJump', [3], 10, true);
-  player.animations.add('rightJump', [7], 10, true);
-  //player.animations.add('leftSprint', [41, 42, 43, 44], 10, true);
-  //player.animations.add('rightSprint', [50, 51, 52, 53], 10, true);
-
-  //visual.animations.add('standLeft' , [5], 25, true);
-  //visual.animations.add('standRight', [14], 25, true);
-
   visual.animations.add('walkRight', [31, 32, 33, 34, 35, 36, 37], 15, true);
   visual.animations.add('walkLeft', [41, 42, 43, 44, 45, 46, 47], 15, true);
 
   visual.animations.add('sprintRight', [31, 32, 33, 34, 35, 36, 37], 30, true);
   visual.animations.add('sprintLeft', [41, 42, 43, 44, 45, 46, 47], 30, true);
-
-  //visual.animations.add('rightSprint', [41, 42, 43, 44, 45, 46], 10, true);
-  //visual.animations.add('leftSprint', [66, 65, 64, 63, 62, 61], 10, true);
 
   visual.animations.add('jumpRight', [7], 5, true);
   visual.animations.add('jumpLeft', [3], 5, true);
@@ -212,6 +193,11 @@ function createPlayerAnimations(){
   visual.animations.add('castRightSlant', [22], 30, true);
   visual.animations.add('castRightUp', [23], 30, true);
 
+  //ill keep these for now
+  player.animations.add('right', [28, 29, 30, 31, 32, 33], 25, true);
+  player.animations.add('left', [19, 20, 21, 22, 23, 24], 25, true);
+  player.animations.add('leftJump', [3], 10, true);
+  player.animations.add('rightJump', [7], 10, true);
 }
 
 function playerHUD(){
@@ -224,7 +210,6 @@ function playerHUD(){
   var heartHeight = 10;
   manaHUD = game.add.sprite(manaWidth, manaHeight, 'manaballs');
   manaHUD.scale.setTo(1.5,1.5);
-  manaHUD.fixedToCamera = true;
   manaHUD.fixedToCamera = true;
 
   hearts = game.add.sprite(heartWidth, heartHeight, 'hearts');
@@ -242,7 +227,6 @@ function playerHUD(){
 //--------------------------------------------------------
 function updateHUD(){
   updateEnergyBalls();
-  updatePlayerFrame();
 }
 
 function updateEnergyBalls(){
