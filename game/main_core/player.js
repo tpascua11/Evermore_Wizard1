@@ -60,6 +60,7 @@ var playerStats = {
   canJump  : 0  ,
   clock    : 0  ,
   direction: 1  ,
+  jumpDirection: 0,
   casting  : 0  ,
   airCasted: 0  ,
   charged  : 0  ,
@@ -177,8 +178,8 @@ function playerControl(){
 function createPlayerAnimations(){
   player.animations.add('right', [28, 29, 30, 31, 32, 33], 25, true);
   player.animations.add('left', [19, 20, 21, 22, 23, 24], 25, true);
-  player.animations.add('leftJump', [59, 60, 61, 62], 10, true);
-  player.animations.add('rightJump', [68, 69, 70, 71], 10, true);
+  player.animations.add('leftJump', [3], 10, true);
+  player.animations.add('rightJump', [7], 10, true);
   //player.animations.add('leftSprint', [41, 42, 43, 44], 10, true);
   //player.animations.add('rightSprint', [50, 51, 52, 53], 10, true);
 
@@ -194,12 +195,14 @@ function createPlayerAnimations(){
   //visual.animations.add('rightSprint', [41, 42, 43, 44, 45, 46], 10, true);
   //visual.animations.add('leftSprint', [66, 65, 64, 63, 62, 61], 10, true);
 
-  visual.animations.add('jumpRight', [68, 69, 70, 71], 100, true);
-  visual.animations.add('jumpLeft', [59, 60, 61, 62], 100, true);
+  visual.animations.add('jumpRight', [7], 5, true);
+  visual.animations.add('jumpLeft', [3], 5, true);
 
-
+  visual.animations.add('standRight', [5], 30, true);
   visual.animations.add('leftStand', [1], 30, true);
-  visual.animations.add('rightStand', [3], 30, true);
+
+  visual.animations.add('layRight', [8], 30, true);
+  visual.animations.add('layLeft', [4], 30, true);
 
   visual.animations.add('castLeft', [11], 30, true);
   visual.animations.add('castLeftSlant', [12], 30, true);
@@ -364,6 +367,7 @@ function movement(){
  if(checkIfCanJump()){
     player.jump = 0;
     player.airCasted = 0;
+    player.jumpDirection = 0;
   }
   else player.jump = 1;
 
@@ -444,7 +448,7 @@ function playerJumpMovement(){
 function playerFallingMovement(){
   if(player.barrier){}
   else if(player.airCasted == 1) return;
-  visual.animations.currentAnim.speed = 15;
+  //visual.animations.currentAnim.speed = 15;
   if(player.direction == 1){
     visual.animations.play('jumpRight');
   }
@@ -531,33 +535,51 @@ function casting(){
 
 function jumpCasting(){
   if(!player.casting) return;
+  if(player.jumpDirection == 0) player.jumpDirection = player.direction;
   player.airCasted = 1;
+
   player.body.velocity.x -= player.direction*1;
   player.animations.stop();
   visual.animations.stop();
-  //if(moveRight.isDown && moveUp.isDown) player.frame = 13;
-  if(moveLeft.isDown && moveUp.isDown) player.frame = 74;
-  else if(moveRight.isDown && moveUp.isDown) player.frame = 83;
-  else if(moveRight.isDown && moveDown.isDown) player.frame = 84;
-  else if(moveLeft.isDown && moveDown.isDown) player.frame = 75;
-  else if(player.direction == 1){
-    if(moveUp.isDown) player.frame = 67;
-    else if(moveDown.isDown) playerFrame = 66;
-    else player.frame = 64;
-  }
-  else{
-    if(moveUp.isDown) player.frame = 58;
-    else if(moveDown.isDown) playerFrame = 56;
-    else player.frame = 55;
-  }
-  if(player.stepsCount <= 0){
-    player.stepsCount= 30;
-  }
-  else{
-    player.stepsCount -= 1;
-  }
-  jumpCastingVisual();
+  if(player.jumpDirection == 1) castedRight();
+  else castedLeft();
+
+  //jumpCastingVisual();
 }
+
+function castedRight(){
+  if(moveLeft.isDown && moveUp.isDown) visual.frame = 75;
+  else if(moveLeft.isDown && moveDown.isDown) visual.frame = 75;//SouthWest
+  else if(moveRight.isDown && moveUp.isDown) visual.frame = 73;
+  else if(moveRight.isDown && moveDown.isDown) visual.frame = 71;
+  else if(player.direction == 1){
+    if(moveUp.isDown) visual.frame = 74;
+    else if(moveDown.isDown) visual.frame = 71;
+    else visual.frame = 76;
+  }
+  else{
+    if(moveUp.isDown) visual.frame = 74;
+    else if(moveDown.isDown) visual.frame = 71;
+    else visual.frame = 75;
+  }
+}
+function castedLeft(){
+  if(moveLeft.isDown && moveUp.isDown) visual.frame = 61;//SouthWest
+  else if(moveLeft.isDown && moveDown.isDown) visual.frame = 65;//SouthWest
+  else if(moveRight.isDown && moveUp.isDown) visual.frame = 65;//NorthEast
+  else if(moveRight.isDown && moveDown.isDown) visual.frame = 65;//SouthEast
+  else if(player.direction == 1){
+    if(moveUp.isDown) visual.frame = 64;//Shooting Up
+    else if(moveDown.isDown) visual.frame = 65;//Shooting Down
+    else visual.frame = 65;//Shooting Foward
+  }
+  else{
+    if(moveUp.isDown) visual.frame = 64;//Shoot Up
+    else if(moveDown.isDown) visual.frame = 61;//Shooting Down
+    else visual.frame = 66;//Shooting Foward
+  }
+}
+
 
 function jumpCastingVisual(){
   if(moveLeft.isDown && moveUp.isDown) visual.frame = 74;
@@ -580,7 +602,7 @@ function playerInactive(){
   player.body.velocity.x = 0;
   //player.animations.stop();
   if(player.direction ==  1){
-    visual.animations.play('rightStand');
+    visual.animations.play('standRight');
     //player.frame = 10;
     //visual.frame = 10;
   }
