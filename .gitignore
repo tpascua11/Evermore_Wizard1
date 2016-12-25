@@ -1,1 +1,8 @@
+page/bower_components/**
+
+!page/bower_components/**/
+!page/bower_components/phaser/build/phaser.min.js
+!page/bower_components/jquery/dist/dist/jquery.js
+
+
 
