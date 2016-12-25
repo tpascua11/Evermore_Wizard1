@@ -374,6 +374,7 @@ function movement(){
   else if(player.sprinting && player.moveLeft)  playerSprintingLeftMovement();
   else if(player.moveRight) playerMoveRightMovement();
   else if(player.moveLeft)  playerMoveLeftMovement();
+  else if(moveDown.isDown) playerLay();
   else playerInactive();
 }
 
@@ -532,6 +533,12 @@ function playerInactive(){
   player.body.velocity.x = 0;
   if(player.direction ==  1) visual.animations.play('standRight');
   else visual.animations.play('leftStand');
+}
+
+function playerLay(){
+  player.body.velocity.x = 0;
+  if(player.direction ==  1) visual.animations.play('layRight');
+  else visual.animations.play('layLeft');
 }
 
 function harmPlayer(body, damage){

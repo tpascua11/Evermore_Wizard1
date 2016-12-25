@@ -75,6 +75,7 @@ function input(){
       case "bombStop": window["shootMagicBomb"](); break;
       case "barrier": window["playerBarrier"](); break;
       case "barrierStop": window["playerStopBarrier"](); break;
+      default: break;
     }
   }
   else if(state == "sprinting"){
@@ -250,7 +251,7 @@ function updateSpells(){
   updateMagicBombs();
   updateBarrier();
   if(player.energy) placeFrontOfPlayer(magicBomb);
-  if(player.rmana <= 0) magicBoostEnd();
+  //if(player.rmana <= 0) magicBoostEnd();
 }
 
 function updateMagicBombs(){
@@ -454,8 +455,8 @@ function magicBoost(){
 }
 
 function magicBoostEnd(){
-  player.speed = saveSpeed;
-  player.sprintSpd = saveSprint;
+  player.speed = 1000;
+  player.sprintSpd = 1000;
 }
 
 //-----------------------------
