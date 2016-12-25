@@ -17,6 +17,10 @@ https://dragons-den-ad546.firebaseapp.com/
 
 https://cdn.rawgit.com/tpascua11/Evermore_Wizard1/master/game/editor/index.html
 
+Current Development At... 
+
+https://rawgit.com/tpascua11/Evermore_Wizard1/feature-simple-ai/game/editor/index.html
+
 NOTE: it takes awhile to load.
 Controls:
 
