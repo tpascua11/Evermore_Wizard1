@@ -7,13 +7,15 @@ var gameHeight = 500;
 
 function preload() {
   game.stage.smoothed = false;
-
+  console.log("Loading Sprites");
   loadMapAlpha();     // Preset Default Level
   preloadBackground();// Preset Background Default Level
   loadPlayerResource(); // The Player
+  console.log("Loading Sounds");
   loadMusic();        // The Music
   loadBoundaries();   // Physics Existance
   loadAISprite();     // The NPC
+  console.log("Done");
 
   game.time.advancedTiming = true; 
 }
