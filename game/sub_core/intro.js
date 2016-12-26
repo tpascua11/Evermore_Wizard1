@@ -10,7 +10,6 @@ var PreLoadState= {
     this.preLoadBar.anchor.setTo(0.5);
     this.preLoadBar.scale.setTo(5,3);
 
-    this.load.setPreloadSprite(this.preLoadBar);
 
     //game.stage.smoothed = false;
     console.log("Loading Sprites");
@@ -23,5 +22,7 @@ var PreLoadState= {
     loadAISprite();     // The NPC
     console.log("Done");
     game.time.advancedTiming = true; 
+
+    this.load.setPreloadSprite(this.preLoadBar);
   }
 };
