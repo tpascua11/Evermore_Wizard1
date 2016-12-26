@@ -61,6 +61,7 @@ var playerStats = {
   clock    : 0  ,
   direction: 1  ,
   jumpDirection: 0,
+  laying: 0,
   casting  : 0  ,
   airCasted: 0  ,
   charged  : 0  ,
@@ -83,6 +84,8 @@ var playerStats = {
 function loadPlayerResource(){
   game.load.spritesheet('dino', '../assets/player/Vark_TemplateGreen.png', 20, 20);
   game.load.spritesheet('visualDino', '../assets/player/Vark_v47.png', 20, 20);
+  game.load.spritesheet('redBoundary', '../assets/player/Vark_TemplateRedSingle.png', 20, 20);
+  game.load.spritesheet('template', '../assets/player/Player_Template.png', 20, 20);
 
   game.load.spritesheet('hearts', '../assets/player/hearts.png', 48, 16);
   game.load.spritesheet('emptyball', '../assets/player/emptyBall.png', 16, 16);
@@ -125,17 +128,23 @@ function createPlayer(){
 
 function playerBody(){
   //Remember: Set Scale Then apply Phyisics
-  player = game.add.sprite(300, 100, 'dino');
+  player = game.add.sprite(300, 100, 'template');
   visual = game.add.sprite(0, 0, 'visualDino');
 
-  player.scale.setTo(3,3);
-  player.alpha = 0;
-  visual.scale.setTo(3,3);
+  player.scale.setTo(1,2);
+  player.alpha = 1;
   game.physics.p2.enable(player);
   player.body.fixedRotation = true;
   player.body.damping = 0.5;
   playerMaterial = game.physics.p2.createMaterial('playerMaterial', player.body);
   player.body.data.gravityScale = 1.00;
+
+  visual.scale.setTo(3,3);
+  visual.setScaleMinMax(3,3);
+  player.addChild(visual);
+  visual.alpha = 1;
+  visual.x-=30;
+  visual.y-=20;
 
   //These Below Fixes The Sprite Lagging when camera moves
   game.renderer.renderSession.roundPixels = true;
@@ -257,8 +266,8 @@ function updatePlayerFrame(){
   playerFPS.text = game.time.fps;
   playerFPS.reset(player.body.x-33, player.body.y - 66);
 
-  visual.x = player.body.x-30;
-  visual.y = player.body.y-30;
+  //visual.x = player.body.x-30;
+  //visual.y = player.body.y-30;
 }
 
 function updatePlayerFrameAt(x, y){
@@ -364,6 +373,7 @@ function movement(){
     player.jumpDirection = 0;
   }
   else player.jump = 1;
+  if(player.laying == 1 && (!moveDown.isDown)) player.laying = 0;
 
   if(player.casting) casting();
   else if(player.jumping) playerJumpMovement();
@@ -537,6 +547,7 @@ function playerInactive(){
 
 function playerLay(){
   player.body.velocity.x = 0;
+  if(player.laying == 0) player.laying = 1;
   if(player.direction ==  1) visual.animations.play('layRight');
   else visual.animations.play('layLeft');
 }
