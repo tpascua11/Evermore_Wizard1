@@ -93,7 +93,7 @@ function loadPlayerResource(){
   game.load.spritesheet('bmissle', '../assets/DarkMagicMisslesB.png', 64, 64);
   game.load.spritesheet('smissle', '../assets/Blue_Magic_Missles.png', 16, 16);
   game.load.spritesheet('energyBall', '../assets/spells/BlueEnergyBall.png', 16, 16);
-  game.load.spritesheet('teleport', '../assets/White_Teleport-sheet.png', 16, 16);
+  //game.load.spritesheet('teleport', '../assets/White_Teleport-sheet.png', 16, 16);
   game.load.spritesheet('casting', '../assets/Casting.png', 16, 16);
   game.load.spritesheet('magicBlock', '../assets/spells/MagicBlock.png', 8, 16);
   game.load.spritesheet('magicShield', '../assets/spells/Shield_Up.png', 4, 16);
