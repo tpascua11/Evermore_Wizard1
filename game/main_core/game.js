@@ -10,7 +10,6 @@ var GameIntroState = {
 
   create: function() {
       this.game.stage.backgroundColor = '#fff';
-      ``
       this.state.add('PreLoadState', PreLoadState);
       this.state.start('PreLoadState');
   },
