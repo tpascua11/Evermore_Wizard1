@@ -10,8 +10,7 @@ var PreLoadState= {
     this.preLoadBar.anchor.setTo(0.5);
     this.preLoadBar.scale.setTo(5,3);
 
-
-    //game.stage.smoothed = false;
+    game.stage.smoothed = false;
     console.log("Loading Sprites");
     loadMapAlpha();     // Preset Default Level
     preloadBackground();// Preset Background Default Level
@@ -24,5 +23,9 @@ var PreLoadState= {
     game.time.advancedTiming = true; 
 
     this.load.setPreloadSprite(this.preLoadBar);
+  },
+  create: function(){
+      this.state.add('livingGame', livingGame);
+      this.state.start('livingGame');
   }
-};
+ };
