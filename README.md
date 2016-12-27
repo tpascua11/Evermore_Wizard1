@@ -13,13 +13,13 @@ This is about a dinosaur/dragon who wants to become a wizard. He recently got a 
 ## Demo/Playtesting
 To Try it out, use the following links
 
-https://dragons-den-ad546.firebaseapp.com/
+https://dragons-den-ad546.firebaseapp.com
 
 https://cdn.rawgit.com/tpascua11/Evermore_Wizard1/master/game/editor/index.html
 
 Current Development At... 
 
-https://rawgit.com/tpascua11/Evermore_Wizard1/feature-simple-ai/game/editor/index.html
+https://dragons-den-ad546.firebaseapp.com
 
 NOTE: it takes awhile to load.
 Controls:
