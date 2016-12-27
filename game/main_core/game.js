@@ -1,6 +1,6 @@
-var game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, 'Evermore: The Wizard Guide');
-var gameWidth = 250;
-var gameHeight = 250;
+//var game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, 'Evermore: The Wizard Guide');
+//var gameWidth = 250;
+//var gameHeight = 250;
 
 var GameIntroState = {
   preload: function(){
@@ -13,10 +13,14 @@ var GameIntroState = {
       console.log("here?");
       this.state.add('PreLoadState', PreLoadState);
       this.state.start('PreLoadState');
+
+      console.log("did this work");
   },
+    update: function(){
+     }
+
 
 };
-
 
 game.state.add('GameIntroState', GameIntroState);
 game.state.start('GameIntroState');
