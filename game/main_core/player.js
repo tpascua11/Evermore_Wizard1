@@ -69,6 +69,7 @@ var playerStats = {
   barrier  : 0 ,
   levitation: 0 ,
   invincible: 0,
+  dot: 0, 
   damageModifier: 1,
   magic: 0 ,
   stepsCount: 25,
@@ -83,7 +84,7 @@ var playerStats = {
 //---------------------------------------------------------
 function loadPlayerResource(){
   game.load.spritesheet('dino', '../assets/player/Vark_TemplateGreen.png', 20, 20);
-  game.load.spritesheet('visualDino', '../assets/player/Vark_v47.png', 20, 20);
+  game.load.spritesheet('visualDino', '../assets/player/Vark_v54.png', 20, 20);
   game.load.spritesheet('redBoundary', '../assets/player/Vark_TemplateRedSingle.png', 20, 20);
   game.load.spritesheet('template', '../assets/player/Player_Template.png', 20, 20);
 
@@ -147,8 +148,8 @@ function playerBody(){
   visual.y-=20;
 
   //These Below Fixes The Sprite Lagging when camera moves
-  game.renderer.renderSession.roundPixels = true;
-  game.camera.roundPx = false;
+  //game.renderer.renderSession.roundPixels = true;
+  //game.camera.roundPx = false;
 }
 
 function playerInfo(){
@@ -346,8 +347,9 @@ function incrementChargeTimer(){
 //______________
 // Invincible
 //______________
+invc = Phaser.Timer.SECOND*1;
 function buildInvicible(){
-  invc = Phaser.Timer.SECOND;
+  invc = Phaser.Timer.SECOND*1;
 }
 
 function startInvincible(){
@@ -359,9 +361,17 @@ function startInvincible(){
 }
 
 function stopInvincible(){
-  player.alpha = 0;
+  console.log("did I happen");
+  player.alpha = 1;
   visual.alpha = 1;
   player.invincible = false;
+}
+
+function startDamageOverTime(){
+
+}
+function damageOverTime(){
+
 }
 //--------------------------------
 // Player_Physics
@@ -553,6 +563,7 @@ function playerLay(){
 }
 
 function harmPlayer(body, damage){
+  if(player.invincible) return;
   body.health -= damage;
   console.log("Health", body.health);
 }

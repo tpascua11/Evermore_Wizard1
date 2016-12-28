@@ -13,6 +13,7 @@ var livingGame = {
             playerActions();
             setupSpells();
             createAI();
+            testDamage();
             setupMouse();
             toolControls();
             //makeBlock();

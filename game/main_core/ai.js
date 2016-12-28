@@ -12,10 +12,11 @@
  |/     `       //        '     \|
 
 //1. AI_Information 
-//2. Player_Building
-//3. Spell_Building
-//4. Player_Actions
-//5. Player_Physics
+//2. AI_Building
+//3. AI_Interaction
+//5. AI_Physics
+//
+//6. Attack_Collision
 */
 
 //---------------------------------------------------------
@@ -35,11 +36,11 @@ var aiBasicStats = {
   direction: 1,
   targetAtX: 0,
   targetAtY: 0,
-  stop     : 0, 
-  stopRange: 0,
+  stop     : 0,
+  stopRange: 50,
   detectRange: 400,
-  pushPowerX: 500, 
-  pushPowerY: 200, 
+  pushPowerX: 500,
+  pushPowerY: 200,
   actionTime: 0,
   doingAction: 0,
   alliance: 2
@@ -79,14 +80,16 @@ var aiDefaultStats = {
 //---------------------------------------------------------
 function loadAISprite(){
   game.load.spritesheet('slime', '../assets/monster/Slime.png', 16, 16);
+
+  game.load.spritesheet('collision', '../assets/monster/attack_animation/red_collision.png', 20, 20);
 }
+
 //var slimey;
 
 function createAI(){
   var i = 0;
-  /*
   for(i = 0; i < 2; i++){
-    slimey = game.add.sprite(i*100, 100, 'slime');
+    slimey = game.add.sprite(i*25, 25, 'slime');
     slimey.scale.setTo(3,3);
     game.physics.p2.enable(slimey);
     slimey.body.fixedRotation = true;
@@ -101,7 +104,6 @@ function createAI(){
     console.log(slimey);
     activeAI.push(slimey);
   }
-  */
 }
 
 function createAIAnimations(){
@@ -112,7 +114,7 @@ function createAIAnimations(){
 function harm(body1){
   if(body1 == null) return;
   if(body1.indestructible || (this.alliance == body1.sprite.alliance)) return;
-  if(body1.invincible){
+  if(body1.sprite.invincible){
     console.log("you have invincible");
     return;
   }
@@ -162,7 +164,6 @@ function aiCheckDistance(ai, target){
 // 3. AI_Interaction
 //---------------------------
 function detectEnemy(){
-
   return true;
 }
 function move(ai){
@@ -189,27 +190,44 @@ function aiRuning(){
     }
   }
 }
+
+//-------------------------------
+// 5. 
+//-------------------------------
+function testDamage(){
+  var damage;
+  damage = game.add.sprite(50, 50, 'collision');
+  slimey.scale.setTo(5,5);
+  game.physics.p2.enable(damage);
+  damage.body.fixedRotation = true;
+  aiMaterial = game.physics.p2.createMaterial('aiMaterial', damage.body);
+  damage.body.health = 10;
+  damage.damage = 10;
+  //createAIAnimations();
+
+  damage.body.onBeginContact.add(harm, damage);
+  //damage.body.onEndContact.add(harm, damage);
+
+  for(var attrname in aiBasicStats){damage[attrname] = aiBasicStats[attrname]}
+  console.log(damage);
+  //activeAI.push(slimey);
+  damage.body.static = true;
+}
+
 //--------------
 //HELPER
 //--------------
 var yAxis = p2.vec2.fromValues(0, 1);
-function checkIfCanJump() {
+function checkIfCanJump(entity) {
   var result = false;
-  for (var i=0; i < game.physics.p2.world.narrowphase.contactEquations.length; i++)
-  {
+  for (var i=0; i < game.physics.p2.world.narrowphase.contactEquations.length; i++){
     var c = game.physics.p2.world.narrowphase.contactEquations[i];
-
-    if (c.bodyA === player.body.data || c.bodyB === player.body.data)
-    {
+    if (c.bodyA === player.body.data || c.bodyB === player.body.data){
       var d = p2.vec2.dot(c.normalA, yAxis);
-
-      if (c.bodyA === player.body.data)
-      {
+      if (c.bodyA === player.body.data){
         d *= -1;
       }
-
-      if (d > 0.5)
-      {
+      if (d > 0.5){
         result = true;
       }
     }
