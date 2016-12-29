@@ -14,8 +14,9 @@
 //1. AI_Information 
 //2. AI_Building
 //3. AI_Interaction
-//5. AI_Physics
+//4. AI_Physics
 //
+//5. Attack_Info
 //6. Attack_Collision
 */
 
@@ -80,6 +81,7 @@ var aiDefaultStats = {
 //---------------------------------------------------------
 function loadAISprite(){
   game.load.spritesheet('slime', '../assets/monster/Slime.png', 16, 16);
+  game.load.spritesheet('goblin', '../assets/monster/Goblin.png', 16, 16);
 
   game.load.spritesheet('collision', '../assets/monster/attack_animation/red_collision.png', 20, 20);
 }
@@ -87,6 +89,7 @@ function loadAISprite(){
 //var slimey;
 
 function createAI(){
+  /*
   var i = 0;
   for(i = 0; i < 2; i++){
     slimey = game.add.sprite(i*25, 25, 'slime');
@@ -98,17 +101,45 @@ function createAI(){
     slimey.damage = 10;
     createAIAnimations();
 
-    slimey.body.onBeginContact.add(harm, slimey);
+    //slimey.body.onBeginContact.add(harm, slimey);
 
     for(var attrname in aiBasicStats){slimey[attrname] = aiBasicStats[attrname]}
     console.log(slimey);
     activeAI.push(slimey);
+  }*/
+
+  for(i = 0; i < 3; i++){
+    goblin= game.add.sprite((i*50)+500, 25, 'goblin');
+    goblin.scale.setTo(3,3);
+    game.physics.p2.enable(goblin);
+    goblin.body.fixedRotation = true;
+    aiMaterial = game.physics.p2.createMaterial('aiMaterial', goblin.body);
+    goblin.body.health = 10;
+    goblin.damage = 10;
+    createGoblinStaberAnimations();
+
+    //slimey.body.onBeginContact.add(harm, slimey);
+
+    for(var attrname in aiBasicStats){goblin[attrname] = aiBasicStats[attrname]}
+    console.log(goblin);
+    activeAI.push(goblin);
   }
+
 }
 
 function createAIAnimations(){
-  slimey.animations.add('move', [0, 1, 2, 3, 4], 25, true);
+  slimey.animations.add('right', [0, 1, 2, 3, 4], 25, true);
+  slimey.animations.add('left', [0, 1, 2, 3, 4], 25, true);
   slimey.animations.play('move', 10, true);
+}
+
+function createGoblinStaberAnimations(){
+  goblin.animations.add('left', [25, 26, 27, 28, 29, 30], 25, true);
+  goblin.animations.add('right', [33, 34, 35, 36, 37, 38], 25, true);
+  goblin.animations.add('move', [25, 26, 27, 28, 29, 30], 25, true);
+  goblin.animations.play('move', 10, true);
+  //goblin.animations.add('right', [0, 1, 2, 3, 4], 25, true);
+  //slimey.animations.play('move', 10, true);
 }
 
 function harm(body1){
@@ -167,14 +198,27 @@ function detectEnemy(){
   return true;
 }
 function move(ai){
-  ai.body.velocity.x = ai.curSpd * ai.direction;
+  //ai.body.velocity.x = ai.curSpd * ai.direction;
+  ai.body.velocity.x = 0;
 }
 function patrol(ai){
   ai.body.velocity.x = ai.curSpd * ai.targetAtX;
 }
 function follow(ai){
-  if(ai.stop) ai.body.velocity.x = 0;
-  else ai.body.velocity.x = ai.curSpd * ai.targetAtX;
+  //if(ai.stop) ai.body.velocity.x = 0;
+  ai.body.velocity.x = ai.curSpd * ai.targetAtX;
+  ai.direction = ai.targetAtX;
+}
+
+function movementAnimation(ai){
+  if(ai.direction == 1){
+    ai.animations.play('right', 10, true);
+    console.log("right");
+  }
+  else{
+    ai.animations.play('left', 10, true);
+    console.log("left");
+  }
 }
 //--------------------------------
 // 4. AI_Physics
@@ -186,18 +230,31 @@ function aiRuning(){
       follow(activeAI[i]);
     }
     else{
-      //move(activeAI[i]);
+      move(activeAI[i]);
     }
+    movementAnimation(activeAI[i]);
   }
+}
+//-------------------------------
+// 5. Attack_Info
+//-------------------------------
+var attack = {
+  force: 0,
+  doingAction: 0,
+  owner: 0,
+  constant: 0, 
+  ownerLink: "owner",
+  alliance: 2
 }
 
 //-------------------------------
-// 5. 
+// 6. Attack_Collision
 //-------------------------------
 function testDamage(){
   var damage;
   damage = game.add.sprite(50, 50, 'collision');
-  slimey.scale.setTo(5,5);
+  //activeAI[0].addChild(damage);
+  damage.scale.setTo(2.3,2.3);
   game.physics.p2.enable(damage);
   damage.body.fixedRotation = true;
   aiMaterial = game.physics.p2.createMaterial('aiMaterial', damage.body);
@@ -212,6 +269,11 @@ function testDamage(){
   console.log(damage);
   //activeAI.push(slimey);
   damage.body.static = true;
+  damage.body.data.shapes[0].sensor = true;
+  damage.postUpdate = function(){
+    damage.reset(activeAI[0].body.x + 20, activeAI[0].body.y);
+  }
+
 }
 
 //--------------

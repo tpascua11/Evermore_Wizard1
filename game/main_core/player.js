@@ -308,7 +308,7 @@ function incrementPlayerTimer(){
 //__________
 function startRegenTimer(){
   regenTimer= game.time.create(false);
-  regenTimer.loop(500, regainMana, this);
+  regenTimer.loop(300, regainMana, this);
   regenTimer.start();
 }
 function regainMana(){
