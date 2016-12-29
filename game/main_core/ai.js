@@ -44,7 +44,8 @@ var aiBasicStats = {
   pushPowerY: 200,
   actionTime: 0,
   doingAction: 0,
-  alliance: 2
+  alliance: 2,
+  lastAnimation: 0, 
 }
 
 var aiDefaultStats = {
@@ -89,9 +90,8 @@ function loadAISprite(){
 //var slimey;
 
 function createAI(){
-  /*
   var i = 0;
-  for(i = 0; i < 2; i++){
+  for(i = 0; i < 30; i++){
     slimey = game.add.sprite(i*25, 25, 'slime');
     slimey.scale.setTo(3,3);
     game.physics.p2.enable(slimey);
@@ -106,9 +106,8 @@ function createAI(){
     for(var attrname in aiBasicStats){slimey[attrname] = aiBasicStats[attrname]}
     console.log(slimey);
     activeAI.push(slimey);
-  }*/
-
-  for(i = 0; i < 3; i++){
+  }
+  for(i = 0; i < 30; i++){
     goblin= game.add.sprite((i*50)+500, 25, 'goblin');
     goblin.scale.setTo(3,3);
     game.physics.p2.enable(goblin);
@@ -130,6 +129,7 @@ function createAI(){
 function createAIAnimations(){
   slimey.animations.add('right', [0, 1, 2, 3, 4], 25, true);
   slimey.animations.add('left', [0, 1, 2, 3, 4], 25, true);
+  slimey.animations.add('move', [0, 1, 2, 3, 4], 25, true);
   slimey.animations.play('move', 10, true);
 }
 
@@ -212,10 +212,14 @@ function follow(ai){
 
 function movementAnimation(ai){
   if(ai.direction == 1){
+    if(1 == ai.lastAnimation) return;
+    ai.lastAnimation = 1;
     ai.animations.play('right', 10, true);
     console.log("right");
   }
   else{
+    if(2 == ai.lastAnimation) return;
+    ai.lastAnimation = 2;
     ai.animations.play('left', 10, true);
     console.log("left");
   }
