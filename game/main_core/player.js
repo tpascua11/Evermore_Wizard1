@@ -148,8 +148,8 @@ function playerBody(){
   visual.y-=20;
 
   //These Below Fixes The Sprite Lagging when camera moves
-  //game.renderer.renderSession.roundPixels = true;
-  //game.camera.roundPx = false;
+  game.renderer.renderSession.roundPixels = true;
+  game.camera.roundPx = false;
 }
 
 function playerInfo(){
