@@ -103,7 +103,7 @@ function loadPlayerResource(){
   game.load.spritesheet('magicPush', '../assets/spells/barrierPush.png', 6, 16);
 
   game.load.audio('blast', '../assets/sound_effect/Blast.wav');
-  game.load.audio('charge', '../assets/sound_effect/Charge.wav');
+  game.load.audio('charge', '../assets/sound_effect/sootheCharge2.wav');
   game.load.audio('shoot', '../assets/sound_effect/Shoot.wav');
   game.load.audio('teleport', '../assets/sound_effect/Teleport.wav');
   game.load.audio('wall', '../assets/sound_effect/Wall.wav');
@@ -342,7 +342,7 @@ function incrementChargeTimer(){
     blaster.tint = 0xff0000;
   }
   if(player.casting) chargingBlast();
-  chargeSound.play();
+  //chargeSound.play();
 }
 //______________
 // Invincible

@@ -159,7 +159,7 @@ function setupSpells(){
   createMagicMaterial();
 
   blastSound  = game.add.audio('blast');  blastSound.volume = 0.2;
-  chargeSound = game.add.audio('charge'); chargeSound.volume = 0.2;
+  chargeSound = game.add.audio('charge'); chargeSound.volume = 1;
   shootSound  = game.add.audio('shoot');  shootSound.volume = 0.2;
   teleportSound = game.add.audio('teleport'); teleportSound.volume = 0.2;
   wallSound = game.add.audio('wall'); wallSound.volume = 0.2;
@@ -299,13 +299,14 @@ function chargeMagicBomb(){
   magicBomb.scale.setTo(pCharge, pCharge);
  }
 
- chargeSound.play();
+ //chargeSound.play();
 }
 
 function makeMagicBomb(){
   player.casting = 1;
   startMagicBombTimer();
 
+  chargeSound.loop = true;
   chargeSound.play();
   pCharge = 1;
   player.rmana-= 1;
@@ -367,6 +368,9 @@ function shootMagicBomb(){
   player.casting = false;
   player.energy = false;
   if(pCharge >= 4) movePlayer(-600, -600);
+
+  //chargeSound.loop = false;
+  chargeSound.stop();
 }
 
 function bombFinale(blast){
