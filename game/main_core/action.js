@@ -272,7 +272,14 @@ function hitBox(body1, body2){
   if(body1.indestructible) return;
   tester = this;
   body1.health -= tester.damage;
-  if(body1.health <= 0) body1.sprite.kill();
+  if(body1.health <= 0){
+    console.log(body1.sprite.attack);
+    tmp = body1.sprite.aid;
+    body1.sprite.attack.destroy();
+    body1.sprite.destroy();
+    activeAI[tmp] = 0;
+    console.log("Number", tmp);
+  }
 }
 //--------------------------------------
 //  Magic_Bomb
@@ -398,8 +405,8 @@ function bombFinaleContact(body1, body2){
   blast.end = true;
   blast.loadTexture('magicExpand', 0, false);
   blast.animations.play('end', 25, false, true);
-  blast.body.velocity.x = 0;
-  blast.body.velocity.y = 0;
+  //blast.body.velocity.x = 0;
+  //blast.body.velocity.y = 0;
   blast.body.damping = 1;
   blast.body.mass= 1.1;
   blast.timeAt = pTime+10;
