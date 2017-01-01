@@ -84,7 +84,6 @@ function loadAISprite(){
   game.load.spritesheet('templateAI', '../assets/monster/templateAI.png', 20, 20);
   game.load.spritesheet('slime', '../assets/monster/Slime.png', 16, 16);
   game.load.spritesheet('goblin', '../assets/monster/Goblin.png', 16, 16);
-
   game.load.spritesheet('collision', '../assets/monster/attack_animation/red_collision.png', 20, 20);
 }
 
@@ -98,16 +97,64 @@ function createAI(){
   //
   var i = 0;
   console.log("Start AI", activeAI.length);
-  for(i = 0; i < 1; i++){
-    goblinMaking(50+i*600,50,i);
-
+  for(i = 0; i < 5; i++){
+    //goblinMaking(50+i*50,50,i);
+    goblinSwordsMan(50+i*50,50,i);
   }
-  //continueGoblins();
 
 }
 //---------------
 //  Goblin
 //---------------
+function goblinSwordsMan(x,y,id){
+    goblin = game.add.sprite(x, y, 'templateAI');
+    goblin.scale.setTo(1,2);
+    game.physics.p2.enable(goblin);
+    goblin.body.fixedRotation = true;
+    aiMaterial = game.physics.p2.createMaterial('aiMaterial', goblin.body);
+    goblin.body.health = 10;
+    goblin.damage = 10;
+    goblin.doAttack = function(){}
+    for(var attrname in aiBasicStats){goblin[attrname] = aiBasicStats[attrname]}
+    goblin.aid = id;
+    goblinSword();
+    console.log(goblin);
+    goblin.visual = game.add.sprite(-24,-15,'goblin');
+    goblin.visual.scale.setTo(3,3);
+    goblin.visual.setScaleMinMax(3,3);
+    goblin.visual.frame = 3;
+    goblin.addChild(goblin.visual);
+    goblin.stopRange = 100;
+    createGoblinSwordsmanAnimations();
+    goblin.dead = false;
+    activeAI.push(goblin);
+}
+
+function goblinStaber(x, y, id){
+    goblin = game.add.sprite(x, y, 'templateAI');
+    goblin.scale.setTo(1,2);
+    game.physics.p2.enable(goblin);
+    goblin.body.fixedRotation = true;
+    aiMaterial = game.physics.p2.createMaterial('aiMaterial', goblin.body);
+    goblin.body.health = 10;
+    goblin.damage = 10;
+    goblin.doAttack = function(){}
+    for(var attrname in aiBasicStats){goblin[attrname] = aiBasicStats[attrname]}
+    goblin.aid = id;
+    goblinDagger();
+    console.log(goblin);
+    goblin.visual = game.add.sprite(-24,-15,'goblin');
+    goblin.visual.scale.setTo(3,3);
+    goblin.visual.setScaleMinMax(3,3);
+    goblin.visual.frame = 3;
+    goblin.addChild(goblin.visual);
+    goblin.stopRange = 25;
+    createGoblinStaberAnimations();
+    goblin.dead = false;
+    activeAI.push(goblin);
+    console.log("AI total", activeAI.length);
+}
+
 function goblinMaking(x, y, id){
     goblin = game.add.sprite(x, y, 'templateAI');
     //goblin.scale.setTo(0.5,1.5);
@@ -140,12 +187,11 @@ function goblinMaking(x, y, id){
 
     //createGoblinStaberAnimations();
     createGoblinSwordsmanAnimations();
+
     //goblinVisual.alpha = 1;
     goblin.dead = false;
     activeAI.push(goblin);
     console.log("AI total", activeAI.length);
-
-
 }
 
 function createGoblinStaberAnimations(){
@@ -156,12 +202,9 @@ function createGoblinStaberAnimations(){
 function createGoblinSwordsmanAnimations(){
   goblin.visual.animations.add('move', [41, 42, 43, 44, 45, 46], 25, true);
   goblin.visual.animations.play('move', 10, true);
-
-
-  goblin.visual.animations.add('attack', [49, 49, 49, 50], 5, true);
+  goblin.visual.animations.add('attack', [49, 49, 49, 50, 51], 10, true);
 }
 
-var check = 0;
 function goblinDagger(){
   var damage;
   goblin.attack= game.add.sprite(0, 0, 'collision');
@@ -177,7 +220,6 @@ function goblinDagger(){
 
   for(var attrname in aiBasicStats){goblin.attack[attrname] = aiBasicStats[attrname]}
   console.log(damage);
-  //activeAI.push(slimey);
   goblin.attack.body.static = true;
   goblin.attack.body.data.shapes[0].sensor = true;
   goblin.attack.id = activeAI.length;//Change THIS LATer
@@ -192,36 +234,42 @@ function goblinSword(){
   goblin.doActionAt = 2;
   goblin.whenAction = 0;
   goblin.readyAction = false;
+  goblin.finishAction = false;
+  goblin.attackLimit = 1;
+  goblin.attackTotal = 0
 
-  var tok;
-  /*
   goblin.doAttack = function(){
-    console.log("yay");
-    if(!this.readyAction){
-      this.visual.animations.play('attack', true);
-      this.whenAction = universalTime + this.doActionAt;
-      this.readyAction = true;
-    }else{
-      if(universalTime >= this.whenAction){
-        //aiHarmWave(this);
-        console.log("Im Attacking");
+    //return;
+    //3rd State - The End Of The Animation
+    if(this.finishAction){
+        this.finishAction = false;
         this.readyAction = false;
-      }
+        this.attackTotal = 0;
     }
-  }
-  */
-  goblin.doAttack = function(){
-    console.log("yay");
-    if(!this.readyAction){
-      this.lastAnimation = 2;//2 Will Be Attack State For ALL
+    //1st State - The Start Of An Attack Animation
+    else if(!this.readyAction){
+      this.lastAnimation = 3;//3 Will Be Attack State For ALL
       this.visual.animations.play('attack', true);
       this.readyAction = true;
-    }else{
+    }
+    //2nd State - The Placement of An Attack Collison
+    else{
       if(this.visual.frame == 50){
-        console.log("Im Attacking");
-        aiHarmWave(this);
-        this.readyAction = false;
+        if(this.attackTotal <  this.attackLimit){
+          this.body.velocity.y = -300;
+          this.body.velocity.x = 1000 * this.direction;
+          aiHarmWave(this);
+          this.attackTotal++;
+        }
       }
+      if(this.visual.frame == 51){
+        this.finishAction = true;
+      }
+      /*
+      else if(this.visual.frame == 51){
+        this.finishAction = true;
+      }else{
+      }*/
     }
   }
 }
@@ -256,17 +304,6 @@ function aiHarmWave(goblinD){
   }
 }
 
-//------------------------------------------
-
-
-function createAIAnimations(){
-  slimey.animations.add('right', [0, 1, 2, 3, 4], 25, true);
-  slimey.animations.add('left', [0, 1, 2, 3, 4], 25, true);
-  slimey.animations.add('move', [0, 1, 2, 3, 4], 25, true);
-  slimey.animations.play('move', 10, true);
-}
-
-
 function harm(body1){
   if(body1 == null) return;
   if(body1.indestructible || (this.alliance == body1.sprite.alliance)) return;
@@ -287,28 +324,6 @@ function harm(body1){
   tester = this;
   tester.direction *= -1;
 }
-
-function extendHarm(body1){
-  if(body1 == null) return;
-  if(body1.indestructible || (this.alliance == body1.sprite.alliance)) return;
-  if(body1.sprite.invincible){
-    console.log("you have invincible");
-    return;
-  }
-  else{
-    console.log("you dont have invincible");
-    if(body1.sprite.invincible == null) return;
-    if(player.barrier) return;
-    harmPlayer(player, 10);
-    hurt.play();
-    console.log(body1);
-    push(this, body1);
-    //startInvincible();
-  }
-  tester = this;
-  tester.direction *= -1;
-}
-
 
 function doAttack(){
   attack.body.data.shapes[0].sensor = true;
@@ -359,16 +374,12 @@ function follow(ai){
 }
 
 function movementAnimation(ai){
-  if(ai.lastAnimation != 1){
-    ai.lastAnimation = 1;
+  if(ai.lastAnimation == 3){
     ai.visual.animations.play('move', 10, true);
   }
   if(ai.direction == 1){
     if(1 == ai.lastAnimation) return;
     ai.lastAnimation = 1;
-    //ai.visual.animations.play('right', 10, true);
-    console.log("right");
-
     ai.visual.setScaleMinMax(3,3);
     ai.visual.scale.setTo(3,3);
     ai.visual.anchor.setTo(0,0);
@@ -376,11 +387,9 @@ function movementAnimation(ai){
   else{
     if(2 == ai.lastAnimation) return;
     ai.lastAnimation = 2;
-    // ai.visual.animations.play('left', 10, true);
     ai.visual.setScaleMinMax(-3,3);
     ai.visual.scale.setTo(-3,3);
     ai.visual.anchor.setTo(1,0);
-    console.log("left");
   }
 }
 //--------------------------------
@@ -390,7 +399,6 @@ function aiRuning(){
   //console.log(activeAI.length);
   for(var i = 0; i < activeAI.length; i++){
     if(activeAI[i] == 0) continue; 
-    //if(ai.
     if(aiCheckDistance(activeAI[i], player)){
       follow(activeAI[i]);
     }
@@ -432,7 +440,6 @@ function testDamage(){
   aiMaterial = game.physics.p2.createMaterial('aiMaterial', damage.body);
   damage.body.health = 10;
   damage.damage = 10;
-  //createAIAnimations();
 
   damage.body.onBeginContact.add(harm, damage);
   //damage.body.onEndContact.add(harm, damage);
@@ -465,6 +472,7 @@ function goblinMaking123(){
 //HELPER
 //--------------
 var yAxis = p2.vec2.fromValues(0, 1);
+/*
 function checkIfCanJump(entity) {
   var result = false;
   for (var i=0; i < game.physics.p2.world.narrowphase.contactEquations.length; i++){
@@ -480,4 +488,4 @@ function checkIfCanJump(entity) {
     }
   }
   return result;
-}
+}*/
