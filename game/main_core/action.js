@@ -160,7 +160,7 @@ function setupSpells(){
 
   blastSound  = game.add.audio('blast');  blastSound.volume = 0.2;
   chargeSound = game.add.audio('charge'); chargeSound.volume = 1;
-  shootSound  = game.add.audio('shoot');  shootSound.volume = 0.2;
+  shootSound  = game.add.audio('shoot');  shootSound.volume = 0.5;
   teleportSound = game.add.audio('teleport'); teleportSound.volume = 0.2;
   wallSound = game.add.audio('wall'); wallSound.volume = 0.2;
 
@@ -275,10 +275,9 @@ function hitBox(body1, body2){
   if(body1.health <= 0){
     console.log(body1.sprite.attack);
     tmp = body1.sprite.aid;
-    body1.sprite.attack.destroy();
+    if(body1.sprite.attack != null) body1.sprite.attack.destroy();
     body1.sprite.destroy();
     activeAI[tmp] = 0;
-    console.log("Number", tmp);
   }
 }
 //--------------------------------------

@@ -5,7 +5,7 @@
  ____/_____\__\@  @/___/_____\____
 |             |\../|              |
 |              \VV/               |
-|        ---- Player -----         |
+|        ---- AI  -----         |
 |_________________________________|
  |    /\ /      \\       \ /\    |
  |  /   V        ))       V   \  |
@@ -91,7 +91,6 @@ function loadAISprite(){
 //var slimey;
 
 function createAI(){
-
   //NOTES:
   //  Always GIve AI its own ID according to whats avaiable at AIRUNNING
   //  Once That AI dies, save that id and use it for the newest AI addition
@@ -100,7 +99,7 @@ function createAI(){
   var i = 0;
   console.log("Start AI", activeAI.length);
   for(i = 0; i < 1; i++){
-    goblinMaking(50,50,i);
+    goblinMaking(50+i*600,50,i);
 
   }
   //continueGoblins();
@@ -119,8 +118,11 @@ function goblinMaking(x, y, id){
     goblin.body.health = 10;
     goblin.damage = 10;
 
+    goblin.doAttack = function(){}
+
     for(var attrname in aiBasicStats){goblin[attrname] = aiBasicStats[attrname]}
     //goblinDagger();
+    goblin.aid = id;
     goblinSword();
     //goblin.sprite()
     console.log(goblin);
@@ -139,10 +141,10 @@ function goblinMaking(x, y, id){
     //createGoblinStaberAnimations();
     createGoblinSwordsmanAnimations();
     //goblinVisual.alpha = 1;
-    goblin.aid = id;
     goblin.dead = false;
     activeAI.push(goblin);
     console.log("AI total", activeAI.length);
+
 
 }
 
@@ -154,6 +156,9 @@ function createGoblinStaberAnimations(){
 function createGoblinSwordsmanAnimations(){
   goblin.visual.animations.add('move', [41, 42, 43, 44, 45, 46], 25, true);
   goblin.visual.animations.play('move', 10, true);
+
+
+  goblin.visual.animations.add('attack', [49, 49, 49, 50], 5, true);
 }
 
 var check = 0;
@@ -184,32 +189,72 @@ function goblinDagger(){
 }
 
 function goblinSword(){
-  var damage;
-  goblin.attack= game.add.sprite(0, 0, 'collision');
-  goblin.attack.scale.setTo(1,1);
-  game.physics.p2.enable(goblin.attack);
-  goblin.attack.body.fixedRotation = true;
-  aiMaterial = game.physics.p2.createMaterial('aiMaterial', goblin.attack.body);
-  goblin.attack.body.health = 10;
-  goblin.attack.damage = 10;
+  goblin.doActionAt = 2;
+  goblin.whenAction = 0;
+  goblin.readyAction = false;
 
-  goblin.attack.body.onBeginContact.add(harm, goblin.attack);
-  //damage.body.onEndContact.add(harm, damage);
-
-  for(var attrname in aiBasicStats){goblin.attack[attrname] = aiBasicStats[attrname]}
-  console.log(damage);
-  //activeAI.push(slimey);
-  goblin.attack.body.static = true;
-  goblin.attack.body.data.shapes[0].sensor = true;
-  goblin.attack.id = activeAI.length;//Change THIS LATer
-  console.log("Goblin ATtack", goblin.attack);
-  
-  goblin.attack.postUpdate = function(){
-    this.reset(activeAI[this.id].body.x , activeAI[this.id].body.y-30);
+  var tok;
+  /*
+  goblin.doAttack = function(){
+    console.log("yay");
+    if(!this.readyAction){
+      this.visual.animations.play('attack', true);
+      this.whenAction = universalTime + this.doActionAt;
+      this.readyAction = true;
+    }else{
+      if(universalTime >= this.whenAction){
+        //aiHarmWave(this);
+        console.log("Im Attacking");
+        this.readyAction = false;
+      }
+    }
+  }
+  */
+  goblin.doAttack = function(){
+    console.log("yay");
+    if(!this.readyAction){
+      this.lastAnimation = 2;//2 Will Be Attack State For ALL
+      this.visual.animations.play('attack', true);
+      this.readyAction = true;
+    }else{
+      if(this.visual.frame == 50){
+        console.log("Im Attacking");
+        aiHarmWave(this);
+        this.readyAction = false;
+      }
+    }
   }
 }
 
+function aiHarmWave(goblinD){
+  goblinD.damage = game.add.sprite(-500, 100, 'collision');
+  goblinD.damage.scale.setTo(1,1);
+  game.physics.p2.enable(goblinD.damage);
+  goblinD.damage.body.fixedRotation = true;
+  //aiMaterial = game.physics.p2.createMaterial('aiMaterial', damage);
+  goblinD.damage.body.health = 10;
+  goblinD.damage.damage = 10;
+  goblinD.damage.id = goblinD.aid;
+  console.log("Goblin ID", goblinD.aid);
 
+  goblinD.damage.body.onBeginContact.add(harm, goblinD.damage);
+
+  goblinD.damage.body.static = true;
+  goblinD.damage.body.data.shapes[0].sensor = true;
+  goblinD.damage.endAtTime = universalTime + 1;
+
+  goblinD.damage.pushPowerX = 700;
+  goblinD.damage.pushPowerY = -100;
+
+  goblinD.damage.postUpdate = function(){
+    //console.log("Harm Wave");
+    this.reset(activeAI[this.id].body.x + 13*activeAI[this.id].direction
+              ,activeAI[this.id].body.y);
+    if(this.endAtTime <= universalTime){
+      this.destroy();
+    }
+  }
+}
 
 //------------------------------------------
 
@@ -235,6 +280,7 @@ function harm(body1){
     if(player.barrier) return;
     harmPlayer(player, 10);
     hurt.play();
+    console.log(body1);
     push(this, body1);
     startInvincible();
   }
@@ -242,14 +288,36 @@ function harm(body1){
   tester.direction *= -1;
 }
 
+function extendHarm(body1){
+  if(body1 == null) return;
+  if(body1.indestructible || (this.alliance == body1.sprite.alliance)) return;
+  if(body1.sprite.invincible){
+    console.log("you have invincible");
+    return;
+  }
+  else{
+    console.log("you dont have invincible");
+    if(body1.sprite.invincible == null) return;
+    if(player.barrier) return;
+    harmPlayer(player, 10);
+    hurt.play();
+    console.log(body1);
+    push(this, body1);
+    //startInvincible();
+  }
+  tester = this;
+  tester.direction *= -1;
+}
+
+
 function doAttack(){
   attack.body.data.shapes[0].sensor = true;
 }
 
 function push(ai, target){
   console.log("What");
-  player.body.velocity.x = ai.pushPowerX * ai.direction;
-  player.body.velocity.y = ai.pushPowerY * -1;
+  player.body.velocity.x += ai.pushPowerX * activeAI[ai.id].direction;
+  player.body.velocity.y += ai.pushPowerY;
 }
 
 function aiCheckDistance(ai, target){
@@ -291,6 +359,10 @@ function follow(ai){
 }
 
 function movementAnimation(ai){
+  if(ai.lastAnimation != 1){
+    ai.lastAnimation = 1;
+    ai.visual.animations.play('move', 10, true);
+  }
   if(ai.direction == 1){
     if(1 == ai.lastAnimation) return;
     ai.lastAnimation = 1;
@@ -318,17 +390,20 @@ function aiRuning(){
   //console.log(activeAI.length);
   for(var i = 0; i < activeAI.length; i++){
     if(activeAI[i] == 0) continue; 
+    //if(ai.
     if(aiCheckDistance(activeAI[i], player)){
       follow(activeAI[i]);
     }
     else{
       move(activeAI[i]);
     }
-    if(activeAI[i].stop){
-      console.log("Im ready to attack");
+    if(activeAI[i].stop || activeAI[i].readyAction){
+      activeAI[i].doAttack();
       activeAI[i].body.velocity.x = 0;
     }
-    movementAnimation(activeAI[i]);
+    else{
+      movementAnimation(activeAI[i]);
+    }
   }
 }
 //-------------------------------
@@ -377,7 +452,7 @@ function testDamage(){
 //------------------------------
 function continueGoblins(){
   timer = game.time.create(false);
-  timer.loop(2000, goblinMaking123, this);
+  timer.loop(500, goblinMaking123, this);
   timer.start();
 }
 

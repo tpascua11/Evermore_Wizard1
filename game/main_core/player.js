@@ -104,7 +104,7 @@ function loadPlayerResource(){
 
   game.load.audio('blast', '../assets/sound_effect/Blast.wav');
   game.load.audio('charge', '../assets/sound_effect/sootheCharge2.wav');
-  game.load.audio('shoot', '../assets/sound_effect/Shoot.wav');
+  game.load.audio('shoot', '../assets/sound_effect/bigShot.wav');
   game.load.audio('teleport', '../assets/sound_effect/Teleport.wav');
   game.load.audio('wall', '../assets/sound_effect/Wall.wav');
   game.load.audio('steps', '../assets/step.wav');
@@ -302,6 +302,7 @@ function incrementPlayerTimer(){
   else pTime++;
 
   if(player.moving >= 0) player.moving--;
+  console.log(pTime);
 }
 //__________
 // Regain
