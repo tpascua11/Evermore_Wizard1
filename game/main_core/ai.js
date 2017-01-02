@@ -25,6 +25,7 @@
 //---------------------------------------------------------
 var ai;
 var activeAI = [];
+var aiTotal = 0;
 
 var aiBasicStats = {
   health   : 100,
@@ -84,6 +85,7 @@ function loadAISprite(){
   game.load.spritesheet('templateAI', '../assets/monster/templateAI.png', 20, 20);
   game.load.spritesheet('slime', '../assets/monster/Slime.png', 16, 16);
   game.load.spritesheet('goblin', '../assets/monster/Goblin.png', 16, 16);
+  game.load.spritesheet('goblinArrow', '../assets/monster/attack_animation/goblin_arrow.png', 7, 3);
   game.load.spritesheet('collision', '../assets/monster/attack_animation/red_collision.png', 20, 20);
 }
 
@@ -96,10 +98,11 @@ function createAI(){
   //  if thats not the case add to the end of AI_Running
   //
   var i = 0;
-  console.log("Start AI", activeAI.length);
-  for(i = 0; i < 5; i++){
-    //goblinMaking(50+i*50,50,i);
-    //goblinSwordsMan(50+i*50,50,i);
+  //console.log("Start AI", activeAI.length);
+  for(i = 0; i < 50; i++){
+    //goblinMaking(50,50,i);
+    //goblinSwordsMan(50,50,i+1);
+    //i++;
     //goblinArcher(50+i*50,50,i);
     
   }
@@ -116,12 +119,12 @@ function goblinSwordsMan(x,y,id){
     goblin.body.fixedRotation = true;
     aiMaterial = game.physics.p2.createMaterial('aiMaterial', goblin.body);
     goblin.body.health = 10;
-    goblin.damage = 10;
+    goblin.damage = 1000;
     goblin.doAttack = function(){}
     for(var attrname in aiBasicStats){goblin[attrname] = aiBasicStats[attrname]}
     goblin.aid = id;
     goblinSword();
-    console.log(goblin);
+    //console.log(goblin);
     goblin.visual = game.add.sprite(-24,-15,'goblin');
     goblin.visual.scale.setTo(3,3);
     goblin.visual.setScaleMinMax(3,3);
@@ -146,7 +149,7 @@ function goblinStaber(x, y, id){
     for(var attrname in aiBasicStats){goblin[attrname] = aiBasicStats[attrname]}
     goblin.aid = id;
     goblinDagger();
-    console.log(goblin);
+    //console.log(goblin);
     goblin.visual = game.add.sprite(-24,-15,'goblin');
     goblin.visual.scale.setTo(3,3);
     goblin.visual.setScaleMinMax(3,3);
@@ -156,7 +159,7 @@ function goblinStaber(x, y, id){
     createGoblinStaberAnimations();
     goblin.dead = false;
     activeAI.push(goblin);
-    console.log("AI total", activeAI.length);
+    //console.log("AI total", activeAI.length);
 }
 
 function goblinArcher(x,y,id){
@@ -171,7 +174,7 @@ function goblinArcher(x,y,id){
     for(var attrname in aiBasicStats){goblin[attrname] = aiBasicStats[attrname]}
     goblin.aid = id;
     goblinBow();
-    console.log(goblin);
+    //console.log(goblin);
     goblin.visual = game.add.sprite(-24,-15,'goblin');
     goblin.visual.scale.setTo(3,3);
     goblin.visual.setScaleMinMax(3,3);
@@ -202,7 +205,7 @@ function goblinMaking(x, y, id){
     goblin.aid = id;
     goblinSword();
     //goblin.sprite()
-    console.log(goblin);
+    //console.log(goblin);
 
 
     goblin.visual = game.add.sprite(-24,-15,'goblin');
@@ -221,7 +224,7 @@ function goblinMaking(x, y, id){
     //goblinVisual.alpha = 1;
     goblin.dead = false;
     activeAI.push(goblin);
-    console.log("AI total", activeAI.length);
+    //console.log("AI total", activeAI.length);
 }
 
 function createGoblinStaberAnimations(){
@@ -256,13 +259,15 @@ function goblinDagger(){
   //damage.body.onEndContact.add(harm, damage);
 
   for(var attrname in aiBasicStats){goblin.attack[attrname] = aiBasicStats[attrname]}
-  console.log(damage);
+  //console.log(damage);
   goblin.attack.body.static = true;
   goblin.attack.body.data.shapes[0].sensor = true;
   goblin.attack.id = activeAI.length;//Change THIS LATer
-  console.log("Goblin ATtack", goblin.attack);
+  //console.log("Goblin ATtack", goblin.attack);
   
   goblin.attack.postUpdate = function(){
+    if(activeAI[this.id] == 0){ this.destroy; return;}
+    this.damage.direction = activeAI[this.id].direction;
     this.reset(activeAI[this.id].body.x+13 * activeAI[this.id].direction, activeAI[this.id].body.y-15);
   }
 }
@@ -318,15 +323,31 @@ function goblinBow(){
   goblin.finishAction = false;
   goblin.attackLimit = 1;
   goblin.attackTotal = 0
+  goblin.lastDirection = goblin.direction;
 
   goblin.doAttack = function(){
+    if(this.targetAtX == 1){
+      if(this.lastDirection == -1) {
+        this.direction = this.lastDirection = 1;
+        this.visual.setScaleMinMax(3,3);
+        this.visual.scale.setTo(3,3);
+        this.visual.anchor.setTo(0,0);
+      }
+    }
+    else{
+      if(this.lastDirection == 1) {
+        this.direction =  this.lastDirection = -1;
+        this.visual.setScaleMinMax(-3,3);
+        this.visual.scale.setTo(-3,3);
+        this.visual.anchor.setTo(1,0);
+      }
+    }
     //return;
     //3rd State - The End Of The Animation
     if(this.finishAction){
-
-        this.finishAction = false;
-        this.readyAction = false;
-        this.attackTotal = 0;
+      this.finishAction = false;
+      this.readyAction = false;
+      this.attackTotal = 0;
     }
     //1st State - The Start Of An Attack Animation
     else if(!this.readyAction){
@@ -346,11 +367,6 @@ function goblinBow(){
       if(this.visual.frame == 29){
         this.finishAction = true;
       }
-      /*
-      else if(this.visual.frame == 51){
-        this.finishAction = true;
-      }else{
-      }*/
     }
   }
 }
@@ -365,7 +381,7 @@ function aiHarmWave(goblinD){
   goblinD.damage.body.health = 10;
   goblinD.damage.damage = 10;
   goblinD.damage.id = goblinD.aid;
-  console.log("Goblin ID", goblinD.aid);
+  //console.log("Goblin ID", goblinD.aid);
 
   goblinD.damage.body.onBeginContact.add(harm, goblinD.damage);
 
@@ -375,6 +391,7 @@ function aiHarmWave(goblinD){
 
   goblinD.damage.pushPowerX = 200;
   goblinD.damage.pushPowerY = -100;
+  goblinD.damage.direction = goblinD.direction;
 
   goblinD.damage.alpha = 0;
 
@@ -385,16 +402,18 @@ function aiHarmWave(goblinD){
     }
     if(activeAI[this.id] == 0) return;
     this.reset(activeAI[this.id].body.x + 13*activeAI[this.id].direction
-              ,activeAI[this.id].body.y);
+        ,activeAI[this.id].body.y);
+    this.damage.direction = activeAI[this.id].direction;
   }
 }
 
 function aiHarmTowards(goblinD){
-  goblinD.damage = game.add.sprite(goblinD.body.x, goblinD.body.y-15, 'collision');
-  goblinD.damage.scale.setTo(1,1);
+  goblinD.damage = game.add.sprite(goblinD.body.x, goblinD.body.y-15, 'goblinArrow');
+  goblinD.damage.scale.setTo(4,4);
   goblinD.damage.alpha = 0;
 
-  goblinD.damage.visual = game.add.sprite(goblinD.body.x, goblinD.body.y-20, 'collision');
+  goblinD.damage.visual = game.add.sprite(goblinD.body.x, goblinD.body.y-20, 'goblinArrow');
+  goblinD.damage.visual.scale.setTo(4,4);
 
   game.physics.p2.enable(goblinD.damage);
 
@@ -403,7 +422,7 @@ function aiHarmTowards(goblinD){
   goblinD.damage.body.health = 1;
   goblinD.damage.damage = 10;
   goblinD.damage.id = goblinD.aid;
-  console.log("Goblin ID", goblinD.aid);
+  //console.log("Goblin ID", goblinD.aid);
 
   goblinD.damage.body.onBeginContact.add(harm, goblinD.damage);
 
@@ -411,13 +430,24 @@ function aiHarmTowards(goblinD){
   goblinD.damage.body.data.shapes[0].sensor = true;
   goblinD.damage.endAtTime = universalTime + 5;
 
-    console.log("did i happen");
+  //console.log("did i happen");
 
   goblinD.damage.pushPowerX = 200;
   goblinD.damage.pushPowerY = -100;
 
   //goblinD.damage.body.velocity.x = 400 * goblinD.direction;
   accelerateToObject(goblinD.damage, player, 400);
+
+  if(goblin.direction == -1) {
+    goblinD.damage.visual.setScaleMinMax(-3,3);
+    goblinD.damage.visual.scale.setTo(-3,3);
+    goblinD.damage.visual.anchor.setTo(1,0);
+  }
+
+
+  goblinD.damage.direction = goblinD.direction;
+
+
 
 
   goblinD.damage.postUpdate = function(){
@@ -431,10 +461,10 @@ function aiHarmTowards(goblinD){
 }
 
 function accelerateToObject(obj1, obj2, speed) {
-    if (typeof speed === 'undefined') { speed = 60; }
-    var angle = Math.atan2(obj2.y - obj1.y, obj2.x - obj1.x);
-    obj1.body.velocity.x = Math.cos(angle) * speed;    // accelerateToObject 
-    obj1.body.velocity.y = Math.sin(angle) * speed;
+  if (typeof speed === 'undefined') { speed = 60; }
+  var angle = Math.atan2(obj2.y - obj1.y, obj2.x - obj1.x);
+  obj1.body.velocity.x = Math.cos(angle) * speed;    // accelerateToObject 
+  obj1.body.velocity.y = Math.sin(angle) * speed;
 }
 
 
@@ -470,10 +500,10 @@ function harmProjectile(body1){
     console.log("you dont have invincible");
     if(body1.sprite.invincible == null) return;
     if(player.barrier) return;
-    harmPlayer(player, 10);
+    //harmPlayer(player, 10);
     hurt.play();
     console.log(body1);
-    push(this, body1);
+    //push(this, body1);
     startInvincible();
   }
   tester = this;
@@ -487,7 +517,7 @@ function doAttack(){
 
 function push(ai, target){
   console.log("What");
-  player.body.velocity.x += ai.pushPowerX * activeAI[ai.id].direction;
+  player.body.velocity.x += ai.pushPowerX * ai.direction;
   player.body.velocity.y += ai.pushPowerY;
 }
 
@@ -524,7 +554,6 @@ function patrol(ai){
   ai.body.velocity.x = ai.curSpd * ai.targetAtX;
 }
 function follow(ai){
-  console.log("AI SPeed", ai.curSpd);
   ai.body.velocity.x = ai.curSpd * ai.targetAtX;
   ai.direction = ai.targetAtX;
 }
@@ -595,7 +624,7 @@ function testDamage(){
   damage.body.fixedRotation = true;
   aiMaterial = game.physics.p2.createMaterial('aiMaterial', damage.body);
   damage.body.health = 10;
-  damage.damage = 10;
+  damage.damage = 1000;
 
   damage.body.onBeginContact.add(harm, damage);
   //damage.body.onEndContact.add(harm, damage);
@@ -619,19 +648,19 @@ function continueGoblins(){
   timer.start();
 
   timer2 = game.time.create(false);
-  timer2.loop(6000, goblinRare123, this);
+  timer2.loop(3000, goblinRare123, this);
   timer2.start();
 }
 
 function goblinMaking123(){
   console.log("NEW GOBLIN AT" ,activeAI.length);
-  goblinSwordsMan(50,50,activeAI.length);
-  goblinSwordsMan(50,50,activeAI.length);
-  goblinStaber(100+250,50,activeAI.length);
+  // goblinSwordsMan(50,50,activeAI.length);
+  // goblinSwordsMan(50,50,activeAI.length);
+  // goblinStaber(100+250,50,activeAI.length);
 }
 
 function goblinRare123(){
-    goblinArcher(300,300,activeAI.length);
+  goblinArcher(300,300,activeAI.length);
 }
 
 //--------------
@@ -639,19 +668,19 @@ function goblinRare123(){
 //--------------
 var yAxis = p2.vec2.fromValues(0, 1);
 /*
-function checkIfCanJump(entity) {
-  var result = false;
-  for (var i=0; i < game.physics.p2.world.narrowphase.contactEquations.length; i++){
-    var c = game.physics.p2.world.narrowphase.contactEquations[i];
-    if (c.bodyA === player.body.data || c.bodyB === player.body.data){
-      var d = p2.vec2.dot(c.normalA, yAxis);
-      if (c.bodyA === player.body.data){
-        d *= -1;
-      }
-      if (d > 0.5){
-        result = true;
-      }
-    }
-  }
-  return result;
-}*/
+   function checkIfCanJump(entity) {
+   var result = false;
+   for (var i=0; i < game.physics.p2.world.narrowphase.contactEquations.length; i++){
+   var c = game.physics.p2.world.narrowphase.contactEquations[i];
+   if (c.bodyA === player.body.data || c.bodyB === player.body.data){
+   var d = p2.vec2.dot(c.normalA, yAxis);
+   if (c.bodyA === player.body.data){
+   d *= -1;
+   }
+   if (d > 0.5){
+   result = true;
+   }
+   }
+   }
+   return result;
+   }*/

@@ -8,5 +8,5 @@ function startUniversalTimer(){
 
 function incrementUniversalTimer(){
   universalTime++;
-  console.log("Universal Timer", universalTime);
+  //console.log("Universal Timer", universalTime);
 }

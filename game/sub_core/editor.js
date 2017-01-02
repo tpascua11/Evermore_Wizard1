@@ -28,6 +28,7 @@ var livingGame = {
            updateHUD();
            aiRuning();
            game.world.bringToTop(bg2);
+           //infoAll();
          }
 }
 
@@ -35,6 +36,15 @@ function create() {
 }
 
 function update() {
+}
+
+function infoAll(){
+  console.log("PLAYER BODY POSITION");
+  console.log(player.body.x);
+  console.log(player.body.y);
+  console.log("PLAYER Velocity");
+  console.log(player.body.velocity.x);
+  console.log(player.body.velocity.y);
 }
 
 //cursors = game.input.keyboard.createCursorKeys();

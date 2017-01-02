@@ -79,7 +79,7 @@ function input(){
     }
   }
   else if(state == "sprinting"){
-    console.log(state, action);
+    //console.log(state, action);
   }
   else if(state == "bomb"){
     switch(action){
@@ -94,7 +94,7 @@ function input(){
     }
   }
   else{
-    console.log(state, action);
+    //console.log(state, action);
   }
   console.log(state, this.action);
 }
@@ -276,8 +276,10 @@ function hitBox(body1, body2){
     console.log(body1.sprite.attack);
     tmp = body1.sprite.aid;
     if(body1.sprite.attack != null) body1.sprite.attack.destroy();
+    console.log("HERE! ", body1);
     body1.sprite.destroy();
     activeAI[tmp] = 0;
+    aiTotal--;
   }
 }
 //--------------------------------------
@@ -477,7 +479,6 @@ function playerLevitate(){
     player.levitation = false;
     return;
   }
-  console.log("testing");
   player.body.velocity.y = 0;
 
 }
