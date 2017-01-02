@@ -38,8 +38,8 @@ var hearts;
 var invc;
 
 var playerStats = {
-  health   : 100,
-  maxHealth: 100,
+  health   : 200,
+  maxHealth: 200,
   mana     : 75 ,
   maxMana  : 100,
   rmana    : 25 ,
@@ -110,6 +110,7 @@ function loadPlayerResource(){
   game.load.audio('steps', '../assets/step.wav');
   game.load.audio('jumpSound', '../assets/Jump19.wav');
   game.load.audio('hurt', '../assets/sound_effect/hurt.wav');
+  game.load.audio('shieldHurt', '../assets/sound_effect/tmp_shield_hurt.wav');
 }
 
 //---------------------------------------------------------
@@ -162,6 +163,7 @@ function playerSounds(){
   steps = game.add.audio('steps'); steps.volume = 0.5;
   jumpSound = game.add.audio('jumpSound'); jumpSound.volume = 0.5; 
   hurt = game.add.audio('hurt');
+  shieldHurt = game.add.audio('shieldHurt'); shieldHurt.volume = 0.5;
 }
 
 function playerControl(){
@@ -315,6 +317,7 @@ function startRegenTimer(){
 function regainMana(){
   if(player.levitation) player.rmana -= 2;
   else if (player.maxRmana <= player.rmana || player.casting) return;
+  else if(player.rmana < 0) player.rmana = 0;
   else player.rmana += player.rechargeRate;
 }
 //__________
@@ -545,8 +548,7 @@ function castedLeft(){
   }
   else{
     if(moveUp.isDown) visual.frame = 64;//Shoot Up
-    else if(moveDown.isDown) visual.frame = 61;//Shooting Down
-    else visual.frame = 66;//Shooting Foward
+    else if(moveDown.isDown) visual.frame = 61;//Shooting se visual.frame = 66;//Shooting Foward
   }
 }
 
@@ -567,6 +569,10 @@ function harmPlayer(body, damage){
   if(player.invincible) return;
   body.health -= damage;
   console.log("Health", body.health);
+  if(body.health <= 0) missionFailed();
+}
+function missionFailed(){
+  window.location.replace("https://www.youtube.com/watch?v=oHg5SJYRHA0");
 }
 
 //--------------

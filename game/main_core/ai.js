@@ -40,7 +40,7 @@ var aiBasicStats = {
   targetAtY: 0,
   stop     : 0,
   stopRange: 50,
-  detectRange: 400,
+  detectRange: 700,
   pushPowerX: 500,
   pushPowerY: 200,
   actionTime: 0,
@@ -119,7 +119,7 @@ function goblinSwordsMan(x,y,id){
     goblin.body.fixedRotation = true;
     aiMaterial = game.physics.p2.createMaterial('aiMaterial', goblin.body);
     goblin.body.health = 10;
-    goblin.damage = 1000;
+    goblin.damage = 10;
     goblin.doAttack = function(){}
     for(var attrname in aiBasicStats){goblin[attrname] = aiBasicStats[attrname]}
     goblin.aid = id;
@@ -254,6 +254,7 @@ function goblinDagger(){
   aiMaterial = game.physics.p2.createMaterial('aiMaterial', goblin.attack.body);
   goblin.attack.body.health = 10;
   goblin.attack.damage = 10;
+  goblin.attack.alpha = 0;
 
   goblin.attack.body.onBeginContact.add(harm, goblin.attack);
   //damage.body.onEndContact.add(harm, damage);
@@ -478,7 +479,11 @@ function harm(body1){
   else{
     console.log("you dont have invincible");
     if(body1.sprite.invincible == null) return;
-    if(player.barrier) return;
+    if(player.barrier){
+      shieldHurt.play();
+      player.rmana--;
+      return;
+    }
     harmPlayer(player, 10);
     hurt.play();
     console.log(body1);
@@ -624,7 +629,7 @@ function testDamage(){
   damage.body.fixedRotation = true;
   aiMaterial = game.physics.p2.createMaterial('aiMaterial', damage.body);
   damage.body.health = 10;
-  damage.damage = 1000;
+  damage.damage = 10;
 
   damage.body.onBeginContact.add(harm, damage);
   //damage.body.onEndContact.add(harm, damage);
@@ -648,19 +653,19 @@ function continueGoblins(){
   timer.start();
 
   timer2 = game.time.create(false);
-  timer2.loop(3000, goblinRare123, this);
+  timer2.loop(7000, goblinRare123, this);
   timer2.start();
 }
 
 function goblinMaking123(){
   console.log("NEW GOBLIN AT" ,activeAI.length);
-  // goblinSwordsMan(50,50,activeAI.length);
-  // goblinSwordsMan(50,50,activeAI.length);
-  // goblinStaber(100+250,50,activeAI.length);
+  goblinSwordsMan(600,50,activeAI.length);
+  goblinSwordsMan(600,50,activeAI.length);
+  goblinStaber(500,50,activeAI.length);
 }
 
 function goblinRare123(){
-  goblinArcher(300,300,activeAI.length);
+  goblinArcher(800,300,activeAI.length);
 }
 
 //--------------

@@ -116,7 +116,7 @@ function setupMouse(){
 }
 
 function setupMouseAlt(){
-    mouseAlt = game.add.sprite(300, 100, 'click');
+    mouseAlt = game.add.sprite(-1000, 100, 'click');
     mouseAlt.scale.setTo(0.5, 0.5);
     game.physics.p2.enable(mouseAlt);
     mouseAlt.body.fixedRotation = true; 
