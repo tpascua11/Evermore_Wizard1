@@ -99,8 +99,11 @@ function createAI(){
   console.log("Start AI", activeAI.length);
   for(i = 0; i < 5; i++){
     //goblinMaking(50+i*50,50,i);
-    goblinSwordsMan(50+i*50,50,i);
+    //goblinSwordsMan(50+i*50,50,i);
+    //goblinArcher(50+i*50,50,i);
+    
   }
+  continueGoblins();
 
 }
 //---------------
@@ -130,6 +133,7 @@ function goblinSwordsMan(x,y,id){
     activeAI.push(goblin);
 }
 
+
 function goblinStaber(x, y, id){
     goblin = game.add.sprite(x, y, 'templateAI');
     goblin.scale.setTo(1,2);
@@ -154,6 +158,32 @@ function goblinStaber(x, y, id){
     activeAI.push(goblin);
     console.log("AI total", activeAI.length);
 }
+
+function goblinArcher(x,y,id){
+    goblin = game.add.sprite(x, y, 'templateAI');
+    goblin.scale.setTo(1,2);
+    game.physics.p2.enable(goblin);
+    goblin.body.fixedRotation = true;
+    aiMaterial = game.physics.p2.createMaterial('aiMaterial', goblin.body);
+    goblin.body.health = 10;
+    goblin.damage = 10;
+    goblin.doAttack = function(){}
+    for(var attrname in aiBasicStats){goblin[attrname] = aiBasicStats[attrname]}
+    goblin.aid = id;
+    goblinBow();
+    console.log(goblin);
+    goblin.visual = game.add.sprite(-24,-15,'goblin');
+    goblin.visual.scale.setTo(3,3);
+    goblin.visual.setScaleMinMax(3,3);
+    goblin.visual.frame = 3;
+    goblin.addChild(goblin.visual);
+    goblin.stopRange = 1000;
+    goblin.curSpd = 0;
+    createGoblinArcherAnimations();
+    goblin.dead = false;
+    activeAI.push(goblin);
+}
+
 
 function goblinMaking(x, y, id){
     goblin = game.add.sprite(x, y, 'templateAI');
@@ -203,6 +233,13 @@ function createGoblinSwordsmanAnimations(){
   goblin.visual.animations.add('move', [41, 42, 43, 44, 45, 46], 25, true);
   goblin.visual.animations.play('move', 10, true);
   goblin.visual.animations.add('attack', [49, 49, 49, 50, 51], 10, true);
+}
+
+function createGoblinArcherAnimations(){
+  goblin.visual.animations.add('move', [25], 25, true);
+  goblin.visual.animations.add('attack', [25, 26, 27, 28, 29, 30], 3, true);
+  goblin.visual.animations.play('move', true);
+  //goblin.visual.animations.add('attack', [49, 49, 49, 50, 51], 10, true);
 }
 
 function goblinDagger(){
@@ -274,6 +311,51 @@ function goblinSword(){
   }
 }
 
+function goblinBow(){
+  goblin.doActionAt = 2;
+  goblin.whenAction = 0;
+  goblin.readyAction = false;
+  goblin.finishAction = false;
+  goblin.attackLimit = 1;
+  goblin.attackTotal = 0
+
+  goblin.doAttack = function(){
+    //return;
+    //3rd State - The End Of The Animation
+    if(this.finishAction){
+
+        this.finishAction = false;
+        this.readyAction = false;
+        this.attackTotal = 0;
+    }
+    //1st State - The Start Of An Attack Animation
+    else if(!this.readyAction){
+      this.lastAnimation = 3;//3 Will Be Attack State For ALL
+      this.visual.animations.play('attack', true);
+      this.readyAction = true;
+    }
+    //2nd State - The Placement of An Attack Collison
+    else{
+      if(this.visual.frame == 28){
+        if(this.attackTotal <  this.attackLimit){
+
+          aiHarmTowards(this);
+          this.attackTotal++;
+        }
+      }
+      if(this.visual.frame == 29){
+        this.finishAction = true;
+      }
+      /*
+      else if(this.visual.frame == 51){
+        this.finishAction = true;
+      }else{
+      }*/
+    }
+  }
+}
+
+
 function aiHarmWave(goblinD){
   goblinD.damage = game.add.sprite(-500, 100, 'collision');
   goblinD.damage.scale.setTo(1,1);
@@ -291,18 +373,70 @@ function aiHarmWave(goblinD){
   goblinD.damage.body.data.shapes[0].sensor = true;
   goblinD.damage.endAtTime = universalTime + 1;
 
-  goblinD.damage.pushPowerX = 700;
+  goblinD.damage.pushPowerX = 200;
   goblinD.damage.pushPowerY = -100;
 
+  goblinD.damage.alpha = 0;
+
   goblinD.damage.postUpdate = function(){
-    //console.log("Harm Wave");
-    this.reset(activeAI[this.id].body.x + 13*activeAI[this.id].direction
-              ,activeAI[this.id].body.y);
-    if(this.endAtTime <= universalTime){
+
+    if((this.endAtTime <= universalTime) || this.dead == true){
       this.destroy();
     }
+    if(activeAI[this.id] == 0) return;
+    this.reset(activeAI[this.id].body.x + 13*activeAI[this.id].direction
+              ,activeAI[this.id].body.y);
   }
 }
+
+function aiHarmTowards(goblinD){
+  goblinD.damage = game.add.sprite(goblinD.body.x, goblinD.body.y-15, 'collision');
+  goblinD.damage.scale.setTo(1,1);
+  goblinD.damage.alpha = 0;
+
+  goblinD.damage.visual = game.add.sprite(goblinD.body.x, goblinD.body.y-20, 'collision');
+
+  game.physics.p2.enable(goblinD.damage);
+
+  goblinD.damage.body.fixedRotation = true;
+  //aiMaterial = game.physics.p2.createMaterial('aiMaterial', damage);
+  goblinD.damage.body.health = 1;
+  goblinD.damage.damage = 10;
+  goblinD.damage.id = goblinD.aid;
+  console.log("Goblin ID", goblinD.aid);
+
+  goblinD.damage.body.onBeginContact.add(harm, goblinD.damage);
+
+  goblinD.damage.body.static = true;
+  goblinD.damage.body.data.shapes[0].sensor = true;
+  goblinD.damage.endAtTime = universalTime + 5;
+
+    console.log("did i happen");
+
+  goblinD.damage.pushPowerX = 200;
+  goblinD.damage.pushPowerY = -100;
+
+  //goblinD.damage.body.velocity.x = 400 * goblinD.direction;
+  accelerateToObject(goblinD.damage, player, 400);
+
+
+  goblinD.damage.postUpdate = function(){
+    if((this.endAtTime <= universalTime)){
+      this.visual.destroy();
+      this.destroy();
+      return;
+    }
+    this.visual.reset(this.body.x, this.body.y);
+  }
+}
+
+function accelerateToObject(obj1, obj2, speed) {
+    if (typeof speed === 'undefined') { speed = 60; }
+    var angle = Math.atan2(obj2.y - obj1.y, obj2.x - obj1.x);
+    obj1.body.velocity.x = Math.cos(angle) * speed;    // accelerateToObject 
+    obj1.body.velocity.y = Math.sin(angle) * speed;
+}
+
 
 function harm(body1){
   if(body1 == null) return;
@@ -324,6 +458,28 @@ function harm(body1){
   tester = this;
   tester.direction *= -1;
 }
+
+function harmProjectile(body1){
+  if(body1 == null) return;
+  if(body1.indestructible || (this.alliance == body1.sprite.alliance)) return;
+  if(body1.sprite.invincible){
+    console.log("you have invincible");
+    return;
+  }
+  else{
+    console.log("you dont have invincible");
+    if(body1.sprite.invincible == null) return;
+    if(player.barrier) return;
+    harmPlayer(player, 10);
+    hurt.play();
+    console.log(body1);
+    push(this, body1);
+    startInvincible();
+  }
+  tester = this;
+  tester.direction *= -1;
+}
+
 
 function doAttack(){
   attack.body.data.shapes[0].sensor = true;
@@ -368,7 +524,7 @@ function patrol(ai){
   ai.body.velocity.x = ai.curSpd * ai.targetAtX;
 }
 function follow(ai){
-  //if(ai.stop) ai.body.velocity.x = 0;
+  console.log("AI SPeed", ai.curSpd);
   ai.body.velocity.x = ai.curSpd * ai.targetAtX;
   ai.direction = ai.targetAtX;
 }
@@ -407,7 +563,7 @@ function aiRuning(){
     }
     if(activeAI[i].stop || activeAI[i].readyAction){
       activeAI[i].doAttack();
-      activeAI[i].body.velocity.x = 0;
+      //activeAI[i].body.velocity.x = 0;
     }
     else{
       movementAnimation(activeAI[i]);
@@ -459,13 +615,23 @@ function testDamage(){
 //------------------------------
 function continueGoblins(){
   timer = game.time.create(false);
-  timer.loop(500, goblinMaking123, this);
+  timer.loop(4000, goblinMaking123, this);
   timer.start();
+
+  timer2 = game.time.create(false);
+  timer2.loop(6000, goblinRare123, this);
+  timer2.start();
 }
 
 function goblinMaking123(){
   console.log("NEW GOBLIN AT" ,activeAI.length);
-  goblinMaking(50, 50, activeAI.length);
+  goblinSwordsMan(50,50,activeAI.length);
+  goblinSwordsMan(50,50,activeAI.length);
+  goblinStaber(100+250,50,activeAI.length);
+}
+
+function goblinRare123(){
+    goblinArcher(300,300,activeAI.length);
 }
 
 //--------------
