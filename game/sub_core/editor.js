@@ -15,8 +15,8 @@ var livingGame = {
             setupSpells();
             createAI();
             testDamage();
-            //setupMouse();
-            //toolControls();
+            setupMouse();
+            toolControls();
             //makeBlock();
             dependOnTest();
           },

@@ -106,7 +106,7 @@ function createAI(){
     //goblinArcher(50+i*50,50,i);
     
   }
-  continueGoblins();
+  //continueGoblins();
 
 }
 //---------------

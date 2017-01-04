@@ -84,7 +84,7 @@ var playerStats = {
 //---------------------------------------------------------
 function loadPlayerResource(){
   game.load.spritesheet('dino', '../assets/player/Vark_TemplateGreen.png', 20, 20);
-  game.load.spritesheet('visualDino', '../assets/player/Vark_v54.png', 20, 20);
+  game.load.spritesheet('visualDino', '../assets/player/Vark_v57.png', 20, 20);
   game.load.spritesheet('redBoundary', '../assets/player/Vark_TemplateRedSingle.png', 20, 20);
   game.load.spritesheet('template', '../assets/player/Player_Template.png', 20, 20);
 
@@ -549,6 +549,7 @@ function castedLeft(){
   else{
     if(moveUp.isDown) visual.frame = 64;//Shoot Up
     else if(moveDown.isDown) visual.frame = 61;//Shooting se visual.frame = 66;//Shooting Foward
+    else visual.frame = 66;
   }
 }
 
