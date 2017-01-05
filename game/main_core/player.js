@@ -63,10 +63,11 @@ var playerStats = {
   jumpDirection: 0,
   laying: 0,
   casting  : 0  ,
+  charging  : 0  ,
+  barrier  : 0 ,
   airCasted: 0  ,
   charged  : 0  ,
   energy   : 0 ,
-  barrier  : 0 ,
   levitation: 0 ,
   invincible: 0,
   dot: 0, 
@@ -94,15 +95,19 @@ function loadPlayerResource(){
   game.load.spritesheet('bmissle', '../assets/DarkMagicMisslesB.png', 64, 64);
   game.load.spritesheet('smissle', '../assets/Blue_Magic_Missles.png', 16, 16);
   game.load.spritesheet('energyBall', '../assets/spells/BlueEnergyBall.png', 16, 16);
-  //game.load.spritesheet('teleport', '../assets/White_Teleport-sheet.png', 16, 16);
+  game.load.spritesheet('teleport', '../assets/White_Teleport-sheet.png', 16, 16);
   game.load.spritesheet('casting', '../assets/Casting.png', 16, 16);
   game.load.spritesheet('magicBlock', '../assets/spells/MagicBlock.png', 8, 16);
   game.load.spritesheet('magicShield', '../assets/spells/Shield_Up.png', 4, 16);
   game.load.spritesheet('circleBarrier', '../assets/spells/barrierv2.png', 20, 20);
   game.load.spritesheet('magicExpand', '../assets/spells/BlueExpand.png', 16, 16);
   game.load.spritesheet('magicPush', '../assets/spells/barrierPush.png', 6, 16);
+  game.load.spritesheet('magicBlast', '../assets/spells/MagicBlast.png', 30, 20);
+
+  game.load.spritesheet('chargeCast', '../assets/spells/Casting2.png', 26, 26);
 
   game.load.audio('blast', '../assets/sound_effect/Blast.wav');
+  game.load.audio('blast2', '../assets/sound_effect/blast_simple.wav');
   game.load.audio('charge', '../assets/sound_effect/sootheCharge2.wav');
   game.load.audio('shoot', '../assets/sound_effect/bigShot.wav');
   game.load.audio('teleport', '../assets/sound_effect/Teleport.wav');
@@ -249,7 +254,7 @@ function playerHUD(){
   game.world.bringToTop(hearts);
   game.world.bringToTop(manaHUD);
 
-  game.camera.follow(player);
+  game.camera.follow(player, Phaser.Camera.FOLLOW_PLATFORMER);
 }
 
 //--------------------------------------------------------
@@ -316,13 +321,14 @@ function startRegenTimer(){
 }
 function regainMana(){
   if(player.levitation) player.rmana -= 2;
-  else if (player.maxRmana <= player.rmana || player.casting) return;
+  else if (player.maxRmana <= player.rmana || player.charging || player.barrier) return;
   else if(player.rmana < 0) player.rmana = 0;
   else player.rmana += player.rechargeRate;
 }
 //__________
 // Charging
 //__________
+/*
 function chargingTimer(){
   chargeTimer = game.time.create(false);
   chargeTimer.loop(500, incrementChargeTimer, this);
@@ -347,7 +353,7 @@ function incrementChargeTimer(){
   }
   if(player.casting) chargingBlast();
   //chargeSound.play();
-}
+}*/
 //______________
 // Invincible
 //______________
@@ -389,7 +395,7 @@ function movement(){
   else player.jump = 1;
   if(player.laying == 1 && (!moveDown.isDown)) player.laying = 0;
 
-  if(player.casting) casting();
+  if(player.casting || player.charging || player.barrier) casting();
   else if(player.jumping) playerJumpMovement();
   else if(player.jump)    playerFallingMovement();
   else if(player.moving >= 0) casting();
@@ -573,7 +579,7 @@ function harmPlayer(body, damage){
   if(body.health <= 0) missionFailed();
 }
 function missionFailed(){
-  window.location.replace("https://www.youtube.com/watch?v=oHg5SJYRHA0");
+  //window.location.replace("https://www.youtube.com/watch?v=oHg5SJYRHA0");
 }
 
 //--------------

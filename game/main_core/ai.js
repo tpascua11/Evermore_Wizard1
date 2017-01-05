@@ -649,7 +649,7 @@ function testDamage(){
 //------------------------------
 function continueGoblins(){
   timer = game.time.create(false);
-  timer.loop(4000, goblinMaking123, this);
+  timer.loop(1000, goblinMaking123, this);
   timer.start();
 
   timer2 = game.time.create(false);

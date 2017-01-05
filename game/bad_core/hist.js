@@ -270,4 +270,104 @@ function chargingBlast(){
   blaster.scale.setTo(pCharge, pCharge);
 }
 
+function makeMagicBomb(){
+  player.casting = 1;
+  startMagicBombTimer();
+
+  chargeSound.loop = true;
+  chargeSound.play();
+  pCharge = 1;
+  player.rmana-= 1;
+  magicBomb = game.add.sprite(player.body.x + 100*player.direction, player.body.y, 'energyBall');
+  magicBomb.scale.setTo(0.3,0.3);
+  game.physics.p2.enable(magicBomb);
+  magicBomb.body.alliance = 0;
+  magicBomb.body.static = true;
+  magicBomb.body.enableBody = false;
+  magicBomb.pCharge = pCharge;
+  magicBomb.scale.setTo(pCharge,pCharge);
+  magicBomb.gravityScale = 0;
+  magicBomb.body.fixedRotation = true;
+  magicBomb.animations.add('run', [0, 1, 2, 3, 4,5], true);
+  magicBomb.animations.add('end', [0, 1, 2, 3, 4, 5, 6], 30, true);
+  magicBomb.animations.play('run', 15, true);
+  magicBomb.body.x = player.body.x + 100*player.direction;
+  magicBomb.body.y = player.body.y;
+  magicBomb.end = false;
+  magicBomb.body.ptype = 'blast';
+
+  placeFrontOfPlayer(magicBomb);
+  player.energy = true;
+
+  //game.world.bringToTop(bg2);
+}
+
+
+function shootMagicBomb(){
+  if(!player.casting || player.energy <= 0) return;
+
+  if(pCharge > 1.2) magicBomb.damage = 0.5 + pCharge*10;
+  else magicBomb.damage = 1;
+  //console.log('Blaster damage', blaster.damage);
+  magicBomb.castEnd = "bombFinale";
+  magicBomb.body.static = false;
+  magicBomb.body.fixedRotation = true;
+  magicBomb.body.data.gravityScale = 0;
+  magicBomb.body.damping = 0;
+  magicBomb.body.force = 3000;
+  placeFrontOfPlayer(magicBomb);
+
+  magicBomb.body.setMaterial(magicMaterial);
+  magicBomb.timeAt = pTime + 10;
+  magicBomb.body.onBeginContact.add(bombFinaleContact, magicBomb);
+  spells.push(magicBomb);
+  player.casting = 0;
+  shootSound.play();
+
+  player.jumping = 0;
+  player.jumpAtY = 0;
+  player.moving = 2;
+  
+  endMagicBombTimer();
+
+  moveFrontOfPlayer(magicBomb);
+  //game.world.bringToTop(bg2);
+
+  player.casting = false;
+  player.energy = false;
+  if(pCharge >= 4) movePlayer(-600, -600);
+
+  //chargeSound.loop = false;
+  chargeSound.stop();
+}
+
+var magicBombTimer;
+
+function startMagicBombTimer(){
+  magicBombTimer = game.time.create(false);
+  magicBombTimer.loop(500, chargeMagicBomb, this);
+  magicBombTimer.start();
+}
+
+function endMagicBombTimer(){
+  //magicBombTimer.stop();
+  chargeTimer.stop();
+
+}
+
+function chargeMagicBomb(){
+ if(pCharge <= 4){
+    pCharge+= 0.3;
+    player.rmana -= 1;
+ }
+ if(player.casting){
+  magicBomb.pCharge = pCharge;
+  magicBomb.scale.setTo(pCharge, pCharge);
+ }
+
+ //chargeSound.play();
+}
+
+
+
 

@@ -71,26 +71,62 @@ function input(){
       case "duckStop" : break;
       case "scan"     : break;
       case "scanStop" : break;
-      case "bomb": window["makeMagicBomb"](); break;
-      case "bombStop": window["shootMagicBomb"](); break;
-      case "barrier": window["playerBarrier"](); break;
-      case "barrierStop": window["playerStopBarrier"](); break;
+      case "barrier"  : window["playerBarrier"](); break;
+      //case "barrierStop": window["playerStopBarrier"](); break;
+      case "bomb": window["chargeMagic"](); break;
+      case "bombStop": window["magicBlast"](); break;
+      //case "bombStop": window["trueMagicBomb"](); break;
       default: break;
     }
   }
   else if(state == "sprinting"){
     //console.log(state, action);
   }
-  else if(state == "bomb"){
-    switch(action){
-      case "bombBlast": break;
-      case "bombShoot": break;
+  else if(state == "charging"){
+    switch(this.action){
+      case "bombStop": window["trueMagicBomb"](); break;
+      case "jump": window["magicBlast"](); break;
+      case "walkL"    : window["playerMoveLeft"]() ; break;
+      case "walkLstop": window["playerStopLeft"]() ;break;
+      case "walkR"    : window["playerMoveRight"]();break;
+      case "walkRstop": window["playerStopRight"]();break;
+      case "sprint"   : window["playerSprint"]();break;
+      case "sprintStop": window["playerSprintStop"](); break;
+      case "duck"     : break;
+      case "duckStop" : break;
+      case "scan"     : break;
+      default: break;
     }
   }
   else if(state == "barrier"){
-    switch(action){
-      case "barrierTeleport": break;
-      case "barrier": break;
+    switch(this.action){
+      case "walkL"    : window["playerMoveLeft"]() ; break;
+      case "walkLstop": window["playerStopLeft"]() ;break;
+      case "walkR"    : window["playerMoveRight"]();break;
+      case "walkRstop": window["playerStopRight"]();break;
+      case "sprint"   : window["playerSprint"]();break;
+      case "sprintStop": window["playerSprintStop"](); break;
+      case "duck"     : break;
+      case "duckStop" : break;
+      case "scan"     : break;
+      case "jump"     : window["teleportWave"](); break;
+      case "barrierTeleport": window["teleportWave()"]();break;
+      case "barrierStop": window["playerStopBarrier"](); break;
+      default: break;
+    }
+  }
+  else if(state == "rift"){
+    switch(this.action){
+      case "duck"     : window["playerFlyDown"]();  break;
+      case "duckStop" : window["playerStopDown"](); break;
+      case "scan"     : window["playerFlyUp"](); break;
+      case "scanStop" : window["playerStopUp"](); break;
+      case "walkL"    : window["playerMoveLeft"]() ; break;
+      case "walkLstop": window["playerStopLeft"]() ;break;
+      case "walkR"    : window["playerMoveRight"]();break;
+      case "walkRstop": window["playerStopRight"]();break;
+      case "jumpStop" : window["teleportEnd"](); break;
+      default: break;
     }
   }
   else{
@@ -125,12 +161,23 @@ function playerSprintStop(){
   player.sprinting = 0;
 }
 
+function playerFlyUp(){
+  player.body.velocity.y = -250;
+}
+function playerStopUp(){
+  player.body.velocity.y = 0;
+}
+function playerFlyDown(){
+  player.body.velocity.y = 250;
+}
+function playerStopDown(){
+  player.body.velocity.y = 0;
+}
+
 function playerJump(){
   console.log("before player jump: ", player.jump);
   if(player.jump >= 1 || player.casting) return;
-  console.log("im with top");
   player.jump++;
-  console.log("after player jump: ", player.jump);
   player.jumping = 1;
   jumpSound.play();
   console.log("Jumping\n");
@@ -159,28 +206,43 @@ function setupSpells(){
   createMagicMaterial();
 
   blastSound  = game.add.audio('blast');  blastSound.volume = 0.2;
+  blast2Sound  = game.add.audio('blast2');  blast2Sound.volume = 0.2;
   chargeSound = game.add.audio('charge'); chargeSound.volume = 1;
   shootSound  = game.add.audio('shoot');  shootSound.volume = 0.5;
   teleportSound = game.add.audio('teleport'); teleportSound.volume = 0.2;
   wallSound = game.add.audio('wall'); wallSound.volume = 0.2;
 
-  circleBarrier = game.add.sprite(300, 100, 'circleBarrier');
-  circleBarrier.scale.setTo(3.2, 3.2);
+  circleBarrier = game.add.sprite(-35, -23, 'circleBarrier');
+  circleBarrier.scale.setTo(3.5, 3.5);
+  circleBarrier.setScaleMinMax(3.5, 3.5);
   circleBarrier.alpha = 0;
   circleBarrier.frame = 0;
   circleBarrier.animations.add('run', [0, 1, 2, 3, 4, 5], true);
   circleBarrier.animations.add('end', [8, 9, 10, 11, 12, 13, 14, 15, 16], false);
   circleBarrier.play('run', 10, true);
+  player.addChild(circleBarrier);
+
+  circleCasting = game.add.sprite(-40, -23, 'chargeCast');
+  circleCasting.scale.setTo(3.2, 3.2);
+  circleCasting.alpha = 0;
+  circleCasting.frame = 0;
+  circleCasting.animations.add('run', [0, 1, 2, 3, 4, 5], 5, true);
+  circleCasting.animations.add('end', [6, 7, 8, 9, 10, 11],5, true);
+  //circleCasting.play('run', true);
+  circleCasting.scale.setTo(3,3);
+  circleCasting.setScaleMinMax(3,3);
+  player.addChild(circleCasting);
+
 }
 
 function placeFrontOfPlayer(magicObject){
   if(moveDown.isDown && (moveRight.isDown || moveLeft.isDown)){
-    magicObject.body.x = player.body.x + 75*player.direction;
-    magicObject.body.y = player.body.y + 50;
+    magicObject.body.x = player.body.x + 37*player.direction;
+    magicObject.body.y = player.body.y + 40;
   }
   else if(moveUp.isDown && (moveRight.isDown || moveLeft.isDown)){
-    magicObject.body.x = player.body.x + 75*player.direction;
-    magicObject.body.y = player.body.y - 50;
+    magicObject.body.x = player.body.x + 37*player.direction;
+    magicObject.body.y = player.body.y - 40;
   }
   else if(moveDown.isDown){
     magicObject.body.x = player.body.x;
@@ -188,13 +250,51 @@ function placeFrontOfPlayer(magicObject){
   }
   else if(moveUp.isDown){
     magicObject.body.x = player.body.x;
-    magicObject.body.y = player.body.y - 60;
+    magicObject.body.y = player.body.y - 40;
   }
   else{
-    magicObject.body.y = player.body.y;
-    magicObject.body.x = player.body.x + 75 * player.direction;
+    magicObject.body.y = player.body.y - 12;
+    magicObject.body.x = player.body.x + 35 * player.direction;
   }
 }
+
+function placeFrontOfPlayerVisualChange(magicObject){
+  if(moveDown.isDown && (moveRight.isDown || moveLeft.isDown)){
+    magicObject.body.x = player.body.x + 37*player.direction;
+    magicObject.body.y = player.body.y + 40;
+    if(player.direction == 1){
+      magicObject.angle = 45;
+    }else{
+      magicObject.angle = 135;
+    }
+  }
+  else if(moveUp.isDown && (moveRight.isDown || moveLeft.isDown)){
+    magicObject.body.x = player.body.x + 37*player.direction;
+    magicObject.body.y = player.body.y - 40;
+    if(player.direction == -1){
+      magicObject.angle = -135;
+    }
+    else magicObject.angle = -45;
+  }
+  else if(moveDown.isDown){
+    magicObject.body.x = player.body.x;
+    magicObject.body.y = player.body.y + 60;
+    magicObject.angle = 90;
+  }
+  else if(moveUp.isDown){
+    magicObject.body.x = player.body.x;
+    magicObject.body.y = player.body.y - 40;
+    magicObject.angle = -90;
+  }
+  else{
+    magicObject.body.y = player.body.y - 12;
+    magicObject.body.x = player.body.x + 35 * player.direction;
+    if(player.direction == -1){
+      magicObject.angle = 180;
+    }
+  }
+}
+
 
 function moveFrontOfPlayer(magicObject){
   if(moveDown.isDown && (moveRight.isDown || moveLeft.isDown)){
@@ -219,25 +319,49 @@ function moveFrontOfPlayer(magicObject){
   }
 }
 
-function movePlayer(x, y){
+function moveFrontOfPlayerWith(magicObject, x, y){
   if(moveDown.isDown && (moveRight.isDown || moveLeft.isDown)){
-    player.body.velocity.x = x*player.direction;
-    player.body.velocity.y = y;
+    magicObject.body.velocity.x = x*player.direction;
+    magicObject.body.velocity.y = y;
   }
   else if(moveUp.isDown && (moveRight.isDown || moveLeft.isDown)){
-    player.body.velocity.x = x*player.direction;
+    magicObject.body.velocity.x = x*player.direction;
+    magicObject.body.velocity.y = -y;
+  }
+  else if(moveDown.isDown){
+    magicObject.body.velocity.x = 0;
+    magicObject.body.velocity.y = y;
+  }
+  else if(moveUp.isDown){
+    magicObject.body.velocity.x = 0;
+    magicObject.body.velocity.y = -y;
+  }
+  else{
+    magicObject.body.velocity.y = 0;
+    magicObject.body.velocity.x = x*player.direction;
+  }
+}
+
+
+function movePlayer(x, y){
+  if(moveDown.isDown && (moveRight.isDown || moveLeft.isDown)){
+    player.body.velocity.x = -x*player.direction;
     player.body.velocity.y = -y;
+  }
+  else if(moveUp.isDown && (moveRight.isDown || moveLeft.isDown)){
+    player.body.velocity.x = -x*player.direction;
+    player.body.velocity.y = y;
   }
   else if(moveDown.isDown){
     player.body.velocity.x = 0;
-    player.body.velocity.y = y;
+    player.body.velocity.y = -y;
   }
   else if(moveUp.isDown){
     player.body.velocity.x = 0;
-    player.body.velocity.y = -y;
+    player.body.velocity.y = y;
   }
   else{
-    player.body.velocity.x = x*player.direction;
+    player.body.velocity.x = -x*player.direction;
     player.body.velocity.y = 0;
   }
 }
@@ -250,7 +374,7 @@ function updateStatusEffect(){
 function updateSpells(){
   updateMagicBombs();
   updateBarrier();
-  if(player.energy) placeFrontOfPlayer(magicBomb);
+  //if(player.energy) placeFrontOfPlayer(magicBomb);
   //if(player.rmana <= 0) magicBoostEnd();
 }
 
@@ -269,9 +393,29 @@ function updateMagicBombs(){
 
 function hitBox(body1, body2){
   if(body1 == null) return;
+  if(body1.indestructible || (this.alliance == body1.sprite.alliance)) return;
+  console.log("Attack Alliance: ", this.alliance);
+  console.log("Target Alliance: ", body1.sprite.alliance);
+  console.log("I should not happen");
+  tester = this;
+  body1.health -= tester.damage;
+  console.log(body1.sprite.attack);
+  if(body1.health <= 0){
+    tmp = body1.sprite.aid;
+    if(body1.sprite.attack != null) body1.sprite.attack.destroy();
+    console.log("HERE! ", body1);
+    body1.sprite.destroy();
+    activeAI[tmp] = 0;
+    aiTotal--;
+  }
+}
+
+function forceBox(body1, body2){
+  if(body1 == null) return;
   if(body1.indestructible) return;
   tester = this;
   body1.health -= tester.damage;
+  //body1.velocity.x += tester.force //* tester.direction; //* body1..direction;
   if(body1.health <= 0){
     console.log(body1.sprite.attack);
     tmp = body1.sprite.aid;
@@ -282,103 +426,96 @@ function hitBox(body1, body2){
     aiTotal--;
   }
 }
-//--------------------------------------
-//  Magic_Bomb
-//--------------------------------------
-var magicBombTimer;
 
-function startMagicBombTimer(){
-  magicBombTimer = game.time.create(false);
-  magicBombTimer.loop(500, chargeMagicBomb, this);
-  magicBombTimer.start();
+//--------------------------------------
+//  Charging_Magic
+//--------------------------------------
+var chargeTimer;
+var chargeSec = Phaser.Timer.SECOND * 1;
+function startChargingMagicTimer(){
+  chargeTimer = game.time.create(false);
+  chargeTimer.loop(chargeSec, chargingMagic, this);
+  chargeTimer.start();
 }
 
 function endMagicBombTimer(){
   magicBombTimer.stop();
 }
 
-function chargeMagicBomb(){
- if(pCharge <= 4){
-    pCharge+= 0.3;
-    player.rmana -= 1;
- }
- if(player.casting){
-  magicBomb.pCharge = pCharge;
-  magicBomb.scale.setTo(pCharge, pCharge);
- }
-
- //chargeSound.play();
+function chargingMagic(){
+  if(pCharge <= 3){
+    pCharge++;
+    circleCasting.animations.currentAnim.speed = pCharge*15;
+    console.log("PCHARGE!!!", pCharge);
+  }else{
+    console.log("CHARGE AT LIMIT");
+  }
 }
 
-function makeMagicBomb(){
-  player.casting = 1;
-  startMagicBombTimer();
-
+function chargeMagic(){
+  console.log("Starting To Charge Up");
   chargeSound.loop = true;
   chargeSound.play();
   pCharge = 1;
-  player.rmana-= 1;
-  magicBomb = game.add.sprite(player.body.x + 100*player.direction, player.body.y, 'energyBall');
-  magicBomb.scale.setTo(0.3,0.3);
+  player.charging = 1;
+  player.casting = 1;
+  circleCasting.play('run', 15, true);
+  circleCasting.alpha = 1;
+  startChargingMagicTimer();
+  state = "charging";
+}
+
+function trueMagicBomb(){
+  if(!player.charging) return;
+  player.charging = player.casting = 0;
+
+  magicBomb = game.add.sprite(0, 0, 'energyBall');
+  magicBomb.scale.setTo(1,1);
   game.physics.p2.enable(magicBomb);
-  magicBomb.body.alliance = 0;
-  magicBomb.body.static = true;
-  magicBomb.body.enableBody = false;
-  magicBomb.pCharge = pCharge;
   magicBomb.scale.setTo(pCharge,pCharge);
-  magicBomb.gravityScale = 0;
+  magicBomb.body.alliance = 1;
+  magicBomb.body.enableBody = false;
+  magicBomb.force = pCharge * 50;
+
+  magicBomb.damage = 1 + pCharge*2;
+
+  magicBomb.body.setMaterial(magicMaterial);
+
   magicBomb.body.fixedRotation = true;
   magicBomb.animations.add('run', [0, 1, 2, 3, 4,5], true);
   magicBomb.animations.add('end', [0, 1, 2, 3, 4, 5, 6], 30, true);
   magicBomb.animations.play('run', 15, true);
-  magicBomb.body.x = player.body.x + 100*player.direction;
-  magicBomb.body.y = player.body.y;
   magicBomb.end = false;
   magicBomb.body.ptype = 'blast';
 
-  placeFrontOfPlayer(magicBomb);
-  player.energy = true;
-
-  //game.world.bringToTop(bg2);
-}
-
-
-function shootMagicBomb(){
-  if(!player.casting || player.energy <= 0) return;
-
-  if(pCharge > 1.2) magicBomb.damage = 0.5 + pCharge*10;
-  else magicBomb.damage = 1;
-  //console.log('Blaster damage', blaster.damage);
+  magicBomb.gravityScale = 0;
   magicBomb.castEnd = "bombFinale";
   magicBomb.body.static = false;
-  magicBomb.body.fixedRotation = true;
   magicBomb.body.data.gravityScale = 0;
   magicBomb.body.damping = 0;
   magicBomb.body.force = 3000;
-  placeFrontOfPlayer(magicBomb);
+  magicBomb.pCharge = pCharge;
 
-  magicBomb.body.setMaterial(magicMaterial);
   magicBomb.timeAt = pTime + 10;
   magicBomb.body.onBeginContact.add(bombFinaleContact, magicBomb);
-  spells.push(magicBomb);
-  player.casting = 0;
+
+  chargeTimer.stop();
+  placeFrontOfPlayer(magicBomb);
+  moveFrontOfPlayer(magicBomb);
+  player.casting = false;
+  player.energy = false;
+
   shootSound.play();
+  chargeSound.stop();
+  spells.push(magicBomb);
 
   player.jumping = 0;
   player.jumpAtY = 0;
   player.moving = 2;
-  
-  endMagicBombTimer();
 
-  moveFrontOfPlayer(magicBomb);
-  //game.world.bringToTop(bg2);
-
-  player.casting = false;
-  player.energy = false;
-  if(pCharge >= 4) movePlayer(-600, -600);
-
-  //chargeSound.loop = false;
-  chargeSound.stop();
+  circleCasting.play('end', 30, false);
+  //circleCasting.alpha = 0;
+  state = "normal";
 }
 
 function bombFinale(blast){
@@ -399,10 +536,10 @@ function bombFinale(blast){
 }
 
 function bombFinaleContact(body1, body2){
-  blast = this;
-  if(body1 != null && (blast.end || blast.body.ptype == body1.ptype)) return;
-  blast.body.static = true;
+  console.log("DID I EVER HAPPEN");
   blastSound.play();
+  blast = this;
+  blast.body.static = true;
   blast.end = true;
   blast.loadTexture('magicExpand', 0, false);
   blast.animations.play('end', 25, false, true);
@@ -416,14 +553,87 @@ function bombFinaleContact(body1, body2){
   blast.body.onBeginContact.add(hitBox, blast);
   blast.body.data.shapes[0].sensor = true;
 }
+//-----------------------------
+//  Magic BLast
+//  ---------------------------
+function magicBlast(){
+  if(!player.charging) return;
+  player.charging = player.casting = 0;
+
+  magicBomb = game.add.sprite(0, 0, 'magicBlast');
+  magicBomb.scale.setTo(1,1);
+  magicBomb.scale.setTo(pCharge*2,2.5);
+  game.physics.p2.enable(magicBomb);
+  magicBomb.body.alliance = 1;
+  magicBomb.body.enableBody = false;
+  magicBomb.force = pCharge * 50;
+
+  magicBomb.damage = 3 + pCharge*5;
+
+  magicBomb.body.setMaterial(magicMaterial);
+
+  magicBomb.body.fixedRotation = true;
+  magicBomb.animations.add('run', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], true);
+  magicBomb.animations.play('run', 50, false);
+  magicBomb.end = true;
+  magicBomb.body.ptype = 'blast';
+
+  magicBomb.gravityScale = 0;
+  magicBomb.castEnd = "bombFinale";
+  magicBomb.body.static = true;
+  magicBomb.body.data.shapes[0].sensor = false;
+
+  magicBomb.body.data.gravityScale = 0;
+  magicBomb.body.damping = 0;
+  //magicBomb.body.force = 3000;
+  magicBomb.body.direction = player.direction;
+  magicBomb.pCharge = pCharge;
+
+  magicBomb.timeAt = pTime + 2;
+  magicBomb.alliance = 1;
+  magicBomb.body.onBeginContact.add(hitBox, magicBomb);
+
+  chargeTimer.stop();
+  placeFrontOfPlayerVisualChange(magicBomb);
+  moveFrontOfPlayerWith(magicBomb, 500*pCharge, 500);
+  movePlayer(400,400);
+  player.casting = false;
+  player.energy = false;
+
+  //shootSound.play();
+  blast2Sound.play();
+  chargeSound.stop();
+  spells.push(magicBomb);
+
+  player.jumping = 0;
+  player.jumpAtY = 0;
+  player.moving = 2;
+
+  circleCasting.play('end', 30, false);
+  //circleCasting.alpha = 0;
+  state = "normal";
+}
+
+
 
 //-----------------------------
 //  Magic Barrier
 //-----------------------------
 function updateBarrier(){
-  circleBarrier.x = player.body.x-30;
-  circleBarrier.y = player.body.y-30;
+  //circleBarrier.x = player.body.x-30;
+  //circleBarrier.y = player.body.y-30;
 }
+/*
+function playerStopBarrier(){
+  if(!player.barrier) return;
+  pCharge = 1;
+  circleBarrier.play('end', 20, false);
+
+  player.casting = false;
+  player.barrier = false;
+  player.jumping = 0;
+  player.jumpAtY = 0;
+}*/
 
 function playerStopBarrier(){
   if(!player.barrier) return;
@@ -434,6 +644,8 @@ function playerStopBarrier(){
   player.barrier = false;
   player.jumping = 0;
   player.jumpAtY = 0;
+
+  state = "normal";
 }
 
 function playerBarrier(){
@@ -445,6 +657,8 @@ function playerBarrier(){
   player.rmana -= 3;
 
   wallSound.play();
+
+  state = "barrier";
 }
 
 //-----------------------------
@@ -482,6 +696,101 @@ function playerLevitate(){
   player.body.velocity.y = 0;
 
 }
+
+//----------------------------
+//  Teleport Wave
+//----------------------------
+var teleportStart;
+var teleportEnd;
+var teleportTimer;
+var teleportEndTimer;
+var teleportGo = true;
+var connection = 0;
+var teleportStack = 0;
+
+function startTeleportTimer(){
+  teleportTimer = game.time.create(false);
+  teleportTimer.loop(5000, teleportEnd, this);
+  teleportTimer.start();
+}
+
+function startGoTeleport(){
+  teleportEndTimer = game.time.create(false);
+  teleportEndTimer.loop(250, teleportEnd, this);
+  teleportEndTimer.start();
+}
+
+function teleportWave(){
+  console.log("did it work");
+  teleportStart = game.add.sprite(player.body.x, player.body.y, 'teleport');
+  teleportStart.scale.setTo(3.3,3.3);
+  teleportSound.play();
+  game.physics.p2.enable(teleportStart);
+  teleportStart.body.setMaterial(magicMaterial);
+  playerStopBarrier();
+  startTeleportTimer();
+  state = "normal";
+
+  teleportStart.body.static = true;
+  teleportStart.body.data.shapes[0].sensor = false;
+
+  player.body.static = true;
+  player.body.data.shapes[0].sensor = false;
+
+  player.body.velocity.y = 0;
+  state = "rift";
+
+  /*
+  teleportEnd = game.add.sprite(player.body.x, player.body.y, 'teleport');
+  teleportEnd.scale.setTo(3,3);
+  teleportSound.play();
+  game.physics.p2.enable(teleportEnd);
+  teleportEnd.body.setMaterial(magicMaterial);
+
+  teleportEnd.body.static = true;
+  teleportEnd.body.data.shapes[0].sensor = false;
+
+
+
+
+  //teleportEnd.static = true;
+  //teleportEnd.body.data.shapes[0].sensor = true;
+
+  teleportEnd.body.onBeginContact.add(teleportConnect, teleportEnd);
+  teleportEnd.body.onEndContact.add(teleportDisconnect, teleportEnd);
+  */
+}
+
+function teleportEnd(){
+    teleportTimer.stop();
+    player.reset(teleportStart.body.x, teleportStart.body.y);
+    /*
+    if(connection == 0){
+      //player.reset(teleportEnd.body.x, teleportEnd.body.y);
+    }else{
+      player.reset(teleportStart.body.x, teleport.body.y);
+    }*/
+    teleportStart.destroy();
+    //teleportEnd.destroy();
+    teleportStart = 0;
+
+    player.body.static = false;
+    player.body.data.shapes[0].sensor = false;
+    state = "normal";
+}
+
+function teleportDisconnect(body1, body2){
+  if(body1 == null) return;
+  if(body1.indestructible || (this.alliance == body1.sprite.alliance)) return;
+  connection--;
+}
+
+function teleportConnect(body1, body2){
+  if(body1 == null) return;
+  if(body1.indestructible || (this.alliance == body1.sprite.alliance)) return;
+  connection++;
+}
+
 
 function levitationSwitch(){
   player.levitation = !player.levitation;
