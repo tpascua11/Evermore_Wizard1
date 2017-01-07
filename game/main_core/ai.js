@@ -30,9 +30,9 @@ var aiTotal = 0;
 var aiBasicStats = {
   health   : 100,
   maxHealth: 100,
-  mana     : 75 ,
-  maxMana  : 100,
-  curSpd   : 100,
+  acl      : 50,
+  maxSpeed : 33,
+  curSpd   : 0,
   ranged   : 0,
   melee    : 0,
   direction: 1,
@@ -104,9 +104,8 @@ function createAI(){
     //goblinSwordsMan(50,50,i+1);
     //i++;
     //goblinArcher(50+i*50,50,i);
-    
   }
-  //continueGoblins();
+ continueGoblins();
 
 }
 //---------------
@@ -118,7 +117,7 @@ function goblinSwordsMan(x,y,id){
     game.physics.p2.enable(goblin);
     goblin.body.fixedRotation = true;
     aiMaterial = game.physics.p2.createMaterial('aiMaterial', goblin.body);
-    goblin.body.health = 10;
+    goblin.body.health = 5;
     goblin.damage = 10;
     goblin.doAttack = function(){}
     for(var attrname in aiBasicStats){goblin[attrname] = aiBasicStats[attrname]}
@@ -143,7 +142,7 @@ function goblinStaber(x, y, id){
     game.physics.p2.enable(goblin);
     goblin.body.fixedRotation = true;
     aiMaterial = game.physics.p2.createMaterial('aiMaterial', goblin.body);
-    goblin.body.health = 10;
+    goblin.body.health = 3;
     goblin.damage = 10;
     goblin.doAttack = function(){}
     for(var attrname in aiBasicStats){goblin[attrname] = aiBasicStats[attrname]}
@@ -207,16 +206,13 @@ function goblinMaking(x, y, id){
     //goblin.sprite()
     //console.log(goblin);
 
-
     goblin.visual = game.add.sprite(-24,-15,'goblin');
     goblin.visual.scale.setTo(3,3);
     goblin.visual.setScaleMinMax(3,3);
     goblin.visual.frame = 3;
     goblin.addChild(goblin.visual);
 
-
     goblin.stopRange = 25;
-
 
     //createGoblinStaberAnimations();
     createGoblinSwordsmanAnimations();
@@ -300,7 +296,7 @@ function goblinSword(){
       if(this.visual.frame == 50){
         if(this.attackTotal <  this.attackLimit){
           this.body.velocity.y = -300;
-          this.body.velocity.x = 1000 * this.direction;
+          this.body.velocity.x = 20 * this.direction;
           aiHarmWave(this);
           this.attackTotal++;
         }
@@ -412,6 +408,8 @@ function aiHarmTowards(goblinD){
   goblinD.damage = game.add.sprite(goblinD.body.x, goblinD.body.y-15, 'goblinArrow');
   goblinD.damage.scale.setTo(4,4);
   goblinD.damage.alpha = 0;
+  goblinD.damage.projectile = true;
+  goblinD.damage.alliance = 2;
 
   goblinD.damage.visual = game.add.sprite(goblinD.body.x, goblinD.body.y-20, 'goblinArrow');
   goblinD.damage.visual.scale.setTo(4,4);
@@ -421,20 +419,22 @@ function aiHarmTowards(goblinD){
   goblinD.damage.body.fixedRotation = true;
   //aiMaterial = game.physics.p2.createMaterial('aiMaterial', damage);
   goblinD.damage.body.health = 1;
-  goblinD.damage.damage = 10;
+  goblinD.damage.damage = 2;
   goblinD.damage.id = goblinD.aid;
   //console.log("Goblin ID", goblinD.aid);
 
-  goblinD.damage.body.onBeginContact.add(harm, goblinD.damage);
+  goblinD.damage.body.onBeginContact.add(harmProjectile, goblinD.damage);
 
   goblinD.damage.body.static = true;
   goblinD.damage.body.data.shapes[0].sensor = true;
-  goblinD.damage.endAtTime = universalTime + 5;
+  goblinD.damage.endAtTime = universalTime + 3;
 
   //console.log("did i happen");
 
   goblinD.damage.pushPowerX = 200;
   goblinD.damage.pushPowerY = -100;
+  goblinD.damage.impact = true;
+  goblinD.damage.afterEffect = false;
 
   //goblinD.damage.body.velocity.x = 400 * goblinD.direction;
   accelerateToObject(goblinD.damage, player, 400);
@@ -445,11 +445,7 @@ function aiHarmTowards(goblinD){
     goblinD.damage.visual.anchor.setTo(1,0);
   }
 
-
   goblinD.damage.direction = goblinD.direction;
-
-
-
 
   goblinD.damage.postUpdate = function(){
     if((this.endAtTime <= universalTime)){
@@ -472,13 +468,9 @@ function accelerateToObject(obj1, obj2, speed) {
 function harm(body1){
   if(body1 == null) return;
   if(body1.indestructible || (this.alliance == body1.sprite.alliance)) return;
-  if(body1.sprite.invincible){
-    console.log("you have invincible");
-    return;
-  }
+  if(body1.sprite.invincible == null) return;
+  if(body1.sprite.invincible) return;
   else{
-    console.log("you dont have invincible");
-    if(body1.sprite.invincible == null) return;
     if(player.barrier){
       shieldHurt.play();
       player.rmana--;
@@ -490,29 +482,41 @@ function harm(body1){
     push(this, body1);
     startInvincible();
   }
-  tester = this;
-  tester.direction *= -1;
+  //tester = this;
+  //tester.direction *= -1;
 }
 
 function harmProjectile(body1){
   if(body1 == null) return;
   if(body1.indestructible || (this.alliance == body1.sprite.alliance)) return;
-  if(body1.sprite.invincible){
-    console.log("you have invincible");
-    return;
-  }
+  if(body1.sprite.invincible) return;
   else{
-    console.log("you dont have invincible");
-    if(body1.sprite.invincible == null) return;
-    if(player.barrier) return;
-    //harmPlayer(player, 10);
-    hurt.play();
-    console.log(body1);
-    //push(this, body1);
-    startInvincible();
+    if(body1.sprite.alliance != 1){//ALLIANCE 1 is player therfore
+      body1.health -= this.damage;
+      console.log(body1.sprite.attack);
+      if(body1.health <= 0){
+        tmp = body1.sprite.aid;
+        if(body1.sprite.attack != null) body1.sprite.attack.destroy();
+        console.log("HERE! ", body1);
+        body1.sprite.destroy();
+        activeAI[tmp] = 0;
+        aiTotal--;
+      }
+    }else{
+      if(body1.sprite.invincible == null) return;
+      if(player.barrier) return;
+      harmPlayer(player, 10);
+      hurt.play();
+      console.log(body1);
+      push(this, body1);
+      startInvincible();
+    }
+    if(this.impact){
+      this.endAtTime = universalTime;
+      //this.visual.destroy();
+      //this.destroy();
+    }
   }
-  tester = this;
-  tester.direction *= -1;
 }
 
 
@@ -553,13 +557,19 @@ function detectEnemy(){
 }
 function move(ai){
   //ai.body.velocity.x = ai.curSpd * ai.direction;
-  ai.body.velocity.x = 0;
+  //ai.body.velocity.x = 0;
 }
 function patrol(ai){
-  ai.body.velocity.x = ai.curSpd * ai.targetAtX;
+  //ai.body.velocity.x = ai.curSpd * ai.targetAtX;
 }
 function follow(ai){
-  ai.body.velocity.x = ai.curSpd * ai.targetAtX;
+  //ai.body.velocity.x = ai.curSpd * ai.targetAtX;
+  if(ai.direction == 1){
+    if(ai.body.velocity.x < ai.maxSpeed) ai.body.velocity.x += ai.acl;
+  }
+  else{
+    if(ai.body.velocity.x > -ai.maxSpeed) ai.body.velocity.x -= ai.acl;
+  }
   ai.direction = ai.targetAtX;
 }
 
@@ -649,11 +659,11 @@ function testDamage(){
 //------------------------------
 function continueGoblins(){
   timer = game.time.create(false);
-  timer.loop(1000, goblinMaking123, this);
+  timer.loop(5000, goblinMaking123, this);
   timer.start();
 
   timer2 = game.time.create(false);
-  timer2.loop(7000, goblinRare123, this);
+  timer2.loop(10000, goblinRare123, this);
   timer2.start();
 }
 

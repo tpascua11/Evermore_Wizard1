@@ -42,8 +42,10 @@ function createWorldAlpha(){
   game.stage.smoothed = false;
 
   simple = game.add.audio('symbo');
-  simple.play();
-  simple.volume = 0.5;
+  //simple.play();
+  simple.loopFull(0.4);
+  //simple.loop = true;
+  //simple.volume = 0.4;
 }
 
 function dependOnTest(){

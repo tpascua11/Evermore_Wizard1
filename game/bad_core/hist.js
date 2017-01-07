@@ -368,6 +368,136 @@ function chargeMagicBomb(){
  //chargeSound.play();
 }
 
+//----------------------------
+//  Teleport Wave
+//----------------------------
+var teleportStart;
+var teleportEnd;
+var teleportTimer;
+var teleportEndTimer;
+var teleportGo = false;
+var connection = 0;
+var teleportStack = 0;
+var teleportZone;
+
+function startTeleportTimer(){
+  teleportTimer = game.time.create(false);
+  teleportTimer.loop(5000, teleportAt, this);
+  teleportTimer.start();
+}
+
+function startGoTeleport(){
+  teleportEndTimer = game.time.create(false);
+  teleportEndTimer.loop(5000, doTeleport, this);
+  teleportEndTimer.start();
+}
+
+function teleportTest(){
+  console.log("TEST");
+  teleportStart = game.add.sprite(player.body.x, player.body.y, 'teleport');
+  teleportStart.scale.setTo(3.3,3.3);
+  teleportSound.play();
+  game.physics.p2.enable(teleportStart);
+  teleportStart.body.setMaterial(magicMaterial);
+  playerStopBarrier();
+
+  teleportStart.body.static = true;
+  //teleportStart.body.data.shapes[0].sensor = true;
+  placeFrontOfPlayerWith(teleportStart, 120, 120);
+  teleportStart.body.velocity.x = 2;
+
+  connection = 0;
+  teleportStart.body.onBeginContact.add(teleportConnect, teleportStart);
+  teleportStart.body.onEndContact.add(teleportDisconnect, teleportStart);
+  startGoTeleport();
+}
+
+function doTeleport(){
+  if(connection == 0){
+    player.reset(teleportStart.body.x, teleportStart.body.y-2);
+  }
+  connection = 0;
+  teleportStart.destroy();
+  teleportEndTimer.stop();
+}
+
+function teleportWave(){
+  teleportGo = false;
+  teleportStart = game.add.sprite(player.body.x, player.body.y, 'teleport');
+  teleportStart.scale.setTo(3.3,3.3);
+  teleportSound.play();
+  game.physics.p2.enable(teleportStart);
+  teleportStart.body.setMaterial(magicMaterial);
+  playerStopBarrier();
+  startTeleportTimer();
+  state = "normal";
+
+  teleportStart.body.static = true;
+  teleportStart.body.data.shapes[0].sensor = false;
+
+  player.body.static = true;
+  player.body.data.shapes[0].sensor = false;
+
+  player.body.velocity.y = 0;
+  state = "rift";
+  teleportStart.body.onBeginContact.add(comeBackPoint, teleportStart);
+
+  player.reset(player.body.x, player.body.y-20);
+  moveFrontOfPlayerWith(player);
+}
+
+function teleportAt(){
+    teleportGo = true;
+    teleportTimer.stop();
+
+      player.body.static = true;
+      player.body.data.shapes[0].sensor = false;
+
+      waveFollow(player, teleportStart, 1000); 
+      return;
+    if(connection == 0){
+      player.reset(teleportEnd.body.x, teleportEnd.body.y);
+      player.body.static = false;
+      player.body.data.shapes[0].sensor = false;
+      state = "normal";
+
+      teleportStart.destroy();
+      teleportEnd.destroy();
+    }
+    else{
+      waveFollow(player, teleportStart, 1000);
+    }
+}
+
+function teleportDisconnect(body1, body2){
+  console.log("Connection", connection);
+  connection--;
+}
+
+function teleportConnect(body1, body2){
+  console.log("Connection", connection);
+  connection++;
+}
+
+function comeBackPoint(){
+  console.log('DID I HAPPEN!');
+  console.log('DID I HAPPEN!');
+  console.log('DID I HAPPEN!');
+  if(!teleportGo) return;
+  console.log('DID I HAPPEN!');
+  console.log('DID I HAPPEN!');
+  player.reset(teleportStart.body.x, teleportStart.body.y);
+  teleportStart.destroy();
+  player.body.velocity.x = 0;
+  player.body.velocity.y = 0;
+  player.body.static = false;
+  player.body.data.shapes[0].sensor = false;
+  state = "normal";
+
+  //teleportEnd.destroy();
+    //teleportStart = 0;
+}
+
 
 
 

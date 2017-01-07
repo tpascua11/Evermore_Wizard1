@@ -110,22 +110,23 @@ function input(){
       case "duckStop" : break;
       case "scan"     : break;
       case "jump"     : window["teleportWave"](); break;
-      case "barrierTeleport": window["teleportWave()"]();break;
+      //case "barrierTeleport": window["teleportTest"]();break;
+      //case "jump": window["teleportTest"]();break;
       case "barrierStop": window["playerStopBarrier"](); break;
       default: break;
     }
   }
   else if(state == "rift"){
     switch(this.action){
-      case "duck"     : window["playerFlyDown"]();  break;
-      case "duckStop" : window["playerStopDown"](); break;
-      case "scan"     : window["playerFlyUp"](); break;
-      case "scanStop" : window["playerStopUp"](); break;
-      case "walkL"    : window["playerMoveLeft"]() ; break;
+      //case "duck"     : window["playerFlyDown"]();  break;
+      //case "duckStop" : window["playerStopDown"](); break;
+      //case "scan"     : window["playerFlyUp"](); break;
+      //case "scanStop" : window["playerStopUp"](); break;
+      //case "walkL"    : window["playerMoveLeft"]() ; break;
       case "walkLstop": window["playerStopLeft"]() ;break;
-      case "walkR"    : window["playerMoveRight"]();break;
+      //case "walkR"    : window["playerMoveRight"]();break;
       case "walkRstop": window["playerStopRight"]();break;
-      case "jumpStop" : window["teleportEnd"](); break;
+      //case "jumpStop" : window["teleportAt"](); break;
       default: break;
     }
   }
@@ -255,6 +256,29 @@ function placeFrontOfPlayer(magicObject){
   else{
     magicObject.body.y = player.body.y - 12;
     magicObject.body.x = player.body.x + 35 * player.direction;
+  }
+}
+
+function placeFrontOfPlayerWith(magicObject, x, y){
+  if(moveDown.isDown && (moveRight.isDown || moveLeft.isDown)){
+    magicObject.body.x = player.body.x + x*player.direction;
+    magicObject.body.y = player.body.y + y;
+  }
+  else if(moveUp.isDown && (moveRight.isDown || moveLeft.isDown)){
+    magicObject.body.x = player.body.x + x*player.direction;
+    magicObject.body.y = player.body.y - y;
+  }
+  else if(moveDown.isDown){
+    magicObject.body.x = player.body.x;
+    magicObject.body.y = player.body.y + y;
+  }
+  else if(moveUp.isDown){
+    magicObject.body.x = player.body.x;
+    magicObject.body.y = player.body.y - y;
+  }
+  else{
+    magicObject.body.y = player.body.y - 7;
+    magicObject.body.x = player.body.x + x * player.direction;
   }
 }
 
@@ -412,21 +436,29 @@ function hitBox(body1, body2){
 
 function forceBox(body1, body2){
   if(body1 == null) return;
-  if(body1.indestructible) return;
+  if(body1.indestructible || (this.alliance == body1.sprite.alliance)) return;
   tester = this;
   body1.health -= tester.damage;
-  //body1.velocity.x += tester.force //* tester.direction; //* body1..direction;
+  console.log(body1.sprite.attack);
+  if(body1.sprite.projectile){
+    body1.sprite.alliance = this.alliance;
+    moveFrontOfPlayerWith(body1.sprite, 500, 500);
+    return;
+  }
+  moveFrontOfPlayerWith(body1.sprite, 1400, 1400);
+  /*
   if(body1.health <= 0){
-    console.log(body1.sprite.attack);
     tmp = body1.sprite.aid;
-    if(body1.sprite.attack != null) body1.sprite.attack.destroy();
+    if(body1.sprite.attack != null){
+      body1.sprite.attack.destroy();
+    }
+    if(body1.sprite.visual != null) body1.sprite.visual.destroy();
     console.log("HERE! ", body1);
     body1.sprite.destroy();
     activeAI[tmp] = 0;
     aiTotal--;
-  }
+  }*/
 }
-
 //--------------------------------------
 //  Charging_Magic
 //--------------------------------------
@@ -477,8 +509,7 @@ function trueMagicBomb(){
   magicBomb.body.enableBody = false;
   magicBomb.force = pCharge * 50;
 
-  magicBomb.damage = 1 + pCharge*2;
-
+  magicBomb.damage = pCharge*2;
   magicBomb.body.setMaterial(magicMaterial);
 
   magicBomb.body.fixedRotation = true;
@@ -493,10 +524,11 @@ function trueMagicBomb(){
   magicBomb.body.static = false;
   magicBomb.body.data.gravityScale = 0;
   magicBomb.body.damping = 0;
-  magicBomb.body.force = 3000;
+  magicBomb.body.force = 0;
   magicBomb.pCharge = pCharge;
 
   magicBomb.timeAt = pTime + 10;
+  magicBomb.end = false;
   magicBomb.body.onBeginContact.add(bombFinaleContact, magicBomb);
 
   chargeTimer.stop();
@@ -536,15 +568,16 @@ function bombFinale(blast){
 }
 
 function bombFinaleContact(body1, body2){
-  console.log("DID I EVER HAPPEN");
+  if(this.end == true) return;
+  if(body1 != null && body1.alliance == 1) return;
   blastSound.play();
   blast = this;
   blast.body.static = true;
   blast.end = true;
   blast.loadTexture('magicExpand', 0, false);
-  blast.animations.play('end', 25, false, true);
-  //blast.body.velocity.x = 0;
-  //blast.body.velocity.y = 0;
+  blast.animations.play('end', 30, false, true);
+  blast.body.velocity.x = 0;
+  blast.body.velocity.y = 0;
   blast.body.damping = 1;
   blast.body.mass= 1.1;
   blast.timeAt = pTime+10;
@@ -580,8 +613,8 @@ function magicBlast(){
 
   magicBomb.gravityScale = 0;
   magicBomb.castEnd = "bombFinale";
-  magicBomb.body.static = true;
-  magicBomb.body.data.shapes[0].sensor = false;
+  //magicBomb.body.static = true;
+  magicBomb.body.data.shapes[0].sensor = true;
 
   magicBomb.body.data.gravityScale = 0;
   magicBomb.body.damping = 0;
@@ -591,7 +624,7 @@ function magicBlast(){
 
   magicBomb.timeAt = pTime + 2;
   magicBomb.alliance = 1;
-  magicBomb.body.onBeginContact.add(hitBox, magicBomb);
+  magicBomb.body.onBeginContact.add(forceBox, magicBomb);
 
   chargeTimer.stop();
   placeFrontOfPlayerVisualChange(magicBomb);
@@ -624,16 +657,16 @@ function updateBarrier(){
   //circleBarrier.y = player.body.y-30;
 }
 /*
-function playerStopBarrier(){
-  if(!player.barrier) return;
-  pCharge = 1;
-  circleBarrier.play('end', 20, false);
+   function playerStopBarrier(){
+   if(!player.barrier) return;
+   pCharge = 1;
+   circleBarrier.play('end', 20, false);
 
-  player.casting = false;
-  player.barrier = false;
-  player.jumping = 0;
-  player.jumpAtY = 0;
-}*/
+   player.casting = false;
+   player.barrier = false;
+   player.jumping = 0;
+   player.jumpAtY = 0;
+   }*/
 
 function playerStopBarrier(){
   if(!player.barrier) return;
@@ -668,6 +701,8 @@ var saveSpeed;
 var saveSprint;
 var saveDamageMod;
 var magicBoostOn = false;
+var teleportPastx;
+var teleportPasty;
 
 function magicBoost(){
   if(player.rmana <= 0) return;
@@ -685,6 +720,74 @@ function magicBoostEnd(){
   player.sprintSpd = 1000;
 }
 
+var connection;
+var teleport;
+function teleportWave(){
+  teleportSound.play();
+
+  teleport = game.add.sprite(0, 0, 'teleport');
+  teleport.scale.setTo(3,3);
+  game.physics.p2.enable(teleport);
+
+  teleport.body.static = false;
+  teleport.body.data.gravityScale = 0;
+  teleport.body.damping = 0;
+  teleport.body.force = 0;
+  teleport.alpha = 1;
+
+  placeFrontOfPlayerWith(teleport,100,100);
+
+  startTeleportTimer();
+
+  teleport.body.onBeginContact.add(teleportConnection, blast);
+  teleport.body.onEndContact.add(teleportDisconnection, blast);
+
+  teleport.indestructible = true;
+  teleport.alliance = 1;
+
+  teleportPastx = teleport.body.x;
+  teleportPasty = teleport.body.y;
+
+  teleportVisual = game.add.sprite(teleport.body.x-23, teleport.body.y-23, 'teleport');
+  teleportVisual.scale.setTo(3,3);
+
+  teleportVisual.animations.add('run', [0, 1, 2, 3, 4, 5], true);
+  teleportVisual.animations.play('run', 25, false, true);
+}
+
+function teleportConnection(body1, body2){
+  connection++;
+  teleportGo();
+}
+
+function teleportDisconnection(body1, body2){
+  //connection--;
+}
+
+var teleportTimer;
+function startTeleportTimer(){
+  teleportTimer= game.time.create(false);
+  teleportTimer.loop(200, teleportGo, this);
+  teleportTimer.start();
+}
+function teleportGo(){
+  teleport.destroy();
+  if(connection == 0){
+    var teleportVisualEnd;
+
+    teleportVisualEnd = game.add.sprite(0 , 0 , 'teleport');
+    teleportVisualEnd.animations.add('run', [5, 4, 3, 2, 1, 0], true);
+    teleportVisualEnd.animations.play('run', 25, false, true);
+    teleportVisualEnd.scale.setTo(5,5);
+    //placeFrontOfPlayerWith(player,100,100);
+    player.reset(teleportPastx, teleportPasty);
+
+  }
+  teleportTimer.stop();
+  connection = 0;
+}
+
+
 //-----------------------------
 //  Magic Levitation
 //-----------------------------
@@ -694,101 +797,13 @@ function playerLevitate(){
     return;
   }
   player.body.velocity.y = 0;
-
 }
 
-//----------------------------
-//  Teleport Wave
-//----------------------------
-var teleportStart;
-var teleportEnd;
-var teleportTimer;
-var teleportEndTimer;
-var teleportGo = true;
-var connection = 0;
-var teleportStack = 0;
-
-function startTeleportTimer(){
-  teleportTimer = game.time.create(false);
-  teleportTimer.loop(5000, teleportEnd, this);
-  teleportTimer.start();
-}
-
-function startGoTeleport(){
-  teleportEndTimer = game.time.create(false);
-  teleportEndTimer.loop(250, teleportEnd, this);
-  teleportEndTimer.start();
-}
-
-function teleportWave(){
-  console.log("did it work");
-  teleportStart = game.add.sprite(player.body.x, player.body.y, 'teleport');
-  teleportStart.scale.setTo(3.3,3.3);
-  teleportSound.play();
-  game.physics.p2.enable(teleportStart);
-  teleportStart.body.setMaterial(magicMaterial);
-  playerStopBarrier();
-  startTeleportTimer();
-  state = "normal";
-
-  teleportStart.body.static = true;
-  teleportStart.body.data.shapes[0].sensor = false;
-
-  player.body.static = true;
-  player.body.data.shapes[0].sensor = false;
-
-  player.body.velocity.y = 0;
-  state = "rift";
-
-  /*
-  teleportEnd = game.add.sprite(player.body.x, player.body.y, 'teleport');
-  teleportEnd.scale.setTo(3,3);
-  teleportSound.play();
-  game.physics.p2.enable(teleportEnd);
-  teleportEnd.body.setMaterial(magicMaterial);
-
-  teleportEnd.body.static = true;
-  teleportEnd.body.data.shapes[0].sensor = false;
-
-
-
-
-  //teleportEnd.static = true;
-  //teleportEnd.body.data.shapes[0].sensor = true;
-
-  teleportEnd.body.onBeginContact.add(teleportConnect, teleportEnd);
-  teleportEnd.body.onEndContact.add(teleportDisconnect, teleportEnd);
-  */
-}
-
-function teleportEnd(){
-    teleportTimer.stop();
-    player.reset(teleportStart.body.x, teleportStart.body.y);
-    /*
-    if(connection == 0){
-      //player.reset(teleportEnd.body.x, teleportEnd.body.y);
-    }else{
-      player.reset(teleportStart.body.x, teleport.body.y);
-    }*/
-    teleportStart.destroy();
-    //teleportEnd.destroy();
-    teleportStart = 0;
-
-    player.body.static = false;
-    player.body.data.shapes[0].sensor = false;
-    state = "normal";
-}
-
-function teleportDisconnect(body1, body2){
-  if(body1 == null) return;
-  if(body1.indestructible || (this.alliance == body1.sprite.alliance)) return;
-  connection--;
-}
-
-function teleportConnect(body1, body2){
-  if(body1 == null) return;
-  if(body1.indestructible || (this.alliance == body1.sprite.alliance)) return;
-  connection++;
+function waveFollow(obj1, obj2, speed){
+  if (typeof speed === 'undefined') { speed = 60; }
+  var angle = Math.atan2(obj2.y - obj1.y, obj2.x - obj1.x);
+  obj1.body.velocity.x = Math.cos(angle) * speed;    // accelerateToObject 
+  obj1.body.velocity.y = Math.sin(angle) * speed;
 }
 
 
@@ -818,3 +833,5 @@ function repositionEnergyTemplate(){
     blaster.body.x = player.body.x + 75 * player.direction;
   }
 }
+
+
