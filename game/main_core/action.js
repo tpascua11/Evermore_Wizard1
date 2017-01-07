@@ -723,6 +723,13 @@ function magicBoostEnd(){
 var connection;
 var teleport;
 function teleportWave(){
+  var teleportVisualEnd;
+  teleportVisualEnd = game.add.sprite(player.body.x-35, player.body.y-23, 'teleport');
+
+  teleportVisualEnd.animations.add('run', [0, 1, 2, 3, 4, 5], true);
+  teleportVisualEnd.animations.play('run', 25, false, true);
+  teleportVisualEnd.scale.setTo(5,5);
+
   teleportSound.play();
 
   teleport = game.add.sprite(0, 0, 'teleport');
@@ -734,6 +741,7 @@ function teleportWave(){
   teleport.body.damping = 0;
   teleport.body.force = 0;
   teleport.alpha = 1;
+  teleport.invincible = true;
 
   placeFrontOfPlayerWith(teleport,100,100);
 
@@ -745,14 +753,20 @@ function teleportWave(){
   teleport.indestructible = true;
   teleport.alliance = 1;
 
-  teleportPastx = teleport.body.x;
-  teleportPasty = teleport.body.y;
+  teleportPastx = player.body.x;
+  teleportPasty = player.body.y;
+
+  moveFrontOfPlayerWith(player, 350, 350);
 
   teleportVisual = game.add.sprite(teleport.body.x-23, teleport.body.y-23, 'teleport');
   teleportVisual.scale.setTo(3,3);
 
-  teleportVisual.animations.add('run', [0, 1, 2, 3, 4, 5], true);
+  teleportVisual.animations.add('run', [5, 4, 3, 2, 1, 0], true);
   teleportVisual.animations.play('run', 25, false, true);
+
+  player.body.data.shapes[0].sensor = true;
+  player.body.static = true;
+  player.alpha = 0;
 }
 
 function teleportConnection(body1, body2){
@@ -771,20 +785,24 @@ function startTeleportTimer(){
   teleportTimer.start();
 }
 function teleportGo(){
-  teleport.destroy();
+  teleport.allaince = 1;
+  teleport.body.x = -500;
+  teleport.body.static = true;
+  teleport.timeAt = pTime;
+  teleport.end = true;
+  spells.push(teleport);
   if(connection == 0){
-    var teleportVisualEnd;
 
-    teleportVisualEnd = game.add.sprite(0 , 0 , 'teleport');
-    teleportVisualEnd.animations.add('run', [5, 4, 3, 2, 1, 0], true);
-    teleportVisualEnd.animations.play('run', 25, false, true);
-    teleportVisualEnd.scale.setTo(5,5);
     //placeFrontOfPlayerWith(player,100,100);
-    player.reset(teleportPastx, teleportPasty);
+    //player.reset(teleportPastx, teleportPasty);
 
   }
   teleportTimer.stop();
   connection = 0;
+
+  player.body.data.shapes[0].sensor = false;
+  player.body.static = false;
+  player.alpha = 1;
 }
 
 

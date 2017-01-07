@@ -393,7 +393,6 @@ function aiHarmWave(goblinD){
   goblinD.damage.alpha = 0;
 
   goblinD.damage.postUpdate = function(){
-
     if((this.endAtTime <= universalTime) || this.dead == true){
       this.destroy();
     }
@@ -466,6 +465,7 @@ function accelerateToObject(obj1, obj2, speed) {
 
 
 function harm(body1){
+  console.log("TELEPORT ALLY", teleport.alliance);
   if(body1 == null) return;
   if(body1.indestructible || (this.alliance == body1.sprite.alliance)) return;
   if(body1.sprite.invincible == null) return;
@@ -487,6 +487,7 @@ function harm(body1){
 }
 
 function harmProjectile(body1){
+  console.log("TELEPORT ALLY", teleport.alliance);
   if(body1 == null) return;
   if(body1.indestructible || (this.alliance == body1.sprite.alliance)) return;
   if(body1.sprite.invincible) return;
