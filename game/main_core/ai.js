@@ -117,8 +117,8 @@ function goblinSwordsMan(x,y,id){
     game.physics.p2.enable(goblin);
     goblin.body.fixedRotation = true;
     aiMaterial = game.physics.p2.createMaterial('aiMaterial', goblin.body);
-    goblin.body.health = 5;
-    goblin.damage = 10;
+    goblin.body.health = 20;
+    goblin.damage = 30;
     goblin.doAttack = function(){}
     for(var attrname in aiBasicStats){goblin[attrname] = aiBasicStats[attrname]}
     goblin.aid = id;
@@ -142,8 +142,8 @@ function goblinStaber(x, y, id){
     game.physics.p2.enable(goblin);
     goblin.body.fixedRotation = true;
     aiMaterial = game.physics.p2.createMaterial('aiMaterial', goblin.body);
-    goblin.body.health = 3;
-    goblin.damage = 10;
+    goblin.body.health = 15;
+    goblin.damage = 20;
     goblin.doAttack = function(){}
     for(var attrname in aiBasicStats){goblin[attrname] = aiBasicStats[attrname]}
     goblin.aid = id;
@@ -167,7 +167,7 @@ function goblinArcher(x,y,id){
     game.physics.p2.enable(goblin);
     goblin.body.fixedRotation = true;
     aiMaterial = game.physics.p2.createMaterial('aiMaterial', goblin.body);
-    goblin.body.health = 10;
+    goblin.body.health = 15;
     goblin.damage = 10;
     goblin.doAttack = function(){}
     for(var attrname in aiBasicStats){goblin[attrname] = aiBasicStats[attrname]}
@@ -390,7 +390,7 @@ function aiHarmWave(goblinD){
   goblinD.damage.pushPowerY = -100;
   goblinD.damage.direction = goblinD.direction;
 
-  goblinD.damage.alpha = 0;
+  //goblinD.damage.alpha = 0;
 
   goblinD.damage.postUpdate = function(){
     if((this.endAtTime <= universalTime) || this.dead == true){
@@ -465,7 +465,6 @@ function accelerateToObject(obj1, obj2, speed) {
 
 
 function harm(body1){
-  console.log("TELEPORT ALLY", teleport.alliance);
   if(body1 == null) return;
   if(body1.indestructible || (this.alliance == body1.sprite.alliance)) return;
   if(body1.sprite.invincible == null) return;
@@ -487,7 +486,6 @@ function harm(body1){
 }
 
 function harmProjectile(body1){
-  console.log("TELEPORT ALLY", teleport.alliance);
   if(body1 == null) return;
   if(body1.indestructible || (this.alliance == body1.sprite.alliance)) return;
   if(body1.sprite.invincible) return;

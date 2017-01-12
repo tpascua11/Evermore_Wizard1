@@ -45,8 +45,8 @@ var playerStats = {
   rmana    : 25 ,
   maxRmana : 25 ,
   curSpd   : 0  ,
-  speed    : 300,
-  sprintSpd: 400,
+  speed    : 350,
+  sprintSpd: 450,
   sprinting: 0  ,
   acl      : 50 ,
   moveLeft : 0  ,
@@ -96,6 +96,7 @@ function loadPlayerResource(){
   game.load.spritesheet('smissle', '../assets/Blue_Magic_Missles.png', 16, 16);
   game.load.spritesheet('energyBall', '../assets/spells/BlueEnergyBall.png', 16, 16);
   game.load.spritesheet('teleport', '../assets/spells/whiteTeleport.png', 16, 16);
+  game.load.spritesheet('teleport301', '../assets/spells/whiteTeleport.png', 16, 16);
   game.load.spritesheet('casting', '../assets/Casting.png', 16, 16);
   game.load.spritesheet('magicBlock', '../assets/spells/MagicBlock.png', 8, 16);
   game.load.spritesheet('magicShield', '../assets/spells/Shield_Up.png', 4, 16);
@@ -316,14 +317,30 @@ function incrementPlayerTimer(){
 //__________
 function startRegenTimer(){
   regenTimer= game.time.create(false);
-  regenTimer.loop(300, regainMana, this);
+  regenTimer.loop(700, regainMana, this);
   regenTimer.start();
 }
+
 function regainMana(){
   if(player.levitation) player.rmana -= 2;
   else if (player.maxRmana <= player.rmana || player.charging || player.barrier) return;
   else if(player.rmana < 0) player.rmana = 0;
   else player.rmana += player.rechargeRate;
+}
+
+function spendMana(cost){
+  cost = cost - player.rmana;
+  player.rmana-= cost;
+  if(cost < 0) cost = 0;
+  if(player.rmana < 0) player.rmana = 0;
+  player.mana -= cost;
+}
+
+function gainMana(amount){
+  player.mana += amount;
+  leftovers = player.mana - player.maxMana;
+  if(leftovers < 0) leftovers = 0;
+  player.rmana += leftovers;
 }
 //__________
 // Charging
