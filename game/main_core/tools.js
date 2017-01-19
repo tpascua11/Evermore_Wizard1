@@ -4,6 +4,140 @@ function loadBoundaries(){
   game.load.spritesheet('click', '../assets/basic/Click.png', 16, 16);
   game.load.spritesheet('checkpoint', '../assets/basic/Checkpoint.png', 16, 16);
 }
+//---------------------------------------
+// Camera Control
+//---------------------------------------
+function cameraMoveRight(){
+  game.camera.x += 300;
+}
+
+function cameraMoveLeft(){
+  game.camera.x -= 300;
+}
+
+function cameraMoveDown(){
+  game.camera.y += 300;
+}
+
+function cameraMoveUp(){
+  game.camera.y -= 300;
+}
+//--------------------------------------
+//  Pinpoint Rectangle
+//--------------------------------------
+var pinTargetID = 0;
+var pinPointOn = false;
+var pinHeight = 0;
+var pinWidth = 0;
+var pinAtX = 0;
+var pinAtY = 0;
+
+function create6pinPoints(){
+  pinTR = game.add.sprite(-1000, -500, 'click');//Top Left
+  pinTM = game.add.sprite(-1000, -500, 'click');//Top Middle
+  pinTL = game.add.sprite(-1000, -500, 'click');//Top Middle
+
+  pinBR = game.add.sprite(-1000, -500, 'click');//Top Left
+  pinBM = game.add.sprite(-1000, -500, 'click');//Top Middle
+  pinBL = game.add.sprite(-1000, -500, 'click');//Top Middle
+
+  game.physics.p2.enable(pinTR);
+  game.physics.p2.enable(pinTM);
+  game.physics.p2.enable(pinTL);
+  game.physics.p2.enable(pinBR);
+  game.physics.p2.enable(pinBM);
+  game.physics.p2.enable(pinBL);
+
+  pinTL.body.static = true;
+  pinTL.hname = 'TL';
+
+  pinTR.body.static = true;
+  pinTR.hname = 'TR';
+
+  pinBL.body.static = true;
+  pinBL.hname = 'BL';
+
+  pinBR.body.static = true;
+  pinBR.hname = 'BR';
+
+  pinTM.body.static = true;
+  pinBM.body.static = true;
+}
+
+function surrondPinpoint(body){
+  if(body.sprite.hooks == null) return;
+  console.log("SURROUNDING!!");
+  pinTargetID = body.eid;
+  console.log("The ID is", pinTargetID);
+  pinBR.body.x = body.x + body.sprite.width/2;
+  pinBR.body.y = body.y + body.sprite.height/2;// +  body.height/2;
+
+  pinBL.body.x = body.x - body.sprite.width/2;
+  pinBL.body.y = body.y + body.sprite.height/2;// +  body.height/2;
+
+  pinTR.body.x = body.x + body.sprite.width/2;
+  pinTR.body.y = body.y - body.sprite.height/2;// +  body.height/2;
+
+  pinTL.body.x = body.x - body.sprite.width/2;
+  pinTL.body.y = body.y - body.sprite.height/2;// +  body.height/2;
+}
+
+function hooksBaseOn(body){
+  if(body.sprite.hname == null) surrondPinpoint(targetBody);
+  else if(body.sprite.hname == 'TR') moveWithTR();
+  else if(body.sprite.hname == 'TL') moveWithTL();
+  else if(body.sprite.hname == 'BR') moveWithBR();
+  else if(body.sprite.hname == 'BL') moveWithBL();
+  else{
+    console.log("DISATER");
+  }
+  resizeOn(body);
+}
+
+function resizeOn(body){
+  console.log("nothing");
+  pinHeight = pinBR.body.y - pinTR.body.y;
+  pinAtY = pinTL.body.y + pinHeight/2;
+
+
+  pinWidth = pinTR.body.x - pinTL.body.x;
+  pinAtX = pinTL.body.x + pinWidth/2;
+
+  //existingBlocks[pinTargetID-1].body.setRectangle(existingBlocks[i].width, existingBlocks[i].height);
+  //existingBlocks[pinTargetID-1].body.setRectangle(pinBR.body.x - pinBL.body.x, pinBR.body.y - pinTR.body.y);
+  //existingBlocks[pinTargetID-1].scale.setTo(3,3);
+  //
+  console.log("AXIS ", pinAtX, pinAtY);
+  console.log("Width ", pinWidth);
+  console.log("Height ", pinHeight);
+}
+
+function moveWithTR(){
+  console.log("HI");
+  pinBR.body.x = pinTR.body.x;
+  pinTL.body.y = pinTR.body.y;
+}
+
+function moveWithTL(){
+
+  console.log("HI");
+  pinBL.body.x = pinTL.body.x;
+  pinTR.body.y = pinTL.body.y;
+}
+
+function moveWithBR(){
+
+  console.log("HI");
+  pinTR.body.x = pinBR.body.x;
+  pinBL.body.y = pinBR.body.y;
+}
+
+function moveWithBL(){
+
+  console.log("HI");
+  pinTL.body.x = pinBL.body.x;
+  pinBR.body.y = pinBL.body.y;
+}
 //--------------------------------------
 //  Object Creation
 //--------------------------------------
@@ -11,7 +145,6 @@ var lastTargetBody;
 var existingBlocks = [];
 
 function toolControls(){
-  console.log("WHAT?");
   buttonC = game.input.keyboard.addKey(Phaser.Keyboard.C);
   buttonC.onDown.add(makeExist, this);
   buttonF = game.input.keyboard.addKey(Phaser.Keyboard.F);
@@ -21,10 +154,22 @@ function toolControls(){
   buttonT.onDown.add(heightPower, this);
   buttonY = game.input.keyboard.addKey(Phaser.Keyboard.Y);
   buttonY.onDown.add(widthPower, this);
+
+  moveUp = game.input.keyboard.addKey(Phaser.Keyboard.W);
+  moveUp.onDown.add(cameraMoveUp, this);
+
+  moveLeft = game.input.keyboard.addKey(Phaser.Keyboard.A);
+  moveLeft.onDown.add(cameraMoveLeft, this);
+
+  moveRight = game.input.keyboard.addKey(Phaser.Keyboard.D);
+  moveRight.onDown.add(cameraMoveRight, this);
+
+  moveDown = game.input.keyboard.addKey(Phaser.Keyboard.S);
+  moveDown.onDown.add(cameraMoveDown, this);
 }
 
 function toolsSetup(){
-
+  create6pinPoints();
 }
 
 function widthPower(){
@@ -47,6 +192,7 @@ function makeExist(){
   console.log("EXIST");
   var box = game.add.sprite(mouse.body.x, mouse.body.y, 'exist');
   //var size = game.rnd.integerInRange(1, 5);
+  box.hooks = true;
   size = 3;
   box.scale.setTo(size, 0.5);
   game.physics.p2.enable(box);
@@ -72,6 +218,44 @@ function makeExist(){
   console.log(box.body.eid);
   //existsBlocks.push(box);
   game.world.bringToTop(bg2);
+}
+
+function existance(width, height, xoo, yoo){
+  var nid = existingBlocks.length;
+  //if(box != null){
+    existingBlocks[pinTargetID-1].destroy();
+    nid = pinTargetID;
+  //}
+  var box = game.add.sprite(0,0, 'exist');
+  //box.scale.x = width;
+  //box.scale.y = height;
+  box.width = width;
+  box.height= height;
+  box.x = xoo;
+  box.y = yoo;
+  game.physics.p2.enable(box);
+  box.frame = 0;
+  box.body.fixedRotation = true;
+
+  box.body.setMaterial(boxMaterial);
+  box.body.static = true;
+  box.hooks = true;
+
+  //existingBlocks.push(box);
+  console.log("Existing Blocks", existingBlocks.length);
+  //box.eid = existingBlocks.length;
+  //box.body.eid = existingBlocks.length;
+  box.eid = nid;
+  box.body.eid = nid;
+
+  box.body.indestructible = true;
+  console.log(box.eid);
+  console.log(box.body.eid);
+  //existsBlocks.push(box);
+  game.world.bringToTop(bg2);
+
+
+  existingBlocks[pinTargetID-1] = box;
 }
 
 function forceStatic(){
@@ -135,11 +319,10 @@ function click(pointer) {
   mouse.body.y = pointer.y + game.camera.y;
 
   mouse.body.static = false;
+  mouse.body.data.gravityScale = 0;
+
   mouse.body.velocity.x = 0;
   mouse.body.velocity.y = 0;
-
-  //mouseAlt.body.x = pointer.x + game.camera.x;
-  //mouseAlt.body.y = pointer.y + game.camera.y;
 
   mouseHolding = true;
 }
@@ -160,6 +343,12 @@ function release() {
 
   targetBody = null;
   console.log("mouse hold off");
+  if(pinPointOn){
+    console.log(" did it work");
+    console.log("PIN AXIS: ", pinAtX, pinAtY);
+    existance(pinWidth, pinHeight, pinAtX, pinAtY);
+  }
+  pinPointOn = false;
 }
 
 function grabBody(body1, body2){
@@ -173,16 +362,36 @@ function grabBody(body1, body2){
   body1.static = true;
   lastTargetBody = body1;
   targetBody = body1;
+  
+  pinTactX = mouse.body.x - body1.x;
+  pinTactY = mouse.body.y - body1.y;
+
+  if(body1.sprite.hname != null) pinPointOn = true;
+  //surrondPinpoint(body1);
 }
+
+function releaseBody(body1, body2){
+  surrondPinpoint(body1);
+}
+
+var pinTactX;
+var pinTactY;
 
 function moveWith(pointer) {
   if(mouseHolding && (targetBody!= null)){
     mouse.body.x = pointer.x + game.camera.x;
     mouse.body.y = pointer.y + game.camera.y;
+
     targetBody.x = mouse.body.x;
     targetBody.y = mouse.body.y;
+
+    targetBody.x = mouse.body.x - pinTactX
+    targetBody.y = mouse.body.y - pinTactY;
+
     targetBody.velocity.x = 0;
     targetBody.velocity.y = 0;
+    //surrondPinpoint(targetBody);
+    hooksBaseOn(targetBody);
   }
 }
 

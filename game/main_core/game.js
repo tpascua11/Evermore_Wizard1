@@ -1,7 +1,3 @@
-//var game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, 'Evermore: The Wizard Guide');
-//var gameWidth = 250;
-//var gameHeight = 250;
-
 var GameIntroState = {
   preload: function(){
       this.load.image('logo', '../assets/menu/Book_1.png');

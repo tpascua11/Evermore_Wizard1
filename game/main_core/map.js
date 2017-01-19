@@ -12,6 +12,7 @@ function loadMapAlpha(){
   game.load.image('sky', '../assets/sky.png');
   game.load.image('level1back', '../assets/Map/Level1-1back.png');
   game.load.image('level1front', '../assets/Map/Level1-1Front.png');
+  game.load.image('background', '../assets/Map/Mountain.png');
 
   game.load.image('ground', '../assets/platform.png');
   game.load.image('star', '../assets/star.png');
@@ -22,9 +23,12 @@ function loadMapAlpha(){
 
 function createWorldAlpha(){
   bg = game.add.tileSprite(0, 0, 1920, 240, 'level1front');
-  game.world.setBounds(0, 0, 1920, 240);
+  mbg = game.add.tileSprite(0,0, 500, 250, 'background');
+  mbg.scale.setTo(3, 3);
 
-  bg2 = game.add.tileSprite(0, 0, 1920, 240, 'level1back');
+  game.world.setBounds(0, 0, 1920, 750);
+
+  bg2 = game.add.tileSprite(0, 700, 1920, 240, 'level1back');
   game.world.bringToTop(bg2);
 
   game.physics.startSystem(Phaser.Physics.P2JS);

@@ -464,7 +464,7 @@ function forceBox(body1, body2){
 //  Charging_Magic
 //--------------------------------------
 var chargeTimer;
-var chargeSec = (Phaser.Timer.SECOND * 0.5);
+var chargeSec = (Phaser.Timer.SECOND * 0.4);
 function startChargingMagicTimer(){
   chargeTimer = game.time.create(false);
   chargeTimer.loop(chargeSec, chargingMagic, this);
@@ -509,15 +509,18 @@ function trueMagicBomb(){
   game.physics.p2.enable(magicBomb);
   if(pCharge == 1){
     magicBomb.scale.setTo(1,1);
-    magicBomb.damage = 5;
+    magicBomb.damage = 15;
+    magicBomb.timeAt = pTime + 1;
   }
   else if(pCharge == 2){
     magicBomb.scale.setTo(1.2,1.2);
     magicBomb.damage = 20;
+    magicBomb.timeAt = pTime + 11;
   }
   else{
-    magicBomb.scale.setTo(2,2);
-    magicBomb.damage = 40;
+    magicBomb.scale.setTo(1.4,1.4);
+    magicBomb.damage = 30;
+    magicBomb.timeAt = pTime + 13;
   }
   magicBomb.alliance = 1;
   magicBomb.body.alliance = 1;
@@ -541,7 +544,6 @@ function trueMagicBomb(){
   magicBomb.body.force = 0;
   magicBomb.pCharge = pCharge;
 
-  magicBomb.timeAt = pTime + 10;
   magicBomb.end = false;
   magicBomb.body.onBeginContact.add(bombFinaleContact, magicBomb);
 
@@ -604,7 +606,7 @@ function bombFinaleContact(body1, body2){
 }
 //-----------------------------
 //  Magic BLast
-//  ---------------------------
+//---------------------------
 function magicBlast(){
   if(!player.charging) return;
   player.charging = player.casting = 0;
@@ -623,7 +625,7 @@ function magicBlast(){
 
   magicBomb.body.fixedRotation = true;
   magicBomb.animations.add('run', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], true);
-  magicBomb.animations.play('run', 50, false);
+  magicBomb.animations.play('run', 30, false);
   magicBomb.end = true;
   magicBomb.body.ptype = 'blast';
 
@@ -662,8 +664,6 @@ function magicBlast(){
   //circleCasting.alpha = 0;
   state = "normal";
 }
-
-
 
 //-----------------------------
 //  Magic Barrier

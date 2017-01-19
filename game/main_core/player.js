@@ -604,6 +604,7 @@ function missionFailed(){
 //--------------
 var yAxis = p2.vec2.fromValues(0, 1);
 function checkIfCanJump() {
+  console.log("TEST JUMP C:", game.physics.p2.world.narrowphase.contactEquations.length);
   var result = false;
   for (var i=0; i < game.physics.p2.world.narrowphase.contactEquations.length; i++){
     var c = game.physics.p2.world.narrowphase.contactEquations[i];

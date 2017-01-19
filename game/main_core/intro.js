@@ -1,5 +1,3 @@
-console.log("...");
-
 var PreLoadState= {
   preload: function (){
     this.stage.smoothed = false;
