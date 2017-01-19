@@ -2,9 +2,9 @@
 // Main Core
 //--------------------------------------------------
 //var game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, 'Evermore: The Wizard Guide', { preload: preload, create: create, update: update } );
-var game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, 'Evermore: The Wizard Guide');
-var gameWidth = 800;
-var gameHeight = 600;
+var game = new Phaser.Game(800, 480, Phaser.AUTO, 'Evermore: The Wizard Guide');
+//var gameWidth = 1000;
+//var gameHeight = 480;
 
 var livingGame = {
   create: function(){

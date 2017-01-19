@@ -1,11 +1,53 @@
-
+//---------------------------------------------------------------------
+//  1_Tools_Control
+//  2_Camera_Control
+//  3_Pinpoint_Rectangle
+//  4_Object_Creation
+//  5_Mouse_Control
+//  6_Adding_Collisions
+//  7_Creation
+//---------------------------------------------------------------------
 function loadBoundaries(){
   game.load.spritesheet('exist', '../assets/basic/Exist.png', 16, 16);
   game.load.spritesheet('click', '../assets/basic/Click.png', 16, 16);
   game.load.spritesheet('checkpoint', '../assets/basic/Checkpoint.png', 16, 16);
 }
+
+function editorCamera(){
+
+}
+//--------------------------------------
+//  1_Tools_Control
+//--------------------------------------
+function toolControls(){
+  buttonC = game.input.keyboard.addKey(Phaser.Keyboard.C);
+  buttonC.onDown.add(makeExist, this);
+  buttonF = game.input.keyboard.addKey(Phaser.Keyboard.F);
+  buttonF.onDown.add(forceStatic, this);
+
+  buttonT = game.input.keyboard.addKey(Phaser.Keyboard.T);
+  buttonT.onDown.add(heightPower, this);
+  buttonY = game.input.keyboard.addKey(Phaser.Keyboard.Y);
+  buttonY.onDown.add(widthPower, this);
+
+  moveUp = game.input.keyboard.addKey(Phaser.Keyboard.W);
+  moveUp.onDown.add(cameraMoveUp, this);
+
+  moveLeft = game.input.keyboard.addKey(Phaser.Keyboard.A);
+  moveLeft.onDown.add(cameraMoveLeft, this);
+
+  moveRight = game.input.keyboard.addKey(Phaser.Keyboard.D);
+  moveRight.onDown.add(cameraMoveRight, this);
+
+  moveDown = game.input.keyboard.addKey(Phaser.Keyboard.S);
+  moveDown.onDown.add(cameraMoveDown, this);
+}
+
+function toolsSetup(){
+  create6pinPoints();
+}
 //---------------------------------------
-// Camera Control
+// 2_Camera_Control
 //---------------------------------------
 function cameraMoveRight(){
   game.camera.x += 300;
@@ -23,7 +65,7 @@ function cameraMoveUp(){
   game.camera.y -= 300;
 }
 //--------------------------------------
-//  Pinpoint Rectangle
+//  3_Pinpoint_Rectangle
 //--------------------------------------
 var pinTargetID = 0;
 var pinPointOn = false;
@@ -103,74 +145,35 @@ function resizeOn(body){
   pinWidth = pinTR.body.x - pinTL.body.x;
   pinAtX = pinTL.body.x + pinWidth/2;
 
-  //existingBlocks[pinTargetID-1].body.setRectangle(existingBlocks[i].width, existingBlocks[i].height);
-  //existingBlocks[pinTargetID-1].body.setRectangle(pinBR.body.x - pinBL.body.x, pinBR.body.y - pinTR.body.y);
-  //existingBlocks[pinTargetID-1].scale.setTo(3,3);
-  //
-  console.log("AXIS ", pinAtX, pinAtY);
-  console.log("Width ", pinWidth);
-  console.log("Height ", pinHeight);
+  //console.log("AXIS ", pinAtX, pinAtY);
+  //console.log("Width ", pinWidth);
+  //console.log("Height ", pinHeight);
 }
 
 function moveWithTR(){
-  console.log("HI");
   pinBR.body.x = pinTR.body.x;
   pinTL.body.y = pinTR.body.y;
 }
 
 function moveWithTL(){
-
-  console.log("HI");
   pinBL.body.x = pinTL.body.x;
   pinTR.body.y = pinTL.body.y;
 }
 
 function moveWithBR(){
-
-  console.log("HI");
   pinTR.body.x = pinBR.body.x;
   pinBL.body.y = pinBR.body.y;
 }
 
 function moveWithBL(){
-
-  console.log("HI");
   pinTL.body.x = pinBL.body.x;
   pinBR.body.y = pinBL.body.y;
 }
 //--------------------------------------
-//  Object Creation
+//  4_Object_Creation
 //--------------------------------------
 var lastTargetBody;
 var existingBlocks = [];
-
-function toolControls(){
-  buttonC = game.input.keyboard.addKey(Phaser.Keyboard.C);
-  buttonC.onDown.add(makeExist, this);
-  buttonF = game.input.keyboard.addKey(Phaser.Keyboard.F);
-  buttonF.onDown.add(forceStatic, this);
-
-  buttonT = game.input.keyboard.addKey(Phaser.Keyboard.T);
-  buttonT.onDown.add(heightPower, this);
-  buttonY = game.input.keyboard.addKey(Phaser.Keyboard.Y);
-  buttonY.onDown.add(widthPower, this);
-
-  moveUp = game.input.keyboard.addKey(Phaser.Keyboard.W);
-  moveUp.onDown.add(cameraMoveUp, this);
-
-  moveLeft = game.input.keyboard.addKey(Phaser.Keyboard.A);
-  moveLeft.onDown.add(cameraMoveLeft, this);
-
-  moveRight = game.input.keyboard.addKey(Phaser.Keyboard.D);
-  moveRight.onDown.add(cameraMoveRight, this);
-
-  moveDown = game.input.keyboard.addKey(Phaser.Keyboard.S);
-  moveDown.onDown.add(cameraMoveDown, this);
-}
-
-function toolsSetup(){
-  create6pinPoints();
-}
 
 function widthPower(){
   console.log("Width Power");
@@ -188,6 +191,7 @@ function heightPower(){
   existingBlocks[i].scale.y += 2;
   existingBlocks[i].body.setRectangle(existingBlocks[i].width, existingBlocks[i].height);
 }
+
 function makeExist(){
   console.log("EXIST");
   var box = game.add.sprite(mouse.body.x, mouse.body.y, 'exist');
@@ -201,7 +205,6 @@ function makeExist(){
   //    [0, 1, 2, 3, 4, 5, 6], 25, true);
   //box.animations.play('auto', 15, true);
   box.frame = 0;
-
   box.body.fixedRotation = true;
   box.body.mass = 6;
   box.body.health = 1;
@@ -209,26 +212,23 @@ function makeExist(){
   box.body.setMaterial(boxMaterial);
   box.body.static = true;
   //existingBlocks = [];
+
   existingBlocks.push(box);
-  console.log("Existing Blocks", existingBlocks.length);
   box.eid = existingBlocks.length;
   box.body.eid = existingBlocks.length;
   box.body.indestructible = true;
   console.log(box.eid);
   console.log(box.body.eid);
-  //existsBlocks.push(box);
+
+  console.log("Existing Blocks", existingBlocks.length);
+
   game.world.bringToTop(bg2);
 }
 
 function existance(width, height, xoo, yoo){
-  var nid = existingBlocks.length;
-  //if(box != null){
-    existingBlocks[pinTargetID-1].destroy();
-    nid = pinTargetID;
-  //}
+  existingBlocks[pinTargetID-1].destroy();
+  var nid = pinTargetID;
   var box = game.add.sprite(0,0, 'exist');
-  //box.scale.x = width;
-  //box.scale.y = height;
   box.width = width;
   box.height= height;
   box.x = xoo;
@@ -241,19 +241,14 @@ function existance(width, height, xoo, yoo){
   box.body.static = true;
   box.hooks = true;
 
-  //existingBlocks.push(box);
   console.log("Existing Blocks", existingBlocks.length);
-  //box.eid = existingBlocks.length;
-  //box.body.eid = existingBlocks.length;
   box.eid = nid;
   box.body.eid = nid;
 
   box.body.indestructible = true;
   console.log(box.eid);
   console.log(box.body.eid);
-  //existsBlocks.push(box);
   game.world.bringToTop(bg2);
-
 
   existingBlocks[pinTargetID-1] = box;
 }
@@ -268,9 +263,8 @@ function forceStatic(){
   //mouse.body.static = false;
 }
 
-
 //---------------------------------------
-//  Mouse Control
+//  5_Mouse_Control
 //---------------------------------------
 var mouseMaterial;
 var mouse;
@@ -396,7 +390,7 @@ function moveWith(pointer) {
 }
 
 //---------------------------
-// Adding Collisions
+// 6_Adding_Collisions
 //--------------------------
 var squarePoint = [];
 var topLeft;
@@ -428,5 +422,16 @@ function squareTruth(point1, point2){
     else{
       topLeft= point1;
     }
+  }
+}
+//--------------------------
+//  7_Creation
+//--------------------------
+var creation;
+
+function createHere(){
+  switch(creation){
+    case "existance": break;
+    default: break;
   }
 }

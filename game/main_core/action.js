@@ -737,6 +737,7 @@ function magicBoostEnd(){
 
 var connection;
 var teleport;
+
 function teleportWave(){
   var teleportVisualEnd;
   teleportVisualEnd = game.add.sprite(player.body.x-35, player.body.y-23, 'teleport301');
