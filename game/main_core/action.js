@@ -610,6 +610,7 @@ function bombFinaleContact(body1, body2){
 function magicBlast(){
   if(!player.charging) return;
   player.charging = player.casting = 0;
+  player.airCasted = 1;
 
   magicBomb = game.add.sprite(0, 0, 'magicBlast');
   //magicBomb.scale.setTo(1,1);
@@ -647,7 +648,7 @@ function magicBlast(){
   chargeTimer.stop();
   placeFrontOfPlayerVisualChange(magicBomb);
   moveFrontOfPlayerWith(magicBomb, 500*pCharge, 500);
-  movePlayer(400,400);
+  movePlayer(400+pCharge*75,400+pCharge*75);
   player.casting = false;
   player.energy = false;
 
@@ -699,11 +700,11 @@ function playerStopBarrier(){
 
 function playerBarrier(){
   if(player.rmana <= 0) return;
+  player.rmana -= 1;
   circleBarrier.play('run', 10, true);
   circleBarrier.alpha = 0.8;
   player.barrier = true;
   player.casting = 1;
-  player.rmana -= 3;
 
   wallSound.play();
   state = "barrier";
@@ -739,6 +740,8 @@ var connection;
 var teleport;
 
 function teleportWave(){
+  if(player.rmana <= 0) return;
+  player.rmana -= 1;
   var teleportVisualEnd;
   teleportVisualEnd = game.add.sprite(player.body.x-35, player.body.y-23, 'teleport301');
 

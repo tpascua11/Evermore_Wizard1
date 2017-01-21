@@ -1,9 +1,14 @@
 <!doctype html> 
-<html lang="en"> 
+<html ng-app="editor" ng-controller="EditorController">
 
 <script type="text/javascript" src="../bower_components/phaser/build/phaser.min.js"></script>
 <script type="text/javascript" src="../bower_components/jquery/dist/jquery.js"></script>
 <script type="text/javascript" src="../bower_components/angular/angular.min.js"></script>
+
+<script type="text/javascript"
+  src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<link rel="stylesheet"
+href="../bower_components/bootstrap/dist/css/bootstrap.min.css">
 
 <script type="text/javascript" src= ../main_core/timer.js></script>
 <script type="text/javascript" src= ../main_core/map.js></script>
@@ -14,10 +19,11 @@
 <script type="text/javascript" src= ../sub_core/editorMode.js></script>
 <script type="text/javascript" src= ../sub_core/editorIntro.js></script>
 <script type="text/javascript" src= ../sub_core/editor.js></script>
+<script type="text/javascript" src= ../sub_core/interfaceEditor.js></script>
 
 <head> 
 	<meta charset="UTF-8" />
-	<title> Evemore - The Wizard Guide </title>
+  <title> Evemore - The Wizard Guide </title>
     <style type="text/css">
         body {
             margin: 0;
@@ -25,6 +31,38 @@
     </style>
 </head>
 <body>
+  <div id='Evermore_The_Wizard_Guide'></div>
+  <div id="" style="overflow-y: scroll; height:300px;">
+    <div class="col-xs-2">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Select</th>
+            <th>Enemy</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="x in loadList | orderBy:name:reverse">
+            <td>
+              <button type="button" class="btn btn-primary"
+                ng-click="lookAtInfo(x)">BaseCreation</button> </td>
+            <td> {{x.name}}</td>
+            <td> {{x.description}} </td>
+          </tr>
+        </tbody>
 
-</body>
-</html>
+      </table>
+    </div>
+  </div>
+  <div class="col-xs-5">
+    <h3>Save?<h3>
+    <button type="button" class="btn btn-primary"
+    ng-click="saveLevel()">Save Level</button>
+
+  </div>
+
+
+
+    </body>
+  </html>

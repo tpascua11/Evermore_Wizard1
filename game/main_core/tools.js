@@ -21,7 +21,7 @@ function editorCamera(){
 //--------------------------------------
 function toolControls(){
   buttonC = game.input.keyboard.addKey(Phaser.Keyboard.C);
-  buttonC.onDown.add(makeExist, this);
+  buttonC.onDown.add(createHere, this);
   buttonF = game.input.keyboard.addKey(Phaser.Keyboard.F);
   buttonF.onDown.add(forceStatic, this);
 
@@ -42,9 +42,32 @@ function toolControls(){
   moveDown = game.input.keyboard.addKey(Phaser.Keyboard.S);
   moveDown.onDown.add(cameraMoveDown, this);
 }
-
+var xample;
 function toolsSetup(){
   create6pinPoints();
+  console.log("did i happen");
+  xample = localStorage.getItem("level"); 
+  var levelAiPlacement = JSON.parse(localStorage.getItem("levelAiPlacement"));
+  var levelBlockPlacement = JSON.parse(localStorage.getItem("levelBlockPlacement"));
+  if(levelAiPlacement == null) return;
+  if(levelBlockPlacement == null) return;
+  console.log("AI LOADED", levelAiPlacement.length);
+  console.log("Block Loaded", levelBlockPlacement);
+  for(var i = 0; i < levelBlockPlacement.length; i++){
+    console.log("block", i);
+    creation = "existance";
+    createHere2(levelBlockPlacement[i].x, levelBlockPlacement[i].y, 
+        levelBlockPlacement[i].width, levelBlockPlacement[i].height);
+  }
+
+  for(var i = 0; i < levelAiPlacement.length; i++){
+    console.log("ai", i);
+    creation = levelAiPlacement[i].name;
+    createHere2(levelAiPlacement[i].x, levelAiPlacement[i].y, 0, 0);
+  }
+  localStorage.removeItem("levelAiPlacement");
+  localStorage.removeItem("levelBlockPlacement");
+
 }
 //---------------------------------------
 // 2_Camera_Control
@@ -192,6 +215,40 @@ function heightPower(){
   existingBlocks[i].body.setRectangle(existingBlocks[i].width, existingBlocks[i].height);
 }
 
+function makeExist(x,y){
+  console.log("EXIST");
+  var box = game.add.sprite(x, y, 'exist');
+  //var size = game.rnd.integerInRange(1, 5);
+  box.hooks = true;
+  size = 3;
+  box.scale.setTo(size, 0.5);
+  game.physics.p2.enable(box);
+
+  //box.animations.add('auto',
+  //    [0, 1, 2, 3, 4, 5, 6], 25, true);
+  //box.animations.play('auto', 15, true);
+  box.frame = 0;
+  box.body.fixedRotation = true;
+  box.body.mass = 6;
+  box.body.health = 1;
+
+  box.body.setMaterial(boxMaterial);
+  box.body.static = true;
+  //existingBlocks = [];
+
+  existingBlocks.push(box);
+  box.eid = existingBlocks.length;
+  box.body.eid = existingBlocks.length;
+  box.body.indestructible = true;
+  console.log(box.eid);
+  console.log(box.body.eid);
+
+  console.log("Existing Blocks", existingBlocks.length);
+
+  game.world.bringToTop(bg2);
+}
+
+
 function makeExist(){
   console.log("EXIST");
   var box = game.add.sprite(mouse.body.x, mouse.body.y, 'exist');
@@ -225,6 +282,33 @@ function makeExist(){
   game.world.bringToTop(bg2);
 }
 
+function reviveExist(width, height, xoo, yoo){
+  var nid = pinTargetID;
+  var box = game.add.sprite(0,0, 'exist');
+  box.width = width;
+  box.height= height;
+  box.x = xoo;
+  box.y = yoo;
+  game.physics.p2.enable(box);
+  box.frame = 0;
+  box.body.fixedRotation = true;
+
+  box.body.setMaterial(boxMaterial);
+  box.body.static = true;
+  box.hooks = true;
+
+  console.log("Existing Blocks", existingBlocks.length);
+  box.eid = nid;
+  box.body.eid = nid;
+
+  box.body.indestructible = true;
+  console.log(box.eid);
+  console.log(box.body.eid);
+  existingBlocks.push(box);
+  game.world.bringToTop(bg2);
+}
+
+
 function existance(width, height, xoo, yoo){
   existingBlocks[pinTargetID-1].destroy();
   var nid = pinTargetID;
@@ -253,6 +337,7 @@ function existance(width, height, xoo, yoo){
   existingBlocks[pinTargetID-1] = box;
 }
 
+
 function forceStatic(){
   lastTargetBody.static = true;
   targetBody.static = true;
@@ -275,37 +360,37 @@ var bodyCheck = false;
 var bodyPast = false;
 
 function setupMouse(){
-    mouseBody = new p2.Body();
-    game.physics.p2.world.addBody(mouseBody);
+  mouseBody = new p2.Body();
+  game.physics.p2.world.addBody(mouseBody);
 
-    mouse = game.add.sprite(300, 100, 'click');
-    mouse.scale.setTo(0.5, 0.5);
-    game.physics.p2.enable(mouse);
-    mouse.body.fixedRotation = true; 
-    mouseMaterial = game.physics.p2.createMaterial('mouseMaterial', mouse.body);
-    mouse.body.static = true;
+  mouse = game.add.sprite(300, 100, 'click');
+  mouse.scale.setTo(0.5, 0.5);
+  game.physics.p2.enable(mouse);
+  mouse.body.fixedRotation = true; 
+  mouseMaterial = game.physics.p2.createMaterial('mouseMaterial', mouse.body);
+  mouse.body.static = true;
 
-    // attach pointer events
-    game.input.onDown.add(click, this);
-    game.input.onUp.add(release, this);
-    game.input.addMoveCallback(moveWith, this);
+  // attach pointer events
+  game.input.onDown.add(click, this);
+  game.input.onUp.add(release, this);
+  game.input.addMoveCallback(moveWith, this);
 
-    mouse.body.onBeginContact.add(grabBody, mouse);
+  mouse.body.onBeginContact.add(grabBody, mouse);
 }
 
 function setupMouseAlt(){
-    mouseAlt = game.add.sprite(-1000, 100, 'click');
-    mouseAlt.scale.setTo(0.5, 0.5);
-    game.physics.p2.enable(mouseAlt);
-    mouseAlt.body.fixedRotation = true; 
-    mouseMaterial = game.physics.p2.createMaterial('mouseMaterial', mouseAlt.body);
-    mouseAlt.body.static = false;
-    // attach pointer events
-    //mouseAlt.body.onBeginContact.add(grabBody, mouseAlt);
+  mouseAlt = game.add.sprite(-1000, 100, 'click');
+  mouseAlt.scale.setTo(0.5, 0.5);
+  game.physics.p2.enable(mouseAlt);
+  mouseAlt.body.fixedRotation = true; 
+  mouseMaterial = game.physics.p2.createMaterial('mouseMaterial', mouseAlt.body);
+  mouseAlt.body.static = false;
+  // attach pointer events
+  //mouseAlt.body.onBeginContact.add(grabBody, mouseAlt);
 }
 
 function click(pointer) {
-  addPoint(pointer);
+  //addPoint(pointer);
   mouse.body.onBeginContact.add(grabBody, mouse);
   console.log("before XY", pointer.x, pointer.y);
   console.log("after XY", pointer.x, pointer.y);
@@ -356,7 +441,7 @@ function grabBody(body1, body2){
   body1.static = true;
   lastTargetBody = body1;
   targetBody = body1;
-  
+
   pinTactX = mouse.body.x - body1.x;
   pinTactY = mouse.body.y - body1.y;
 
@@ -380,7 +465,7 @@ function moveWith(pointer) {
     targetBody.y = mouse.body.y;
 
     targetBody.x = mouse.body.x - pinTactX
-    targetBody.y = mouse.body.y - pinTactY;
+      targetBody.y = mouse.body.y - pinTactY;
 
     targetBody.velocity.x = 0;
     targetBody.velocity.y = 0;
@@ -416,7 +501,7 @@ function squareTruth(point1, point2){
     }
   }
   else{
-   if(point1.y >= point2.y){
+    if(point1.y >= point2.y){
       bottomLeft = point1;
     }
     else{
@@ -427,11 +512,70 @@ function squareTruth(point1, point2){
 //--------------------------
 //  7_Creation
 //--------------------------
-var creation;
+var creation = "something";
 
+var creationList = [
+{
+  name: "goblinSwordGuy",
+    description: "has a sword"
+},
+{
+  name: "goblinDaggerGuy",
+  description: "has a dagger"
+},
+{
+  name: "goblinBowGuy",
+  description: "has a bow"
+},
+{
+  name: "mushroom",
+  description: "jumps kinda high"
+},
+{
+  name: "absorbFlower",
+  description: "drains mana"
+},
+{
+  name: "existance",
+  description: "adds collision fields"
+}
+];
+
+function lookAtInfo(object){
+
+}
+var chx = 0;
+var chy = 0;
 function createHere(){
+  chx = mouse.body.x;
+  chy = mouse.body.y;
   switch(creation){
-    case "existance": break;
+    case "existance"      : makeExist(chx, chy); break;
+    case "goblinSwordGuy" : goblinSwordsMan(chx, chy, activeAI.length); break;
+    case "goblinDaggerGuy": goblinStaber(chx, chy, activeAI.length); break;
+    case "goblinBowGuy"   : goblinArcher(chx, chy, activeAI.length); break;
+    case "mushroom"       : makeExist(chx, chy); break;
+    case "absorbFlower"   : makeExist(chx, chy); break;
     default: break;
   }
+  console.log("creation", creation);
 }
+
+function createHere2(x,y,width,height){
+  chx = x;
+  chy = y;
+  switch(creation){
+    case "existance"      : 
+      reviveExist(width, height, chx, chy); break;
+    case "goblinSwordGuy" : goblinSwordsMan(chx, chy, activeAI.length); break;
+    case "goblinDaggerGuy": goblinStaber(chx, chy, activeAI.length); break;
+    case "goblinBowGuy"   : goblinArcher(chx, chy, activeAI.length); break;
+    case "mushroom"       : makeExist(chx, chy); break;
+    case "absorbFlower"   : makeExist(chx, chy); break;
+    default: break;
+  }
+  console.log("creation", creation);
+}
+
+
+

@@ -38,8 +38,8 @@ var hearts;
 var invc;
 
 var playerStats = {
-  health   : 200,
-  maxHealth: 200,
+  health   : 25,
+  maxHealth: 25,
   mana     : 75 ,
   maxMana  : 100,
   rmana    : 25 ,
@@ -89,7 +89,9 @@ function loadPlayerResource(){
   game.load.spritesheet('redBoundary', '../assets/player/Vark_TemplateRedSingle.png', 20, 20);
   game.load.spritesheet('template', '../assets/player/Player_Template.png', 20, 20);
 
+  game.load.spritesheet('woodHUD', '../assets/player/woodHud.png', 216, 32);
   game.load.spritesheet('hearts', '../assets/player/hearts.png', 48, 16);
+  game.load.spritesheet('healthBalls', '../assets/player/healthBalls.png', 200, 8);
   game.load.spritesheet('emptyball', '../assets/player/emptyBall.png', 16, 16);
   game.load.spritesheet('manaballs', '../assets/player/manaBalls.png', 200, 8);
   game.load.spritesheet('bmissle', '../assets/DarkMagicMisslesB.png', 64, 64);
@@ -236,6 +238,7 @@ function createPlayerAnimations(){
   player.animations.add('rightJump', [7], 10, true);
 }
 
+  var woodHUD;
 function playerHUD(){
   playerFPS = game.add.text(10, 10, game.time.fps, {fontSize: '25px', fill: '#ffff00'});
   playerFPS.fixedToCamera = true;
@@ -245,11 +248,17 @@ function playerHUD(){
   var heartWidth = 40;
   var heartHeight = 10;
   manaHUD = game.add.sprite(manaWidth, manaHeight, 'manaballs');
-  manaHUD.scale.setTo(1.5,1.5);
+  manaHUD.scale.setTo(1.7,1.7);
   manaHUD.fixedToCamera = true;
 
-  hearts = game.add.sprite(heartWidth, heartHeight, 'hearts');
-  hearts.frame = 2;
+  //hearts = game.add.sprite(heartWidth, heartHeight, 'hearts');
+  //hearts.frame = 2;
+  //hearts.fixedToCamera = true;
+
+
+  hearts = game.add.sprite(heartWidth, heartHeight, 'healthBalls');
+  hearts.scale.setTo(1.7,1.7);
+  hearts.frame = 25;
   hearts.fixedToCamera = true;
 
   game.world.bringToTop(hearts);
@@ -317,7 +326,7 @@ function incrementPlayerTimer(){
 //__________
 function startRegenTimer(){
   regenTimer= game.time.create(false);
-  regenTimer.loop(700, regainMana, this);
+  regenTimer.loop(1000, regainMana, this);
   regenTimer.start();
 }
 
@@ -591,12 +600,15 @@ function playerLay(){
 
 function harmPlayer(body, damage){
   if(player.invincible) return;
+  //console.log("Player Hurt By: ", damage );
   body.health -= damage;
-  console.log("Health", body.health);
+  if(body.health <= 0) hearts.frame = 0;
+  else hearts.frame = body.health;
+  //console.log("Health", body.health);
   if(body.health <= 0) missionFailed();
 }
 function missionFailed(){
-  //window.location.replace("https://www.youtube.com/watch?v=oHg5SJYRHA0");
+  window.location.replace("https://www.youtube.com/watch?v=oHg5SJYRHA0");
 }
 
 //--------------
@@ -604,7 +616,7 @@ function missionFailed(){
 //--------------
 var yAxis = p2.vec2.fromValues(0, 1);
 function checkIfCanJump() {
-  console.log("TEST JUMP C:", game.physics.p2.world.narrowphase.contactEquations.length);
+  //console.log("TEST JUMP C:", game.physics.p2.world.narrowphase.contactEquations.length);
   var result = false;
   for (var i=0; i < game.physics.p2.world.narrowphase.contactEquations.length; i++){
     var c = game.physics.p2.world.narrowphase.contactEquations[i];

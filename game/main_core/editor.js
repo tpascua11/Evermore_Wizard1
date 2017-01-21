@@ -13,10 +13,11 @@ var livingGame = {
             createPlayer();   
             playerActions();
             setupSpells();
-            createAI();
+            //createAI();
             testDamage();
             //setupMouse();
             //toolControls();
+            toolsSetup();
             //makeBlock();
             dependOnTest();
           },

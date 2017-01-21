@@ -28,7 +28,7 @@ function createWorldAlpha(){
 
   game.world.setBounds(0, 0, 1920, 750);
 
-  bg2 = game.add.tileSprite(0, 700, 1920, 240, 'level1back');
+  bg2 = game.add.tileSprite(0, 700, 192, 240, 'level1back');
   game.world.bringToTop(bg2);
 
   game.physics.startSystem(Phaser.Physics.P2JS);
