@@ -20,6 +20,8 @@ var livingGame = {
             toolsSetup();
             //makeBlock();
             dependOnTest();
+            //game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+            //game.input.onDown.add(gofull, this);
           },
   update:function(){
            movement();
@@ -46,6 +48,19 @@ function infoAll(){
   console.log("PLAYER Velocity");
   console.log(player.body.velocity.x);
   console.log(player.body.velocity.y);
+}
+
+function gofull() {
+
+    if (game.scale.isFullScreen)
+    {
+            game.scale.stopFullScreen();
+        }
+    else
+    {
+            game.scale.startFullScreen(false);
+        }
+
 }
 
 //cursors = game.input.keyboard.createCursorKeys();

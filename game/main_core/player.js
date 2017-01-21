@@ -61,6 +61,7 @@ var playerStats = {
   clock    : 0  ,
   direction: 1  ,
   jumpDirection: 0,
+  focus: 2,
   laying: 0,
   casting  : 0  ,
   charging  : 0  ,
@@ -417,10 +418,10 @@ function movement(){
     player.jump = 0;
     player.airCasted = 0;
     player.jumpDirection = 0;
+    player.focus = 2;
   }
   else player.jump = 1;
   if(player.laying == 1 && (!moveDown.isDown)) player.laying = 0;
-
   if(player.casting || player.charging || player.barrier) casting();
   else if(player.jumping) playerJumpMovement();
   else if(player.jump)    playerFallingMovement();

@@ -609,12 +609,15 @@ function bombFinaleContact(body1, body2){
 //---------------------------
 function magicBlast(){
   if(!player.charging) return;
+  if(player.focus <= 0) return;
+  player.focus-=1;
+  //if(player.focus <= 50) return;
   player.charging = player.casting = 0;
-  player.airCasted = 1;
+  //player.focus-=33;
 
   magicBomb = game.add.sprite(0, 0, 'magicBlast');
   //magicBomb.scale.setTo(1,1);
-  magicBomb.scale.setTo(pCharge*2,2);
+  magicBomb.scale.setTo(pCharge*3,2);
   game.physics.p2.enable(magicBomb);
   magicBomb.body.alliance = 1;
   magicBomb.body.enableBody = false;
@@ -626,7 +629,7 @@ function magicBlast(){
 
   magicBomb.body.fixedRotation = true;
   magicBomb.animations.add('run', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], true);
-  magicBomb.animations.play('run', 30, false);
+  magicBomb.animations.play('run', 40, false);
   magicBomb.end = true;
   magicBomb.body.ptype = 'blast';
 
@@ -647,8 +650,8 @@ function magicBlast(){
 
   chargeTimer.stop();
   placeFrontOfPlayerVisualChange(magicBomb);
-  moveFrontOfPlayerWith(magicBomb, 500*pCharge, 500);
-  movePlayer(400+pCharge*75,400+pCharge*75);
+  //moveFrontOfPlayerWith(magicBomb, 500*pCharge, 500);
+  movePlayer(400+pCharge*60,400+pCharge*60);
   player.casting = false;
   player.energy = false;
 
@@ -688,6 +691,7 @@ function updateBarrier(){
 function playerStopBarrier(){
   if(!player.barrier) return;
   pCharge = 1;
+
   circleBarrier.play('end', 20, false);
 
   player.casting = false;
@@ -702,13 +706,27 @@ function playerBarrier(){
   if(player.rmana <= 0) return;
   player.rmana -= 1;
   circleBarrier.play('run', 10, true);
-  circleBarrier.alpha = 0.8;
+  //circleBarrier.tint = 0xFF0000;
+  circleBarrier.alpha = 0.7;
   player.barrier = true;
   player.casting = 1;
 
   wallSound.play();
   state = "barrier";
 }
+
+function playerSuperBarrier(){
+  if(player.rmana <= 0) return;
+  player.rmana -= 1;
+  circleBarrier.play('run', 10, true);
+  circleBarrier.alpha = 0.9;
+  player.barrier = true;
+  player.casting = 1;
+
+  wallSound.play();
+  state = "barrier";
+}
+
 
 //-----------------------------
 // Magic Boost
@@ -742,6 +760,8 @@ var teleport;
 function teleportWave(){
   if(player.rmana <= 0) return;
   player.rmana -= 1;
+  if(player.focus <= 0) return;
+  player.focus-=1;
   var teleportVisualEnd;
   teleportVisualEnd = game.add.sprite(player.body.x-35, player.body.y-23, 'teleport301');
 
@@ -766,8 +786,6 @@ function teleportWave(){
 
   startTeleportTimer();
 
-  teleport.body.onBeginContact.add(teleportConnection, blast);
-  teleport.body.onEndContact.add(teleportDisconnection, blast);
 
   teleport.indestructible = true;
   teleport.alliance = 1;
@@ -786,6 +804,9 @@ function teleportWave(){
   player.body.data.shapes[0].sensor = true;
   player.body.static = true;
   player.alpha = 0;
+
+  teleport.body.onBeginContact.add(teleportConnection, blast);
+  teleport.body.onEndContact.add(teleportDisconnection, blast);
 }
 
 function teleportConnection(body1, body2){
