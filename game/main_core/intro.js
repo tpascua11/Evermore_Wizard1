@@ -22,6 +22,9 @@ var PreLoadState= {
     loadMusic();        // The Music
     loadBoundaries();   // Physics Existance
     loadAISprite();     // The NPC
+
+
+    loadSpecialsSprite();
     console.log("Done");
 
     game.time.advancedTiming = true;

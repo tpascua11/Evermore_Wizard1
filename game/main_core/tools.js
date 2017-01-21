@@ -49,6 +49,9 @@ function toolsSetup(){
   xample = localStorage.getItem("level"); 
   var levelAiPlacement = JSON.parse(localStorage.getItem("levelAiPlacement"));
   var levelBlockPlacement = JSON.parse(localStorage.getItem("levelBlockPlacement"));
+  var levelStmp = JSON.parse(localStorage.getItem("levelStmp"));
+  var levelSflo = JSON.parse(localStorage.getItem("levelSflo"));
+
   if(levelAiPlacement == null) return;
   if(levelBlockPlacement == null) return;
   console.log("AI LOADED", levelAiPlacement.length);
@@ -65,6 +68,17 @@ function toolsSetup(){
     creation = levelAiPlacement[i].name;
     createHere2(levelAiPlacement[i].x, levelAiPlacement[i].y, 0, 0);
   }
+
+  for(var i = 0; i < levelStmp.length; i++){
+    creation = levelStmp[i].name;
+    createHere2(levelStmp[i].x, levelStmp[i].y, 0, 0);
+  }
+
+  for(var i = 0; i < levelSflo.length; i++){
+    creation = levelSflo[i].name;
+    createHere2(levelSflo[i].x, levelSflo[i].y, 0, 0);
+  }
+
   localStorage.removeItem("levelAiPlacement");
   localStorage.removeItem("levelBlockPlacement");
 
@@ -512,7 +526,7 @@ function squareTruth(point1, point2){
 //--------------------------
 //  7_Creation
 //--------------------------
-var creation = "something";
+var creation = "existance";
 
 var creationList = [
 {
@@ -528,8 +542,8 @@ var creationList = [
   description: "has a bow"
 },
 {
-  name: "mushroom",
-  description: "jumps kinda high"
+  name: "manaStone",
+  description: "gives out mana when up close"
 },
 {
   name: "absorbFlower",
@@ -554,6 +568,7 @@ function createHere(){
     case "goblinSwordGuy" : goblinSwordsMan(chx, chy, activeAI.length); break;
     case "goblinDaggerGuy": goblinStaber(chx, chy, activeAI.length); break;
     case "goblinBowGuy"   : goblinArcher(chx, chy, activeAI.length); break;
+    case "manaStone"      : createManaStone(chx, chy); break;
     case "mushroom"       : makeExist(chx, chy); break;
     case "absorbFlower"   : makeExist(chx, chy); break;
     default: break;
@@ -570,6 +585,7 @@ function createHere2(x,y,width,height){
     case "goblinSwordGuy" : goblinSwordsMan(chx, chy, activeAI.length); break;
     case "goblinDaggerGuy": goblinStaber(chx, chy, activeAI.length); break;
     case "goblinBowGuy"   : goblinArcher(chx, chy, activeAI.length); break;
+    case "manaStone"      : createManaStone(chx, chy); break;
     case "mushroom"       : makeExist(chx, chy); break;
     case "absorbFlower"   : makeExist(chx, chy); break;
     default: break;

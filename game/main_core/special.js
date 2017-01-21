@@ -1,0 +1,108 @@
+//----------------------------------
+// 2_Specials_Loading
+//----------------------------------
+function loadSpecialsSprite(){
+  game.load.spritesheet('LoadStone', '../assets/Object/LoadStone.png', 20, 20);
+  game.load.spritesheet('ManaStone', '../assets/Object/ManaStone.png', 16, 16);
+  game.load.spritesheet('Mana', '../assets/Object/Energy.png', 10, 10);
+
+  game.load.audio('regen', '../assets/sound_effect/regen.wav');
+
+}
+function setupSpecials(){
+    regen = game.add.audio('regen'); 
+}
+//---------------------------------
+// 3_Specials_List
+//---------------------------------
+var tmpSpecials = [];
+var floSpecials = [];
+var regen;
+
+function specialsRunning(){
+  for(var i = 0; i < tmpSpecials.length; i++){
+    tmpSpecials[i].doAction();
+  }
+  for(var i = 0; i < floSpecials.length; i++){
+    floSpecials[i].doAction();
+  }
+}
+
+
+function createManaStone(x,y){
+  console.log("Creating Manastone");
+  var manaStone;
+  manaStone = game.add.sprite(x, y, 'ManaStone');
+  manaStone.scale.setTo(5,5);
+  game.physics.p2.enable(manaStone);
+  manaStone.body.fixedRotation = true;
+  aiMaterial = game.physics.p2.createMaterial('aiMaterial', manaStone.body);
+  manaStone.body.health = 200;
+  manaStone.damage = 1;
+  manaStone.special = 5;
+  manaStone.pTime = universalTime + 5;
+  manaStone.body.currentMana = 0;
+  manaStone.body.maxMana = 5;
+  manaStone.sid = floSpecials.length;
+  manaStone.doAction = function (){
+    if(this.pTime <= universalTime){
+      console.log("Timer On");
+      this.pTime = universalTime + 5;
+      if(this.body.currentMana <= this.body.maxMana){
+        console.log("Generating Mana");
+        createManaBalls(this.body.x-25, this.body.y+15, this.sid);
+        createManaBalls(this.body.x, this.body.y, this.sid);
+        createManaBalls(this.body.x+25, this.body.y+15, this.sid);
+      }
+    }
+  }
+  manaStone.body.data.shapes[0].sensor = true;
+  manaStone.body.static = true;
+
+  manaStone.name = "manaStone";
+
+  floSpecials.push(manaStone);
+}
+
+
+function createManaBalls(x,y,floID){
+  var manaBalls;
+  manaBalls= game.add.sprite(x, y, 'Mana');
+  manaBalls.scale.setTo(2,2);
+  game.physics.p2.enable(manaBalls);
+  manaBalls.body.fixedRotation = true;
+  //aiMaterial = game.physics.p2.createMaterial('aiMaterial', manaBalls.body);
+  manaBalls.body.onBeginContact.add(regainMana, manaBalls);
+  manaBalls.body.health = 200;
+  manaBalls.damage = 1;
+  manaBalls.special = 1;
+
+  manaBalls.animations.add('run', [0, 1, 2], true);
+  manaBalls.animations.play('run', 15, true);
+
+  manaBalls.body.static = true;
+  manaBalls.gravityScale = 0;
+  manaBalls.body.data.shapes[0].sensor = true;
+  manaBalls.body.velocity.y = -25;
+  manaBalls.floID = floID;
+  manaBalls.body.floID = floID;
+  manaBalls.name = "manaStone";
+  manaBalls.end = true;
+  manaBalls.timeAt = pTime + 40;
+  manaBalls.alliance = 1;
+  manaBalls.body.alliance = 1;
+  manaBalls.body.indestructible = true;
+  spells.push(manaBalls);
+}
+
+function regainMana(body1){
+  if(body1 == null) return;
+  if(body1.sprite.alliance != 1) return;
+  console.log("Did this happen");
+  if(player.rmana < 25) player.rmana+= this.special;
+  console.log("FLO POWER", floSpecials[this.floID]);
+  floSpecials[this.floID].body.currentMana--;
+  regen.play()
+  this.destroy();
+  
+}

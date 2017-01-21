@@ -20,6 +20,7 @@ var editorMode = {
             toolControls();
             //makeBlock();
             dependOnTest();
+            setupSpecials();
           },
   update:function(){
            //movement();

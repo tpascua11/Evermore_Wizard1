@@ -23,6 +23,7 @@ var editorPreLoadState= {
     loadBoundaries();   // Physics Existance
     loadAISprite();     // The NPC
     console.log("Done");
+    loadSpecialsSprite();
 
     game.time.advancedTiming = true;
 

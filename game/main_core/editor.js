@@ -20,6 +20,10 @@ var livingGame = {
             toolsSetup();
             //makeBlock();
             dependOnTest();
+            setupSpecials();
+            //-----------------------
+            //regen.volume = 0.5; 
+            //createManaStone(100,700);
             //game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
             //game.input.onDown.add(gofull, this);
           },
@@ -30,6 +34,7 @@ var livingGame = {
            updatePlayerFrame();
            updateHUD();
            aiRuning();
+           specialsRunning();
            game.world.bringToTop(bg2);
            //infoAll();
          }
