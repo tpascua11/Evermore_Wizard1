@@ -610,7 +610,7 @@ function bombFinaleContact(body1, body2){
 function magicBlast(){
   if(!player.charging) return;
   if(player.focus <= 0) return;
-  player.focus-=1;
+  player.focus-=2;
   //if(player.focus <= 50) return;
   player.charging = player.casting = 0;
   //player.focus-=33;
@@ -761,7 +761,8 @@ function teleportWave(){
   if(player.rmana <= 0) return;
   player.rmana -= 1;
   if(player.focus <= 0) return;
-  player.focus-=1;
+  if(teleport != null) teleport.destroy();
+  player.focus-=2;
   var teleportVisualEnd;
   teleportVisualEnd = game.add.sprite(player.body.x-35, player.body.y-23, 'teleport301');
 
@@ -793,7 +794,7 @@ function teleportWave(){
   teleportPastx = player.body.x;
   teleportPasty = player.body.y;
 
-  moveFrontOfPlayerWith(player, 350, 350);
+  moveFrontOfPlayerWith(player, 450, 450);
 
   teleportVisual = game.add.sprite(teleport.body.x-23, teleport.body.y-23, 'teleport301');
   teleportVisual.scale.setTo(3,3);
@@ -802,7 +803,7 @@ function teleportWave(){
   teleportVisual.animations.play('run', 25, false, true);
 
   player.body.data.shapes[0].sensor = true;
-  player.body.static = true;
+  //player.body.static = true;
   player.alpha = 0;
 
   teleport.body.onBeginContact.add(teleportConnection, blast);
@@ -821,7 +822,7 @@ function teleportDisconnection(body1, body2){
 var teleportTimer;
 function startTeleportTimer(){
   teleportTimer= game.time.create(false);
-  teleportTimer.loop(200, teleportGo, this);
+  teleportTimer.loop(400, teleportGo, this);
   teleportTimer.start();
 }
 function teleportGo(){

@@ -28,7 +28,6 @@ function specialsRunning(){
   }
 }
 
-
 function createManaStone(x,y){
   console.log("Creating Manastone");
   var manaStone;
@@ -40,14 +39,18 @@ function createManaStone(x,y){
   manaStone.body.health = 200;
   manaStone.damage = 1;
   manaStone.special = 5;
-  manaStone.pTime = universalTime + 5;
+  manaStone.pTime = universalTime + 12;
+
+  manaStone.alliance = 1;
+  manaStone.body.alliance = 1;
+
   manaStone.body.currentMana = 0;
   manaStone.body.maxMana = 5;
   manaStone.sid = floSpecials.length;
   manaStone.doAction = function (){
     if(this.pTime <= universalTime){
       console.log("Timer On");
-      this.pTime = universalTime + 5;
+      this.pTime = universalTime + 12;
       if(this.body.currentMana <= this.body.maxMana){
         console.log("Generating Mana");
         createManaBalls(this.body.x-25, this.body.y+15, this.sid);
@@ -58,6 +61,9 @@ function createManaStone(x,y){
   }
   manaStone.body.data.shapes[0].sensor = true;
   manaStone.body.static = true;
+
+  manaStone.animations.add('run', [0, 1, 2, 3, 4, 5, 6, 7,8 ], true);
+  manaStone.animations.play('run', 20, true);
 
   manaStone.name = "manaStone";
 
@@ -78,7 +84,7 @@ function createManaBalls(x,y,floID){
   manaBalls.special = 1;
 
   manaBalls.animations.add('run', [0, 1, 2], true);
-  manaBalls.animations.play('run', 15, true);
+  manaBalls.animations.play('run', 20, true);
 
   manaBalls.body.static = true;
   manaBalls.gravityScale = 0;
