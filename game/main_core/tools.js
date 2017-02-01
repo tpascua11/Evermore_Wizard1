@@ -43,14 +43,22 @@ function toolControls(){
   moveDown.onDown.add(cameraMoveDown, this);
 }
 var xample;
-function toolsSetup(){
-  create6pinPoints();
-  console.log("did i happen");
-  xample = localStorage.getItem("level"); 
-  var levelAiPlacement = JSON.parse(localStorage.getItem("levelAiPlacement"));
-  var levelBlockPlacement = JSON.parse(localStorage.getItem("levelBlockPlacement"));
-  var levelStmp = JSON.parse(localStorage.getItem("levelStmp"));
-  var levelSflo = JSON.parse(localStorage.getItem("levelSflo"));
+
+
+function gameModeSetup(){
+  var sameOld= JSON.parse(localStorage.getItem("sameOld"));
+  //sameOld = "none";
+  if(sameOld == version){
+    console.log("I MADE IT THROUGH");
+    var levelAiPlacement = JSON.parse(localStorage.getItem("levelAiPlacement"));
+    var levelBlockPlacement = JSON.parse(localStorage.getItem("levelBlockPlacement"));
+    var levelStmp = JSON.parse(localStorage.getItem("levelStmp"));
+    var levelSflo = JSON.parse(localStorage.getItem("levelSflo"));
+  }
+  //  var userId = firebase.auth().currentUser.uid;
+  //console.log("Database Forever Catch: Wait for data");
+  //while(!loadedIn){
+  //}
 
   if(levelAiPlacement == null) return;
   if(levelBlockPlacement == null) return;
@@ -78,10 +86,14 @@ function toolsSetup(){
     creation = levelSflo[i].name;
     createHere2(levelSflo[i].x, levelSflo[i].y, 0, 0);
   }
+}
 
-  localStorage.removeItem("levelAiPlacement");
-  localStorage.removeItem("levelBlockPlacement");
-
+function toolsSetup(){
+  create6pinPoints();
+  //var levelAiPlacement = JSON.parse(localStorage.getItem("levelAiPlacement"));
+  //var levelBlockPlacement = JSON.parse(localStorage.getItem("levelBlockPlacement"));
+  //var levelStmp = JSON.parse(localStorage.getItem("levelStmp"));
+  //var levelSflo = JSON.parse(localStorage.getItem("levelSflo"));
 }
 //---------------------------------------
 // 2_Camera_Control

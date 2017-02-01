@@ -3,8 +3,8 @@
 function loadMusic(){
   //game.load.audio('symbo', ['../assets/meltdown.mp3']);
 
-  //game.load.audio('symbo', ['../assets/music/Visager_Windy_Bluffs_Loop.mp3']);
-  game.load.audio('symbo', ['../assets/music/Visager_-_22_-_Battle_Loop.mp3']);
+  game.load.audio('symbo', ['../assets/music/Visager_Windy_Bluffs_Loop.mp3']);
+  //game.load.audio('symbo', ['../assets/music/Visager_-_22_-_Battle_Loop.mp3']);
 
 
 

@@ -53,6 +53,7 @@ var playerStats = {
   moveRight: 0  ,
   moving   : 0  ,
   jump     : 0  ,
+  spellJump: 0  ,
   jumpTotal: 100,
   jumpAtY  : 0  ,
   jumpAcl  : 5  ,
@@ -76,6 +77,7 @@ var playerStats = {
   magic: 0 ,
   stepsCount: 25,
   rechargeRate: 1,
+  rechargeSec: Phaser.Timer.SECOND * 0.1,
   alliance: 1,
   resistance: "nothing",
   weak: "nothing"
@@ -104,6 +106,7 @@ function loadPlayerResource(){
   game.load.spritesheet('magicBlock', '../assets/spells/MagicBlock.png', 8, 16);
   game.load.spritesheet('magicShield', '../assets/spells/Shield_Up.png', 4, 16);
   game.load.spritesheet('circleBarrier', '../assets/spells/barrierv2.png', 20, 20);
+  game.load.spritesheet('spellJump', '../assets/spells/bounce.png', 20, 20);
   game.load.spritesheet('magicExpand', '../assets/spells/BlueExpand.png', 16, 16);
   game.load.spritesheet('magicPush', '../assets/spells/barrierPush.png', 6, 16);
   game.load.spritesheet('magicBlast', '../assets/spells/MagicBlast.png', 30, 20);
@@ -120,6 +123,7 @@ function loadPlayerResource(){
   game.load.audio('jumpSound', '../assets/Jump19.wav');
   game.load.audio('hurt', '../assets/sound_effect/hurt.wav');
   game.load.audio('shieldHurt', '../assets/sound_effect/tmp_shield_hurt.wav');
+  game.load.audio('bounce', '../assets/sound_effect/bounce.wav');
 }
 
 //---------------------------------------------------------
@@ -132,14 +136,14 @@ function createPlayer(){
   createPlayerAnimations();
   playerControl();
   continuePlayerTimer();
-  startRegenTimer();
+  //startRegenTimer();
   buildInvicible();
   playerHUD();
 }
 
 function playerBody(){
   //Remember: Set Scale Then apply Phyisics
-  player = game.add.sprite(300, 100, 'template');
+  player = game.add.sprite(0, 400, 'template');
   visual = game.add.sprite(0, 0, 'visualDino');
 
   player.scale.setTo(1,2);
@@ -171,6 +175,7 @@ function playerInfo(){
 function playerSounds(){
   steps = game.add.audio('steps'); steps.volume = 0.5;
   jumpSound = game.add.audio('jumpSound'); jumpSound.volume = 0.5; 
+  spellJumpSound = game.add.audio('bounce'); spellJumpSound.volume = 0.5; 
   hurt = game.add.audio('hurt');
   shieldHurt = game.add.audio('shieldHurt'); shieldHurt.volume = 0.5;
 }
@@ -232,6 +237,9 @@ function createPlayerAnimations(){
   visual.animations.add('castJumpRightW', [23], 30, true);
   visual.animations.add('castJumpRightNW', [23], 30, true);
 
+  visual.animations.add('magicJumpLeft', [1,2,3], 30, false);
+  visual.animations.add('magicJumpRight', [5,6,7], 30, false);
+
   //ill keep these for now
   player.animations.add('right', [28, 29, 30, 31, 32, 33], 25, true);
   player.animations.add('left', [19, 20, 21, 22, 23, 24], 25, true);
@@ -249,7 +257,7 @@ function playerHUD(){
   var heartWidth = 40;
   var heartHeight = 10;
   manaHUD = game.add.sprite(manaWidth, manaHeight, 'manaballs');
-  manaHUD.scale.setTo(1.7,1.7);
+  manaHUD.scale.setTo(1.5,1.5);
   manaHUD.fixedToCamera = true;
 
   //hearts = game.add.sprite(heartWidth, heartHeight, 'hearts');
@@ -258,7 +266,7 @@ function playerHUD(){
 
 
   hearts = game.add.sprite(heartWidth, heartHeight, 'healthBalls');
-  hearts.scale.setTo(1.7,1.7);
+  hearts.scale.setTo(1.5,1.5);
   hearts.frame = 25;
   hearts.fixedToCamera = true;
 
@@ -326,15 +334,16 @@ function incrementPlayerTimer(){
 // Regain
 //__________
 function startRegenTimer(){
+  console.log("did this happen");
   regenTimer= game.time.create(false);
-  regenTimer.loop(1000, regainMana, this);
+  regenTimer.loop(player.rechargeSec, regainMana2, this);
   regenTimer.start();
 }
 
-function regainMana(){
-  if(player.levitation) player.rmana -= 2;
-  else if (player.maxRmana <= player.rmana || player.charging || player.barrier) return;
+function regainMana2(){
+  if (player.maxRmana <= player.rmana || player.barrier || player.casting) return;
   else if(player.rmana < 0) player.rmana = 0;
+  else if(player.laying) player.rmana += player.rechargeRate;
   else player.rmana += player.rechargeRate;
 }
 
@@ -416,13 +425,15 @@ function damageOverTime(){
 function movement(){
  if(checkIfCanJump()){
     player.jump = 0;
+    player.spellJump = 0;
     player.airCasted = 0;
     player.jumpDirection = 0;
     player.focus = 2;
   }
   else player.jump = 1;
-  if(player.laying == 1 && (!moveDown.isDown)) player.laying = 0;
+  //if(player.laying == 1 && (!moveDown.isDown)) player.laying = 0;
   if(player.casting || player.charging || player.barrier) casting();
+  else if(player.spellJump) playerAirMovement();
   else if(player.jumping) playerJumpMovement();
   else if(player.jump)    playerFallingMovement();
   else if(player.moving >= 0) casting();
@@ -435,18 +446,31 @@ function movement(){
   else playerInactive();
 }
 
-function playerAirMovement(){
+function playerWalkMovement(){
   if(player.moveRight){
-    if(player.body.velocity.x > 200) return;
+    if(player.body.velocity.x > 175) return;
     player.body.velocity.x += 25;
   }
   else if(player.moveLeft){
-    if(player.body.velocity.x < -200) return;
+    if(player.body.velocity.x < -175) return;
+    player.body.velocity.x -= 25;
+  }
+}
+
+
+function playerAirMovement(){
+  if(player.moveRight){
+    if(player.body.velocity.x > 175) return;
+    player.body.velocity.x += 25;
+  }
+  else if(player.moveLeft){
+    if(player.body.velocity.x < -175) return;
     player.body.velocity.x -= 25;
   }
 }
 
 function playerJumpMovement(){
+  console.log("Jumping Movement Upward");
   if(player.jumpAtY < player.jumpSpan){
     player.jumpAtY += player.jumpAcl;
     player.body.velocity.y = -player.jumpAcl*55;
@@ -457,14 +481,11 @@ function playerJumpMovement(){
     console.log("Stop Jumping\n");
   }
 
-  player.animations.stop();
   if(player.direction == 1){
-    player.frame = 14;
-    visual.frane = 14;
+    visual.frame = 7;
   }
   else{
-    player.frame = 5;
-    visual.frane = 5;
+    visual.frame = 3;
   }
   playerAirMovement();
 }
@@ -498,17 +519,23 @@ function playerSprintingLeftMovement(){
 }
 
 function playerMoveRightMovement(){
-  player.body.velocity.x = player.speed;
+  if(player.body.velocity.x < player.speed){
+    player.body.velocity.x += player.acl;
+  }
+  //player.body.velocity.x = player.speed;
   visual.animations.play('walkRight');
 
-  playSteps(17);
+  playSteps(13);
 }
 
 function playerMoveLeftMovement(){
-  player.body.velocity.x = -player.speed;
+  if(player.body.velocity.x > -player.speed){
+    player.body.velocity.x -= player.acl;
+  }
+  //player.body.velocity.x = -player.speed;
   visual.animations.play('walkLeft');
 
-  playSteps(17);
+  playSteps(13);
 }
 
 function playSteps(count){
@@ -522,8 +549,7 @@ function playSteps(count){
 }
 
 function casting(){
-  player.body.velocity.y -= 5;
-  player.animations.stop();
+  //player.body.velocity.y -= 5;
   visual.animations.stop();
   if(player.jump){ 
     jumpCasting();
@@ -539,6 +565,7 @@ function casting(){
     if(moveUp.isDown) visual.frame = 13;
     else visual.frame = 11;
   }
+  player.body.velocity.x = 0;
 }
 
 function jumpCasting(){
@@ -609,7 +636,11 @@ function harmPlayer(body, damage){
   if(body.health <= 0) missionFailed();
 }
 function missionFailed(){
-  window.location.replace("https://www.youtube.com/watch?v=oHg5SJYRHA0");
+  console.log("RESTART OR CRACTY");
+  player.body.health = 25;
+  //game.state.add('livingGame', livingGame);
+  //game.state.start('livingGame');
+  //window.location.replace("https://www.youtube.com/watch?v=oHg5SJYRHA0");
 }
 
 //--------------

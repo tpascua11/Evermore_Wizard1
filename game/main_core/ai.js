@@ -133,6 +133,8 @@ function goblinSwordsMan(x,y,id){
     createGoblinSwordsmanAnimations();
     goblin.dead = false;
     goblin.name = "goblinSwordGuy";
+
+    //game.physics.p2.setPostBroadphaseCallback(checkVeg, this);
     activeAI.push(goblin);
 }
 
@@ -148,6 +150,8 @@ function goblinStaber(x, y, id){
     goblin.doAttack = function(){}
     for(var attrname in aiBasicStats){goblin[attrname] = aiBasicStats[attrname]}
     goblin.aid = id;
+    goblin.acl = 10;
+    goblin.maxSpeed = 150;
     goblinDagger();
     //console.log(goblin);
     goblin.visual = game.add.sprite(-24,-15,'goblin');
@@ -174,6 +178,7 @@ function goblinArcher(x,y,id){
     goblin.doAttack = function(){}
     for(var attrname in aiBasicStats){goblin[attrname] = aiBasicStats[attrname]}
     goblin.aid = id;
+    goblin.acl = 0;
     goblinBow();
     //console.log(goblin);
     goblin.visual = game.add.sprite(-24,-15,'goblin');
@@ -704,6 +709,9 @@ function goblinRare123(){
 //--------------
 //HELPER
 //--------------
+function avoidance(){
+
+}
 var yAxis = p2.vec2.fromValues(0, 1);
 /*
    function checkIfCanJump(entity) {

@@ -12,7 +12,7 @@ function loadMapAlpha(){
   game.load.image('sky', '../assets/sky.png');
   game.load.image('level1back', '../assets/Map/Level1-1back.png');
   game.load.image('level1front', '../assets/Map/Level1-1Front.png');
-  game.load.image('background', '../assets/Map/Mountain.png');
+  game.load.image('background', '../assets/Map/Level0-Back.png');
 
   game.load.image('ground', '../assets/platform.png');
   game.load.image('star', '../assets/star.png');
@@ -22,13 +22,15 @@ function loadMapAlpha(){
 }
 
 function createWorldAlpha(){
-  bg = game.add.tileSprite(0, 0, 1920, 240, 'level1front');
-  mbg = game.add.tileSprite(0,0, 500, 250, 'background');
-  mbg.scale.setTo(3, 3);
+  //bg = game.add.tileSprite(0, 0, 1920, 240, 'level1front');
+  //mbg = game.add.tileSprite(0,0, 500, 250, 'background');
+  mbg = game.add.tileSprite(0,0, 1920, 500, 'background');
+  mbg.scale.setTo(1, 1);
+  //mbg.scale.setTo(3, 3);
 
-  game.world.setBounds(0, 0, 1920, 750);
+  game.world.setBounds(0, 0, 1920, 500);
 
-  bg2 = game.add.tileSprite(0, 700, 192, 240, 'level1back');
+  bg2 = game.add.tileSprite(0, 260, 1920, 240, 'level1back');
   game.world.bringToTop(bg2);
 
   game.physics.startSystem(Phaser.Physics.P2JS);
@@ -45,9 +47,9 @@ function createWorldAlpha(){
 
   game.stage.smoothed = false;
 
-  simple = game.add.audio('symbo');
+  //simple = game.add.audio('symbo');
   //simple.play();
-  simple.loopFull(0.4);
+  //simple.loopFull(0.4);
   //simple.loop = true;
   //simple.volume = 0.4;
 }
@@ -58,4 +60,10 @@ function dependOnTest(){
     level = json;
     console.log(level); // this will show the info it in firebug console
   });
+}
+
+function clearLevel(){
+  console.log("Existing Blocks Total", existingBlocks.length);
+  console.log("Permanant Specials Total", floSpecials.length);
+  console.log("Temporary Specials", tmpSpecials.length);
 }
