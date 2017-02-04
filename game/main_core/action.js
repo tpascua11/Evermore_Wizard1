@@ -695,7 +695,7 @@ function magicBlast(){
 
   magicBomb.body.fixedRotation = true;
   magicBomb.animations.add('run', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], true);
-  magicBomb.animations.play('run', 40, false);
+  magicBomb.animations.play('run', 10, false);
   magicBomb.end = true;
   magicBomb.body.ptype = 'blast';
 

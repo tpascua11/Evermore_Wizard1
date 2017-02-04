@@ -180,22 +180,56 @@ function transitionPoint(x,y){
   manaStone.sid = floSpecials.length;
   manaStone.doAction = function (){}
 
-  manaStone.body.data.shapes[0].sensor = true;
   manaStone.body.static = true;
+  manaStone.body.data.shapes[0].sensor = true;
 
-  manaStone.animations.add('run', [0, 1, 2, 3, 4, 5, 6, 7,8 ], true);
-  manaStone.animations.play('run', 20, true);
+  //manaStone.animations.add('run', [0, 1, 2, 3, 4, 5, 6, 7,8 ], true);
+  //manaStone.animations.play('run', 20, true);
 
-  manaStone.name = "LoadStone";
+  manaStone.name = "transitionPoint";
   manaStone.body.onBeginContact.add(doTransition, manaStone);
+
+  manaStone.wayPointAt = "rightend";
+
+  floSpecials.push(manaStone);
+  
 }
 
 function doTransition(body1){
-  if(alliance != 1) return;
-  if(body1.sprite.name != "Player") return;
-  checkPointX = this.x;
-  checkPointY = this.x;
+  //if(body1.alliance != 1) return;
+  //player.cutscene = true;
+  if(body1.alliance == 1 || body1.sprite.alliance == 1){
+    if(player.moveRight){
+      console.log("AHHHHH!!!");
+      cutscene(2);
+      game.camera.fade('#000000', Phaser.Timer.SECOND * 2);
+      game.camera.onFadeComplete.add(resetFade, this);
+    }
+  }
+
+  //if(body1.sprite.name != "Player") return;
+  //checkPointX = this.x;
+  //checkPointY = this.x;
 }
+
+function resetFade() {
+    game.camera.flash(0x000000, Phaser.Timer.SECOND * 2);
+  clearLevel();
+  gameModeSetup();
+  respawnBack();
+   // game.camera.resetFX();
+}
+
+function cutscene(time){
+  player.cutscene = true;
+  game.time.events.add(Phaser.Timer.SECOND * time, cutsceneEnd, this);
+  console.log("I should only happen ONCEEE");
+}
+
+function cutsceneEnd(){
+  player.cutscene = false;
+}
+
 
 
 

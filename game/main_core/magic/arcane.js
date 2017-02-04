@@ -173,7 +173,7 @@ function magicForce(){
 
   magicBomb.body.fixedRotation = true;
   magicBomb.animations.add('run', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], true);
-  magicBomb.animations.play('run', 40, false);
+  magicBomb.animations.play('run', 25, false, true);
   magicBomb.end = true;
   magicBomb.body.ptype = 'blast';
 
@@ -188,7 +188,7 @@ function magicForce(){
   magicBomb.body.direction = player.direction;
   magicBomb.pCharge = pCharge;
 
-  magicBomb.timeAt = pTime + 2;
+  magicBomb.timeAt = pTime + 12;
   magicBomb.alliance = 1;
   magicBomb.body.onBeginContact.add(forceBox, magicBomb);
 
@@ -199,7 +199,7 @@ function magicForce(){
 
   //shootSound.play();
   blast2Sound.play();
-  spells.push(magicBomb);
+  //spells.push(magicBomb);
   endCharge();
 }
 

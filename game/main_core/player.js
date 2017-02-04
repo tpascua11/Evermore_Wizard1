@@ -38,7 +38,7 @@ var hearts;
 var invc;
 
 var playerStats = {
-  health   : 25,
+  health   : 5,
   maxHealth: 25,
   mana     : 75 ,
   maxMana  : 100,
@@ -80,7 +80,8 @@ var playerStats = {
   rechargeSec: Phaser.Timer.SECOND * 0.1,
   alliance: 1,
   resistance: "nothing",
-  weak: "nothing"
+  weak: "nothing",
+  cutscene: 0
 };
 
 //---------------------------------------------------------
@@ -88,7 +89,7 @@ var playerStats = {
 //---------------------------------------------------------
 function loadPlayerResource(){
   game.load.spritesheet('dino', '../assets/player/Vark_TemplateGreen.png', 20, 20);
-  game.load.spritesheet('visualDino', '../assets/player/Vark_v57.png', 20, 20);
+  game.load.spritesheet('visualDino', '../assets/player/Vark_v57caper.png', 20, 20);
   game.load.spritesheet('redBoundary', '../assets/player/Vark_TemplateRedSingle.png', 20, 20);
   game.load.spritesheet('template', '../assets/player/Player_Template.png', 20, 20);
 
@@ -419,6 +420,7 @@ function startDamageOverTime(){
 function damageOverTime(){
 
 }
+
 //--------------------------------
 // Player_Physics
 //--------------------------------
@@ -432,7 +434,8 @@ function movement(){
   }
   else player.jump = 1;
   //if(player.laying == 1 && (!moveDown.isDown)) player.laying = 0;
-  if(player.casting || player.charging || player.barrier) casting();
+  if(player.cutscene) console.log("HERO", player.cutscene);
+  else if(player.casting || player.charging || player.barrier) casting();
   else if(player.spellJump) playerAirMovement();
   else if(player.jumping) playerJumpMovement();
   else if(player.jump)    playerFallingMovement();
@@ -638,6 +641,9 @@ function harmPlayer(body, damage){
 function missionFailed(){
   console.log("RESTART OR CRACTY");
   player.body.health = 25;
+
+  clearLevel();
+  gameModeSetup();
   //game.state.add('livingGame', livingGame);
   //game.state.start('livingGame');
   //window.location.replace("https://www.youtube.com/watch?v=oHg5SJYRHA0");

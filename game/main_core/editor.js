@@ -9,7 +9,9 @@ var game = new Phaser.Game(800, 480, Phaser.AUTO, 'Evermore_The_Wizard_Guide');
 var livingGame = {
   create: function(){
             startUniversalTimer(); 
-            createWorldAlpha();
+            //createWorldAlpha();
+            createWorldBase();
+            createWorldBeta(1,2);
             createPlayer();   
             playerActions();
             setupSpells();
@@ -27,8 +29,8 @@ var livingGame = {
             //-----------------------
             //regen.volume = 0.5; 
             //createManaStone(100,700);
-            //game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
-            //game.input.onDown.add(gofull, this);
+            game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+            game.input.onDown.add(gofull, this);
             console.log("DONE");
           },
   update:function(){
@@ -39,7 +41,7 @@ var livingGame = {
            updateHUD();
            aiRuning();
            specialsRunning();
-           game.world.bringToTop(bg2);
+           game.world.bringToTop(foreground);
            //infoAll();
          }
 }

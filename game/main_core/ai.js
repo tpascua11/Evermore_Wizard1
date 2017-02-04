@@ -271,7 +271,7 @@ function goblinDagger(){
   //console.log("Goblin ATtack", goblin.attack);
   
   goblin.attack.postUpdate = function(){
-    if(activeAI[this.id] == 0){ this.destroy; return;}
+    if(activeAI[this.id] == 0 || (this.id > activeAI.length)){ this.destroy; return;}
     this.damage.direction = activeAI[this.id].direction;
     this.reset(activeAI[this.id].body.x+13 * activeAI[this.id].direction, activeAI[this.id].body.y-15);
   }
@@ -404,7 +404,7 @@ function aiHarmWave(goblinD){
     if((this.endAtTime <= universalTime) || this.dead == true){
       this.destroy();
     }
-    if(activeAI[this.id] == 0) return;
+    if(activeAI[this.id] == 0 || activeAI[this.id] == null) return;//!!!!!!FIX HERE
     this.reset(activeAI[this.id].body.x + 13*activeAI[this.id].direction
         ,activeAI[this.id].body.y);
     this.damage.direction = activeAI[this.id].direction;

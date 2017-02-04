@@ -14,39 +14,10 @@ function loadBoundaries(){
 }
 
 function editorCamera(){
-
 }
-//--------------------------------------
-//  1_Tools_Control
-//--------------------------------------
-function toolControls(){
-  buttonC = game.input.keyboard.addKey(Phaser.Keyboard.C);
-  buttonC.onDown.add(createHere, this);
-  buttonF = game.input.keyboard.addKey(Phaser.Keyboard.F);
-  buttonF.onDown.add(forceStatic, this);
-
-  buttonT = game.input.keyboard.addKey(Phaser.Keyboard.T);
-  buttonT.onDown.add(heightPower, this);
-  buttonY = game.input.keyboard.addKey(Phaser.Keyboard.Y);
-  buttonY.onDown.add(widthPower, this);
-
-  moveUp = game.input.keyboard.addKey(Phaser.Keyboard.W);
-  moveUp.onDown.add(cameraMoveUp, this);
-
-  moveLeft = game.input.keyboard.addKey(Phaser.Keyboard.A);
-  moveLeft.onDown.add(cameraMoveLeft, this);
-
-  moveRight = game.input.keyboard.addKey(Phaser.Keyboard.D);
-  moveRight.onDown.add(cameraMoveRight, this);
-
-  moveDown = game.input.keyboard.addKey(Phaser.Keyboard.S);
-  moveDown.onDown.add(cameraMoveDown, this);
-}
-var xample;
-
 
 function gameModeSetup(){
-  var sameOld= JSON.parse(localStorage.getItem("sameOld"));
+  var sameOld = JSON.parse(localStorage.getItem("sameOld"));
   //sameOld = "none";
   if(sameOld == version){
     console.log("I MADE IT THROUGH");
@@ -55,10 +26,6 @@ function gameModeSetup(){
     var levelStmp = JSON.parse(localStorage.getItem("levelStmp"));
     var levelSflo = JSON.parse(localStorage.getItem("levelSflo"));
   }
-  //  var userId = firebase.auth().currentUser.uid;
-  //console.log("Database Forever Catch: Wait for data");
-  //while(!loadedIn){
-  //}
 
   if(levelAiPlacement == null) return;
   if(levelBlockPlacement == null) return;
@@ -86,6 +53,33 @@ function gameModeSetup(){
     creation = levelSflo[i].name;
     createHere2(levelSflo[i].x, levelSflo[i].y, 0, 0);
   }
+  console.log(levelSflo, "FLO");
+}
+//--------------------------------------
+//  1_Tools_Control
+//--------------------------------------
+function toolControls(){
+  buttonC = game.input.keyboard.addKey(Phaser.Keyboard.C);
+  buttonC.onDown.add(createHere, this);
+  buttonF = game.input.keyboard.addKey(Phaser.Keyboard.F);
+  buttonF.onDown.add(forceStatic, this);
+
+  buttonT = game.input.keyboard.addKey(Phaser.Keyboard.T);
+  buttonT.onDown.add(heightPower, this);
+  buttonY = game.input.keyboard.addKey(Phaser.Keyboard.Y);
+  buttonY.onDown.add(widthPower, this);
+
+  moveUp = game.input.keyboard.addKey(Phaser.Keyboard.W);
+  moveUp.onDown.add(cameraMoveUp, this);
+
+  moveLeft = game.input.keyboard.addKey(Phaser.Keyboard.A);
+  moveLeft.onDown.add(cameraMoveLeft, this);
+
+  moveRight = game.input.keyboard.addKey(Phaser.Keyboard.D);
+  moveRight.onDown.add(cameraMoveRight, this);
+
+  moveDown = game.input.keyboard.addKey(Phaser.Keyboard.S);
+  moveDown.onDown.add(cameraMoveDown, this);
 }
 
 function toolsSetup(){
@@ -284,9 +278,6 @@ function makeExist(){
   box.scale.setTo(size, 0.5);
   game.physics.p2.enable(box);
 
-  //box.animations.add('auto',
-  //    [0, 1, 2, 3, 4, 5, 6], 25, true);
-  //box.animations.play('auto', 15, true);
   box.frame = 0;
   box.body.fixedRotation = true;
   box.body.mass = 6;
@@ -331,7 +322,7 @@ function reviveExist(width, height, xoo, yoo){
   console.log(box.eid);
   console.log(box.body.eid);
   existingBlocks.push(box);
-  game.world.bringToTop(bg2);
+  game.world.bringToTop(foreground);
 }
 
 
@@ -543,7 +534,7 @@ var creation = "existance";
 var creationList = [
 {
   name: "goblinSwordGuy",
-    description: "has a sword"
+  description: "has a sword"
 },
 {
   name: "goblinDaggerGuy",
@@ -560,6 +551,10 @@ var creationList = [
 {
   name: "absorbFlower",
   description: "drains mana"
+},
+{
+  name: "transitionPoint",
+  description: "Foward"
 },
 {
   name: "existance",
@@ -581,6 +576,7 @@ function createHere(){
     case "goblinDaggerGuy": goblinStaber(chx, chy, activeAI.length); break;
     case "goblinBowGuy"   : goblinArcher(chx, chy, activeAI.length); break;
     case "manaStone"      : createManaStone(chx, chy); break;
+    case "transitionPoint": transitionPoint(chx, chy); break;
     case "mushroom"       : makeExist(chx, chy); break;
     case "absorbFlower"   : makeExist(chx, chy); break;
     default: break;
@@ -598,12 +594,10 @@ function createHere2(x,y,width,height){
     case "goblinDaggerGuy": goblinStaber(chx, chy, activeAI.length); break;
     case "goblinBowGuy"   : goblinArcher(chx, chy, activeAI.length); break;
     case "manaStone"      : createManaStone(chx, chy); break;
+    case "transitionPoint": transitionPoint(chx, chy); break;
     case "mushroom"       : makeExist(chx, chy); break;
     case "absorbFlower"   : makeExist(chx, chy); break;
     default: break;
   }
   console.log("creation", creation);
 }
-
-
-
