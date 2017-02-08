@@ -86,7 +86,8 @@ function shootMagicBomb(){
   magicBomb.body.enableBody = false;
   magicBomb.force = pCharge * 50;
 
-  magicBomb.body.setMaterial(magicMaterial);
+  //magicBomb.body.setMaterial(magicMaterial);
+  magicBomb.body.setMaterial(bounceBombMaterial);
 
   magicBomb.body.fixedRotation = true;
   magicBomb.animations.add('run', [0, 1, 2, 3, 4,5], true);
@@ -132,7 +133,8 @@ function magicBombFinale(blast){
 
 function magicBombFinaleContact(body1, body2){
   if(this.end == true) return;
-  if(body1 != null && body1.alliance == 1) return;
+  //if(body1 != null && body1.alliance == 1) return;
+  if(body1!= null && body1.sprite.alliance != 2) return;
   blastSound.play();
   blast = this;
   blast.body.static = true;

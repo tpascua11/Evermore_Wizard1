@@ -206,7 +206,11 @@ var blastMaterial;
 
 function createMagicMaterial(){
   magicMaterial = game.physics.p2.createMaterial('magicMaterial');
+  bounceBombMaterial = game.physics.p2.createMaterial('magicMaterial');
   blastMaterial = game.physics.p2.createMaterial('blastMaterial');
+
+  var bombBounceContact = game.physics.p2.createContactMaterial(bounceBombMaterial, boxMaterial);
+  bombBounceContact.restitution = 1.0;
 }
 
 function setupSpells(){
