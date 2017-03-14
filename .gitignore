@@ -1,0 +1,9 @@
+game/bower_components/**
+
+!game/bower_components/**/
+!game/bower_components/phaser/build/phaser.min.js
+!game/bower_components/jquery/dist/jquery.js
+!game/bower_components/angular/angular.min.js
+!game/bower_components/bootstrap/dist/js/bootstrap.min.js
+!game/bower_components/bootstrap/dist/css/bootstrap.min.css
+!game/bower_components/firebase/firebase.js

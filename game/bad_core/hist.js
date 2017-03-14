@@ -270,4 +270,234 @@ function chargingBlast(){
   blaster.scale.setTo(pCharge, pCharge);
 }
 
+function makeMagicBomb(){
+  player.casting = 1;
+  startMagicBombTimer();
+
+  chargeSound.loop = true;
+  chargeSound.play();
+  pCharge = 1;
+  player.rmana-= 1;
+  magicBomb = game.add.sprite(player.body.x + 100*player.direction, player.body.y, 'energyBall');
+  magicBomb.scale.setTo(0.3,0.3);
+  game.physics.p2.enable(magicBomb);
+  magicBomb.body.alliance = 0;
+  magicBomb.body.static = true;
+  magicBomb.body.enableBody = false;
+  magicBomb.pCharge = pCharge;
+  magicBomb.scale.setTo(pCharge,pCharge);
+  magicBomb.gravityScale = 0;
+  magicBomb.body.fixedRotation = true;
+  magicBomb.animations.add('run', [0, 1, 2, 3, 4,5], true);
+  magicBomb.animations.add('end', [0, 1, 2, 3, 4, 5, 6], 30, true);
+  magicBomb.animations.play('run', 15, true);
+  magicBomb.body.x = player.body.x + 100*player.direction;
+  magicBomb.body.y = player.body.y;
+  magicBomb.end = false;
+  magicBomb.body.ptype = 'blast';
+
+  placeFrontOfPlayer(magicBomb);
+  player.energy = true;
+
+  //game.world.bringToTop(bg2);
+}
+
+
+function shootMagicBomb(){
+  if(!player.casting || player.energy <= 0) return;
+
+  if(pCharge > 1.2) magicBomb.damage = 0.5 + pCharge*10;
+  else magicBomb.damage = 1;
+  //console.log('Blaster damage', blaster.damage);
+  magicBomb.castEnd = "bombFinale";
+  magicBomb.body.static = false;
+  magicBomb.body.fixedRotation = true;
+  magicBomb.body.data.gravityScale = 0;
+  magicBomb.body.damping = 0;
+  magicBomb.body.force = 3000;
+  placeFrontOfPlayer(magicBomb);
+
+  magicBomb.body.setMaterial(magicMaterial);
+  magicBomb.timeAt = pTime + 10;
+  magicBomb.body.onBeginContact.add(bombFinaleContact, magicBomb);
+  spells.push(magicBomb);
+  player.casting = 0;
+  shootSound.play();
+
+  player.jumping = 0;
+  player.jumpAtY = 0;
+  player.moving = 2;
+  
+  endMagicBombTimer();
+
+  moveFrontOfPlayer(magicBomb);
+  //game.world.bringToTop(bg2);
+
+  player.casting = false;
+  player.energy = false;
+  if(pCharge >= 4) movePlayer(-600, -600);
+
+  //chargeSound.loop = false;
+  chargeSound.stop();
+}
+
+var magicBombTimer;
+
+function startMagicBombTimer(){
+  magicBombTimer = game.time.create(false);
+  magicBombTimer.loop(500, chargeMagicBomb, this);
+  magicBombTimer.start();
+}
+
+function endMagicBombTimer(){
+  //magicBombTimer.stop();
+  chargeTimer.stop();
+
+}
+
+function chargeMagicBomb(){
+ if(pCharge <= 4){
+    pCharge+= 0.3;
+    player.rmana -= 1;
+ }
+ if(player.casting){
+  magicBomb.pCharge = pCharge;
+  magicBomb.scale.setTo(pCharge, pCharge);
+ }
+
+ //chargeSound.play();
+}
+
+//----------------------------
+//  Teleport Wave
+//----------------------------
+var teleportStart;
+var teleportEnd;
+var teleportTimer;
+var teleportEndTimer;
+var teleportGo = false;
+var connection = 0;
+var teleportStack = 0;
+var teleportZone;
+
+function startTeleportTimer(){
+  teleportTimer = game.time.create(false);
+  teleportTimer.loop(5000, teleportAt, this);
+  teleportTimer.start();
+}
+
+function startGoTeleport(){
+  teleportEndTimer = game.time.create(false);
+  teleportEndTimer.loop(5000, doTeleport, this);
+  teleportEndTimer.start();
+}
+
+function teleportTest(){
+  console.log("TEST");
+  teleportStart = game.add.sprite(player.body.x, player.body.y, 'teleport');
+  teleportStart.scale.setTo(3.3,3.3);
+  teleportSound.play();
+  game.physics.p2.enable(teleportStart);
+  teleportStart.body.setMaterial(magicMaterial);
+  playerStopBarrier();
+
+  teleportStart.body.static = true;
+  //teleportStart.body.data.shapes[0].sensor = true;
+  placeFrontOfPlayerWith(teleportStart, 120, 120);
+  teleportStart.body.velocity.x = 2;
+
+  connection = 0;
+  teleportStart.body.onBeginContact.add(teleportConnect, teleportStart);
+  teleportStart.body.onEndContact.add(teleportDisconnect, teleportStart);
+  startGoTeleport();
+}
+
+function doTeleport(){
+  if(connection == 0){
+    player.reset(teleportStart.body.x, teleportStart.body.y-2);
+  }
+  connection = 0;
+  teleportStart.destroy();
+  teleportEndTimer.stop();
+}
+
+function teleportWave(){
+  teleportGo = false;
+  teleportStart = game.add.sprite(player.body.x, player.body.y, 'teleport');
+  teleportStart.scale.setTo(3.3,3.3);
+  teleportSound.play();
+  game.physics.p2.enable(teleportStart);
+  teleportStart.body.setMaterial(magicMaterial);
+  playerStopBarrier();
+  startTeleportTimer();
+  state = "normal";
+
+  teleportStart.body.static = true;
+  teleportStart.body.data.shapes[0].sensor = false;
+
+  player.body.static = true;
+  player.body.data.shapes[0].sensor = false;
+
+  player.body.velocity.y = 0;
+  state = "rift";
+  teleportStart.body.onBeginContact.add(comeBackPoint, teleportStart);
+
+  player.reset(player.body.x, player.body.y-20);
+  moveFrontOfPlayerWith(player);
+}
+
+function teleportAt(){
+    teleportGo = true;
+    teleportTimer.stop();
+
+      player.body.static = true;
+      player.body.data.shapes[0].sensor = false;
+
+      waveFollow(player, teleportStart, 1000); 
+      return;
+    if(connection == 0){
+      player.reset(teleportEnd.body.x, teleportEnd.body.y);
+      player.body.static = false;
+      player.body.data.shapes[0].sensor = false;
+      state = "normal";
+
+      teleportStart.destroy();
+      teleportEnd.destroy();
+    }
+    else{
+      waveFollow(player, teleportStart, 1000);
+    }
+}
+
+function teleportDisconnect(body1, body2){
+  console.log("Connection", connection);
+  connection--;
+}
+
+function teleportConnect(body1, body2){
+  console.log("Connection", connection);
+  connection++;
+}
+
+function comeBackPoint(){
+  console.log('DID I HAPPEN!');
+  console.log('DID I HAPPEN!');
+  console.log('DID I HAPPEN!');
+  if(!teleportGo) return;
+  console.log('DID I HAPPEN!');
+  console.log('DID I HAPPEN!');
+  player.reset(teleportStart.body.x, teleportStart.body.y);
+  teleportStart.destroy();
+  player.body.velocity.x = 0;
+  player.body.velocity.y = 0;
+  player.body.static = false;
+  player.body.data.shapes[0].sensor = false;
+  state = "normal";
+
+  //teleportEnd.destroy();
+    //teleportStart = 0;
+}
+
+
+
 

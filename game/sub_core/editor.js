@@ -1,46 +1,20 @@
-//--------------------------------------------------
-// Main Core
-//--------------------------------------------------
-var game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, 'Evermore: The Wizard Guide', { preload: preload, create: create, update: update } );
-var gameWidth = 1000;
-var gameHeight = 500;
+var GameIntroState = {
+  preload: function(){
+      this.load.image('logo', '../assets/menu/Book_1.png');
+      this.load.image('preLoadBar', '../assets/menu/Stupid_Bar.png');
 
-function preload() {
-  game.stage.smoothed = false;
+      this.load.image('load_ball', '../assets/menu/Load_Ball.png');
+      this.load.image('wordLoading', '../assets/menu/loading.png');
+  },
 
-  loadMapAlpha();     // Preset Default Level
-  preloadBackground();// Preset Background Default Level
-  loadPlayerResource(); // The Player
-  loadMusic();        // The Music
-  loadBoundaries();   // Physics Existance
-  loadAISprite();     // The NPC
+  create: function() {
+      this.game.stage.backgroundColor = '#fff';
+      this.state.add('editorPreLoadState', PreLoadState);
+      this.state.start('editorPreLoadState');
+  },
+  update: function(){
+  }
+};
 
-  game.time.advancedTiming = true; 
-}
-
-function create() {
-  createWorldAlpha();
-  createPlayer();   
-  playerActions();
-  setupSpells();
-  
-  createAI();
-
-  setupMouse();
-  toolControls();
-
-  dependOnTest();
-  //makeBlock();
-}
-
-function update() {
-  movement();
-  updateSpells();
-  updateStatusEffect();
-  updateHUD();
-  aiRuning();
-
-  game.world.bringToTop(bg2);
-}
-
-//cursors = game.input.keyboard.createCursorKeys();
+game.state.add('GameIntroState', editorPreLoadState);
+game.state.start('GameIntroState');
