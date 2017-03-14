@@ -11,12 +11,12 @@
  |  /   V        ))       V   \  |
  |/     `       //        '     \|
 
-Player_Key_Inputs
-Player_Actions_List
-Player_Physical_Action
-Player_Spell_Setup
-Magic_Bomb
-*/
+ Player_Key_Inputs
+ Player_Actions_List
+ Player_Physical_Action
+ Player_Spell_Setup
+ Magic_Bomb
+ */
 var state = "normal";
 var activeBox;
 
@@ -54,88 +54,90 @@ function playerActions(){
 //----------------------------------------------------
 //  Player_Action_List
 //----------------------------------------------------
-//TODO JUST USE THE ACTION VARIABLES for the CALL FUNCTION
-//    or maybe not
 function input(){
-  if(state == "normal"){
-    switch(this.action){
-      case "jump"     : window["playerJump"](); break;
-      case "jumpStop" : window["playerJumpStop"](); break;
-      case "walkL"    : window["playerMoveLeft"]() ; break;
-      case "walkLstop": window["playerStopLeft"]() ;break;
-      case "walkR"    : window["playerMoveRight"]();break;
-      case "walkRstop": window["playerStopRight"]();break;
-      case "sprint"   : window["playerSprint"]();break;
-      case "sprintStop": window["playerSprintStop"](); break;
-      case "duck"     : break;
-      case "duckStop" : break;
-      case "scan"     : break;
-      case "scanStop" : break;
-      case "barrier"  : window["playerBarrier"](); break;
-      //case "barrierStop": window["playerStopBarrier"](); break;
-      case "bomb": window["chargeMagic2"](); break;
-      case "bombStop": window["magicBlast"](); break;
-      //case "bombStop": window["trueMagicBomb"](); break;
-      default: break;
-    }
-  }
-  else if(state == "sprinting"){
-    //console.log(state, action);
-  }
-  else if(state == "charging"){
-    switch(this.action){
-      case "bombStop": window["shootMagicBomb"](); break;
-      case "jump": window["magicForce"](); break;
-      case "walkL"    : window["playerMoveLeft"]() ; break;
-      case "walkLstop": window["playerStopLeft"]() ;break;
-      case "walkR"    : window["playerMoveRight"]();break;
-      case "walkRstop": window["playerStopRight"]();break;
-      case "sprint"   : window["playerSprint"]();break;
-      case "sprintStop": window["playerSprintStop"](); break;
-      case "barrier"  : window["playerBarrier"](); break;
-      case "duck"     : break;
-      case "duckStop" : break;
-      case "scan"     : break;
-      default: break;
-    }
-  }
-  else if(state == "barrier"){
-    switch(this.action){
-      case "bombStop": window["trueMagicBomb"](); break;
-      case "walkL"    : window["playerMoveLeft"]() ; break;
-      case "walkLstop": window["playerStopLeft"]() ;break;
-      case "walkR"    : window["playerMoveRight"]();break;
-      case "walkRstop": window["playerStopRight"]();break;
-      case "sprint"   : window["playerSprint"]();break;
-      case "sprintStop": window["playerSprintStop"](); break;
-      case "duck"     : break;
-      case "duckStop" : break;
-      case "scan"     : break;
-      case "jump"     : window["teleportWave"](); break;
-      //case "barrierTeleport": window["teleportTest"]();break;
-      //case "jump": window["teleportTest"]();break;
-      case "barrierStop": window["playerStopBarrier"](); break;
-      default: break;
-    }
-  }
-  else if(state == "rift"){
-    switch(this.action){
-      //case "duck"     : window["playerFlyDown"]();  break;
-      //case "duckStop" : window["playerStopDown"](); break;
-      //case "scan"     : window["playerFlyUp"](); break;
-      //case "scanStop" : window["playerStopUp"](); break;
-      //case "walkL"    : window["playerMoveLeft"]() ; break;
-      case "walkLstop": window["playerStopLeft"]() ;break;
-      //case "walkR"    : window["playerMoveRight"]();break;
-      case "walkRstop": window["playerStopRight"]();break;
-      //case "jumpStop" : window["teleportAt"](); break;
-      default: break;
-    }
-  }
-  else{
-    //console.log(state, action);
+  switch(state){
+    case "normal"   : normalAction(this.action) ; break;
+    case "sprinting": sprintAction(this.action) ; break;
+    case "charging" : chargeAction(this.action) ; break; 
+    case "barrier"  : barrierAction(this.action); break;
+    case "rift"     : riftAction(this.action)   ; break;
+    default: break;
   }
   console.log(state, this.action);
+}
+
+function normalAction(action){
+  switch(action){
+    case "jump"      : playerJump()    ;   break;
+    case "jumpStop"  : playerJumpStop();   break;
+    case "walkL"     : playerMoveLeft();   break;
+    case "walkLstop" : playerStopLeft();   break;
+    case "walkR"     : playerMoveRight();  break;
+    case "walkRstop" : playerStopRight();  break;
+    case "sprint"    : playerSprint();     break;
+    case "sprintStop": playerSprintStop(); break;
+    case "duck"      : break;
+    case "duckStop"  : break;
+    case "scan"      : break;
+    case "scanStop"  : break;
+    case "barrier"   : playerBarrier();    break;
+    case "bomb"      : chargeMagic2();     break;
+    case "bombStop"  : magicBlast;         break;
+    default: break;
+  }
+}
+
+function chargeAction(action){
+  switch(action){
+    case "bombStop"  : shootMagicBomb();   break;
+    case "jump"      : magicForce()    ;   break;
+    case "walkL"     : playerMoveLeft();   break;
+    case "walkLstop" : playerStopLeft();   break;
+    case "walkR"     : playerMoveRight();  break;
+    case "walkRstop" : playerStopRight();  break;
+    case "sprint"    : playerSprint();     break;
+    case "sprintStop": playerSprintStop(); break;
+    case "barrier"   : playerBarrier();    break;
+    case "duck"      : break;
+    case "duckStop"  : break;
+    case "scan"      : break;
+    default: break;
+  }
+}
+
+function barrierAction(action){
+  switch(action){
+    case "bombStop" : trueMagicBomb();     break;
+    case "walkL"    : playerMoveLeft();    break;
+    case "walkLstop": playerStopLeft();    break;
+    case "walkR"    : playerMoveRight();   break;
+    case "walkRstop": playerStopRight();   break;
+    case "sprint"   : playerSprint();      break;
+    case "sprintStop":playerSprintStop();  break;
+    case "duck"     : break;
+    case "duckStop" : break;
+    case "scan"     : break;
+    case "jump"     : teleportWave();      break;
+    case "barrierStop": playerStopBarrier(); break;
+    default: break;
+  }
+}
+
+function sprintAction(action){
+  switch(action){
+    case "duck"      : break;
+    case "duckStop"  : break;
+    case "scan"      : break;
+    default: break;
+  }
+}
+
+function riftAction(action){
+  switch(action){
+    case "walkLstop": break;
+    case "walkRstop": break;
+    default: break;
+  }
 }
 
 //-----------------------------------------------
@@ -179,6 +181,8 @@ function playerStopDown(){
 
 function playerJump(){
   console.log("before player jump: ", player.jump);
+  console.log("2before player jump: ", player.jump);
+  console.log("3before player jump: ", player.jump);
   if(player.casting) return;
   if(player.jump == 1){
     playerSpellJump();
@@ -187,6 +191,15 @@ function playerJump(){
   player.jump++;
   player.jumping = 1;
   jumpSound.play();
+  console.log("Jumping\n", player.jump);
+
+  console.log("Jumping\n", player.jump);
+  console.log("Jumping\n", player.jump);
+  console.log("Jumping4\n", player.jump);
+  console.log("Jumping3\n", player.jump);
+  console.log("Jumping2\n", player.jump);
+  console.log("Jumping\n", player.jump);
+  console.log("Jumping\n", player.jump);
   console.log("Jumping\n", player.jump);
 }
 
