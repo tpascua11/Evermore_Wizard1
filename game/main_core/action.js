@@ -481,50 +481,57 @@ function updateMagicBombs(){
   }
 }
 
-function hitBox(body1, body2){
-  if(body1 == null) return;
-  if(body1.indestructible || (this.alliance == body1.sprite.alliance)) return;
-  console.log("Attack Alliance: ", this.alliance);
-  console.log("Target Alliance: ", body1.sprite.alliance);
-  console.log("I should not happen");
-  tester = this;
-  body1.health -= tester.damage;
-  console.log(body1.sprite.attack);
-  if(body1.health <= 0){
-    tmp = body1.sprite.aid;
-    if(body1.sprite.attack != null) body1.sprite.attack.destroy();
-    console.log("HERE! ", body1);
-    body1.sprite.destroy();
-    activeAI[tmp] = 0;
-    aiTotal--;
+function hitBox(affectedBody, body2){
+  var attack = this;
+  if(checkBodyHit(affectedBody, attack)) return;
+  affectedBody.health -= attack.damage;
+  console.log("Affected Body Health", affectedBody.health);
+  if(affectedBody.health <= 0) entityDestroy(affectedBody);
+}
+
+function forceBox(affectedBody, body2){
+  var attack = this;
+  if(checkBodyHit(affectedBody, attack)) return;
+  if(reflectProjectile(affectedBody)) return;
+  affectedBody.health -= attack.damage;
+  velocityFrontOfPlayer(affectedBody.sprite, 500, 500);
+  if(affectedBody.health <= 0) entityDestroy(affectedBody);
+}
+
+function reflectProjectile(body){
+  if(body.sprite.projectile){
+    body.sprite.alliance = this.alliance;
+    moveFrontOfPlayerWith(body.sprite, 500, 500);
+    return true;
+  }
+  else return false
+}
+
+function checkBodyHit(body1, body2){
+  if(!body1 || 
+      body1.indestructible ||
+      body1.sprite.alliance == body2.alliance)
+  {
+    return true;
+  } else {
+    return false;
   }
 }
 
-function forceBox(body1, body2){
-  if(body1 == null) return;
-  if(body1.indestructible || (this.alliance == body1.sprite.alliance)) return;
-  tester = this;
-  body1.health -= tester.damage;
-  console.log(body1.sprite.attack);
-  if(body1.sprite.projectile){
-    body1.sprite.alliance = this.alliance;
-    moveFrontOfPlayerWith(body1.sprite, 500, 500);
-    return;
-  }
-  velocityFrontOfPlayer(body1.sprite, 500, 500);
-  //moveFrontOfPlayerWith(body1.sprite, 1400, 1400);
-  if(body1.health <= 0){
-    tmp = body1.sprite.aid;
-    if(body1.sprite.attack != null){
-      body1.sprite.attack.destroy();
+function entityDestroy(body){
+  if(body.health <= 0){
+    tmp = body.sprite.aid;
+    if(body.sprite.attack != null){
+      body.sprite.attack.destroy();
     }
-    if(body1.sprite.visual != null) body1.sprite.visual.destroy();
-    console.log("HERE! ", body1);
-    body1.sprite.destroy();
+    if(body.sprite.visual != null){ 
+      body.sprite.visual.destroy();
+    }
+    body.sprite.destroy();
     activeAI[tmp] = 0;
-    aiTotal--;
   }
 }
+
 //--------------------------------------
 //  Charging_Magic
 //--------------------------------------

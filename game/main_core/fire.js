@@ -15,7 +15,7 @@ var levelSflo;
 var loadedIn = false;
 var sameOld = false; //Instead This Will Be Version Level
                      //That Way we wont have to keep loading
-var version = 8;
+var version = 12;
 
 getSomething();
 

@@ -72,7 +72,7 @@ var playerStats = {
   energy   : 0 ,
   levitation: 0 ,
   invincible: 0,
-  dot: 0, 
+  dot: 0,
   damageModifier: 1,
   magic: 0 ,
   stepsCount: 25,

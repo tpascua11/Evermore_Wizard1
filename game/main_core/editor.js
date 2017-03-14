@@ -31,7 +31,7 @@ var livingGame = {
             //createManaStone(100,700);
             game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
             game.input.onDown.add(gofull, this);
-            console.log("DONE");
+            console.log(" \"DONE ZONE\"");
           },
   update:function(){
            movement();

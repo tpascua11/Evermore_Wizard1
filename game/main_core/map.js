@@ -23,7 +23,7 @@ var foreground;
 
 function createWorldBase(){
   game.physics.startSystem(Phaser.Physics.P2JS);
-  game.physics.p2.gravity.y = 1000;
+  game.physics.p2.gravity.y = 1100;
   game.physics.p2.world.defaultContactMaterial.friction = 0.3;
   game.physics.p2.world.setGlobalStiffness(1e5);
   game.physics.p2.setImpactEvents(true);
@@ -114,7 +114,7 @@ function createWorldAlpha(){
   game.world.bringToTop(bg2);
 
   game.physics.startSystem(Phaser.Physics.P2JS);
-  game.physics.p2.gravity.y = 1000;
+  game.physics.p2.gravity.y = 1100;
   game.physics.p2.world.defaultContactMaterial.friction = 0.3;
   game.physics.p2.world.setGlobalStiffness(1e5);
   game.physics.p2.setImpactEvents(true);
