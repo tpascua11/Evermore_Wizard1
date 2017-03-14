@@ -10,30 +10,11 @@ This is about a dinosaur/dragon who wants to become a wizard. He recently got a 
 
 
 ## Demo/Playtesting
-To Try it out, use the following links
 
-https://dragons-den-ad546.firebaseapp.com
-
-https://dragons-den-ad546.firebaseapp.com/Evermore_Wizard1/game/access/index.html
-
-https://cdn.rawgit.com/tpascua11/Evermore_Wizard1/master/game/editor/index.html
-
-Current Development At... 
-
-https://dragons-den-ad546.firebaseapp.com
+bahamutech.com
 
 NOTE: it takes awhile to load.
 Controls:
-
-To move around use keys: WASD
-
-To sprint: hold shift
-
-to Shoot: K
-
-to bubble: L
-
-to Jump: J
 
 ## Credits
 
@@ -41,7 +22,7 @@ to Jump: J
 
 Phaser Engine. https://github.com/photonstorm/phaser
 
-Javascript, HTML5, HTML
+Javascript, HTML5, HTML, AngularJs, 
 
 
 ## Coder
@@ -59,7 +40,7 @@ Ted Pascua
 ### Music
    Need to find owner's name
    
-### Old Version
+### Older Version
 ![Alt text](https://github.com/tpascua11/Evermore_Wizard1/blob/master/document/DinosaurWizardBetter.gif "Optional title")
 
 
