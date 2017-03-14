@@ -1,17 +1,16 @@
 # Evermore, The Wizard's Guide.
 
 
-## Game
-This is about a dinosaur/dragon who wants to become a wizard. He recently got a spellbook that allows him to cast spells. That spellbook also gives the user privilege to go to Wizard University. With that, he sets off on a journey to the Wizard Universtity to learn Wizardry. 
-
 ![Alt text](https://github.com/tpascua11/Evermore_Wizard1/blob/master/document/DinosaurWizardV82.gif "Dinosaur Wizard")
 
 
+## Game
+Play as a lizard who wants to become a wizard. For years he worked as Librarian and study magic. He now recently got a spelbook that allow him to cast spells. That spellbook also grants him access to go to the Wizard University. Help the Lizard Wizard on his adventure to Wizard University to learn more magic!
 
 
 ## Demo/Playtesting
 
-bahamutech.com
+https://bahamutech.com/
 
 NOTE: it takes awhile to load.
 Controls:
