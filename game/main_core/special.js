@@ -1,14 +1,6 @@
 //----------------------------------
 // 2_Specials_Loading
 //----------------------------------
-function loadSpecialsSprite(){
-  game.load.spritesheet('LoadStone', '../assets/Object/LoadStone.png', 20, 20);
-  game.load.spritesheet('ManaStone', '../assets/Object/ManaStone.png', 16, 16);
-  game.load.spritesheet('Mana', '../assets/Object/Energy.png', 10, 10);
-
-  game.load.audio('regen', '../assets/sound_effect/regen.wav');
-
-}
 function setupSpecials(){
     regen = game.add.audio('regen'); 
 }

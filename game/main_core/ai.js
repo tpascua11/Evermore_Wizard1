@@ -81,15 +81,6 @@ var aiDefaultStats = {
 //---------------------------------------------------------
 // 2. AI_Building
 //---------------------------------------------------------
-function loadAISprite(){
-  game.load.spritesheet('templateAI', '../assets/monster/templateAI.png', 20, 20);
-  game.load.spritesheet('slime', '../assets/monster/Slime.png', 16, 16);
-  game.load.spritesheet('goblin', '../assets/monster/Goblin.png', 16, 16);
-  game.load.spritesheet('goblinArrow', '../assets/monster/attack_animation/goblin_arrow.png', 7, 3);
-  game.load.spritesheet('collision', '../assets/monster/attack_animation/red_collision.png', 20, 20);
-}
-
-//var slimey;
 
 function createAI(){
   //NOTES:
@@ -712,21 +703,3 @@ function goblinRare123(){
 function avoidance(){
 
 }
-var yAxis = p2.vec2.fromValues(0, 1);
-/*
-   function checkIfCanJump(entity) {
-   var result = false;
-   for (var i=0; i < game.physics.p2.world.narrowphase.contactEquations.length; i++){
-   var c = game.physics.p2.world.narrowphase.contactEquations[i];
-   if (c.bodyA === player.body.data || c.bodyB === player.body.data){
-   var d = p2.vec2.dot(c.normalA, yAxis);
-   if (c.bodyA === player.body.data){
-   d *= -1;
-   }
-   if (d > 0.5){
-   result = true;
-   }
-   }
-   }
-   return result;
-   }*/

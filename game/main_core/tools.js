@@ -7,11 +7,6 @@
 //  6_Adding_Collisions
 //  7_Creation
 //---------------------------------------------------------------------
-function loadBoundaries(){
-  game.load.spritesheet('exist', '../assets/basic/Exist.png', 16, 16);
-  game.load.spritesheet('click', '../assets/basic/Click.png', 16, 16);
-  game.load.spritesheet('checkpoint', '../assets/basic/Checkpoint.png', 16, 16);
-}
 
 function editorCamera(){
 }

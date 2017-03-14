@@ -85,49 +85,6 @@ var playerStats = {
 };
 
 //---------------------------------------------------------
-// Player_Preload
-//---------------------------------------------------------
-function loadPlayerResource(){
-  game.load.spritesheet('dino', '../assets/player/Vark_TemplateGreen.png', 20, 20);
-  game.load.spritesheet('visualDino', '../assets/player/Vark_v57caper.png', 20, 20);
-  game.load.spritesheet('redBoundary', '../assets/player/Vark_TemplateRedSingle.png', 20, 20);
-  game.load.spritesheet('template', '../assets/player/Player_Template.png', 20, 20);
-
-  game.load.spritesheet('woodHUD', '../assets/player/woodHud.png', 216, 32);
-  game.load.spritesheet('hearts', '../assets/player/hearts.png', 48, 16);
-  game.load.spritesheet('healthBalls', '../assets/player/healthBalls.png', 200, 8);
-  game.load.spritesheet('emptyball', '../assets/player/emptyBall.png', 16, 16);
-  game.load.spritesheet('manaballs', '../assets/player/manaBalls.png', 200, 8);
-  game.load.spritesheet('bmissle', '../assets/DarkMagicMisslesB.png', 64, 64);
-  game.load.spritesheet('smissle', '../assets/Blue_Magic_Missles.png', 16, 16);
-  game.load.spritesheet('energyBall', '../assets/spells/BlueEnergyBall.png', 16, 16);
-  game.load.spritesheet('teleport', '../assets/spells/whiteTeleport.png', 16, 16);
-  game.load.spritesheet('teleport301', '../assets/spells/whiteTeleport.png', 16, 16);
-  game.load.spritesheet('casting', '../assets/Casting.png', 16, 16);
-  game.load.spritesheet('magicBlock', '../assets/spells/MagicBlock.png', 8, 16);
-  game.load.spritesheet('magicShield', '../assets/spells/Shield_Up.png', 4, 16);
-  game.load.spritesheet('circleBarrier', '../assets/spells/barrierv2.png', 20, 20);
-  game.load.spritesheet('spellJump', '../assets/spells/bounce.png', 20, 20);
-  game.load.spritesheet('magicExpand', '../assets/spells/BlueExpand.png', 16, 16);
-  game.load.spritesheet('magicPush', '../assets/spells/barrierPush.png', 6, 16);
-  game.load.spritesheet('magicBlast', '../assets/spells/MagicBlast.png', 30, 20);
-
-  game.load.spritesheet('chargeCast', '../assets/spells/Casting2.png', 26, 26);
-
-  game.load.audio('blast', '../assets/sound_effect/Blast.wav');
-  game.load.audio('blast2', '../assets/sound_effect/blast_simple.wav');
-  game.load.audio('charge', '../assets/sound_effect/sootheCharge2.wav');
-  game.load.audio('shoot', '../assets/sound_effect/bigShot.wav');
-  game.load.audio('teleport', '../assets/sound_effect/Teleport.wav');
-  game.load.audio('wall', '../assets/sound_effect/Wall.wav');
-  game.load.audio('steps', '../assets/step.wav');
-  game.load.audio('jumpSound', '../assets/Jump19.wav');
-  game.load.audio('hurt', '../assets/sound_effect/hurt.wav');
-  game.load.audio('shieldHurt', '../assets/sound_effect/tmp_shield_hurt.wav');
-  game.load.audio('bounce', '../assets/sound_effect/bounce.wav');
-}
-
-//---------------------------------------------------------
 // Player_Building
 //---------------------------------------------------------
 function createPlayer(){
@@ -248,7 +205,6 @@ function createPlayerAnimations(){
   player.animations.add('rightJump', [7], 10, true);
 }
 
-  var woodHUD;
 function playerHUD(){
   playerFPS = game.add.text(10, 10, game.time.fps, {fontSize: '25px', fill: '#ffff00'});
   playerFPS.fixedToCamera = true;
@@ -260,11 +216,6 @@ function playerHUD(){
   manaHUD = game.add.sprite(manaWidth, manaHeight, 'manaballs');
   manaHUD.scale.setTo(1.5,1.5);
   manaHUD.fixedToCamera = true;
-
-  //hearts = game.add.sprite(heartWidth, heartHeight, 'hearts');
-  //hearts.frame = 2;
-  //hearts.fixedToCamera = true;
-
 
   hearts = game.add.sprite(heartWidth, heartHeight, 'healthBalls');
   hearts.scale.setTo(1.5,1.5);
@@ -362,35 +313,6 @@ function gainMana(amount){
   if(leftovers < 0) leftovers = 0;
   player.rmana += leftovers;
 }
-//__________
-// Charging
-//__________
-/*
-function chargingTimer(){
-  chargeTimer = game.time.create(false);
-  chargeTimer.loop(500, incrementChargeTimer, this);
-  chargeTimer.start();
-}
-function endChargingTimer(){
-  chargeTimer.stop();
-}
-function incrementChargeTimer(){
-  if(pCharge <= 4){
-    pCharge+= 0.5;
-    player.rmana -= 1;
-  }
-  if(pCharge < 2){
-    blaster.tint = 0x00ff00;
-  }
-  else if(pCharge < 3){
-    blaster.tint = 0xffff00;
-  }
-  else if(pCharge < 4){
-    blaster.tint = 0xff0000;
-  }
-  if(player.casting) chargingBlast();
-  //chargeSound.play();
-}*/
 //______________
 // Invincible
 //______________
@@ -654,7 +576,6 @@ function missionFailed(){
 //--------------
 var yAxis = p2.vec2.fromValues(0, 1);
 function checkIfCanJump() {
-  //console.log("TEST JUMP C:", game.physics.p2.world.narrowphase.contactEquations.length);
   var result = false;
   for (var i=0; i < game.physics.p2.world.narrowphase.contactEquations.length; i++){
     var c = game.physics.p2.world.narrowphase.contactEquations[i];

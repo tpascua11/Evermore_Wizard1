@@ -17,9 +17,6 @@ var entityStats = {
 function makeEntity(x, y, odd){
 }
 
-function preloadBackground(){
-  game.load.spritesheet('level1', '../assets/Blocks.png', 16, 16);
-}
 
 var amounts = 0;
 function makeBlock(){
