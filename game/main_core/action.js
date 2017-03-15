@@ -114,6 +114,32 @@ function setupSpells(){
   player.addChild(magicBounce);
 }
 
+function lineUp(back , front, starAim){
+  //TODO: starAim - this will a template 
+  //      for all entity to use ablities that aim
+  if(moveDown.isDown && (moveRight.isDown || moveLeft.isDown)){
+    front.body.x = back.body.x + starAim.bottomRightX * back.direction;
+    front.body.y = starAim.bottomRightY;
+  }
+  else if(moveUp.isDown && (moveRight.isDown || moveLeft.isDown)){
+    front.body.x = back.body.x + starAim.topRightX * back.direction;
+    front.body.y = back.body.y - starAim.topRightY;
+  }
+  else if(moveDown.isDown){
+    front.body.x = back.body.x;
+    front.body.x = back.body.x + starAim.BottomX;
+    front.body.y = back.body.y + starAim.BottomY;
+  }
+  else if(moveUp.isDown){
+    front.body.x = back.body.x + starAim.topX;
+    front.body.y = back.body.y + starAim.topY;
+  }
+  else{
+    front.body.y = back.body.y + starAim.sideY;
+    front.body.x = back.body.x + starAim.sideX * back.direction;
+  }
+}
+
 function placeFrontOfPlayer(magicObject){
   if(moveDown.isDown && (moveRight.isDown || moveLeft.isDown)){
     magicObject.body.x = player.body.x + 37*player.direction;
@@ -310,6 +336,29 @@ function addVelocityToPlayer(x, y){
   else{
     player.body.velocity.x += -x*player.direction;
     player.body.velocity.y += 0;
+  }
+}
+
+function addVelocityTo(entity, x, y){
+  if(moveDown.isDown && (moveRight.isDown || moveLeft.isDown)){
+    entity.body.velocity.x += -x*entity.direction;
+    entity.body.velocity.y += -y;
+  }
+  else if(moveUp.isDown && (moveRight.isDown || moveLeft.isDown)){
+    entity.body.velocity.x += -x*entity.direction;
+    entity.body.velocity.y += y;
+  }
+  else if(moveDown.isDown){
+    entity.body.velocity.x += 0;
+    entity.body.velocity.y += -y;
+  }
+  else if(moveUp.isDown){
+    entity.body.velocity.x += 0;
+    entity.body.velocity.y += y;
+  }
+  else{
+    entity.body.velocity.x += -x*entity.direction;
+    entity.body.velocity.y += 0;
   }
 }
 
