@@ -1,8 +1,6 @@
-////--------------------------------------------------
-// Main Core
-//--------------------------------------------------
-//var game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, 'Evermore: The Wizard Guide', { preload: preload, create: create, update: update } );
-var game = new Phaser.Game(800, 480, Phaser.AUTO, 'Evermore_The_Wizard_Guide');
+var game = new Phaser.Game(800, 480, Phaser.AUTO, 
+    'Evermore_The_Wizard_Guide');
+
 //var gameWidth = 1000;
 //var gameHeight = 480;
 
@@ -27,11 +25,12 @@ var livingGame = {
             setupSpecials();
             startRegenTimer();
             //-----------------------
-            //regen.volume = 0.5; 
-            //createManaStone(100,700);
             game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
             game.input.onDown.add(gofull, this);
-            console.log(" \"DONE ZONE\"");
+
+            //These Below Fixes The Sprite Lagging when camera moves
+            game.renderer.renderSession.roundPixels = true;
+            game.camera.roundPx = false;
           },
   update:function(){
            movement();
@@ -63,14 +62,14 @@ function infoAll(){
 
 function gofull() {
 
-    if (game.scale.isFullScreen)
-    {
-            game.scale.stopFullScreen();
-        }
-    else
-    {
-            game.scale.startFullScreen(false);
-        }
+  if (game.scale.isFullScreen)
+  {
+    game.scale.stopFullScreen();
+  }
+  else
+  {
+    game.scale.startFullScreen(false);
+  }
 
 }
 

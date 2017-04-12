@@ -12,20 +12,66 @@
  |/     `       //        '     \|
 
   Player_Information
-  Player_Preload
   Player_Building
   Player_Timers
   Player_Updates
   Spell_Building
-  Player_Actions
-  Player_Physics
-  Player_Sounds
+  Living_Player
+  Player_Physics_And_Render
 
 */
 
 //---------------------------------------------------------
 // Player_Information
 //---------------------------------------------------------
+
+var playerStats = {
+        health: 5,
+     maxHealth: 25,
+          mana: 75,
+       maxMana: 100,
+         rmana: 25,
+      maxRmana: 25,
+        curSpd: 0,
+         speed: 350,
+     sprintSpd: 450,
+     sprinting: 0,
+           acl: 50,
+      moveLeft: 0,
+     moveRight: 0,
+        moving: 0,
+          jump: 0,
+     spellJump: 0,
+     jumpTotal: 100,
+       jumpAtY: 0,
+       jumpAcl: 5,
+      jumpSpan: 50,
+       canJump: 0,
+         clock: 0,
+     direction: 1,
+ jumpDirection: 0,
+         focus: 2,
+        laying: 0,
+       casting: 0,
+      charging: 0,
+       barrier: 0,
+     airCasted: 0,
+       charged: 0,
+        energy: 0,
+    levitation: 0,
+    invincible: 0,
+           dot: 0,
+damageModifier: 1,
+         magic: 0,
+    stepsCount: 25,
+  rechargeRate: 1,
+   rechargeSec: Phaser.Timer.SECOND * 0.1,
+      alliance: 1,
+    resistance: "nothing",
+          weak: "nothing",
+      cutscene: 0
+};
+
 var player;
 var playerMaterial;
 var magicCG;
@@ -37,52 +83,6 @@ var manaHUD;
 var hearts;
 var invc;
 
-var playerStats = {
-  health   : 5,
-  maxHealth: 25,
-  mana     : 75 ,
-  maxMana  : 100,
-  rmana    : 25 ,
-  maxRmana : 25 ,
-  curSpd   : 0  ,
-  speed    : 350,
-  sprintSpd: 450,
-  sprinting: 0  ,
-  acl      : 50 ,
-  moveLeft : 0  ,
-  moveRight: 0  ,
-  moving   : 0  ,
-  jump     : 0  ,
-  spellJump: 0  ,
-  jumpTotal: 100,
-  jumpAtY  : 0  ,
-  jumpAcl  : 5  ,
-  jumpSpan : 50 ,
-  canJump  : 0  ,
-  clock    : 0  ,
-  direction: 1  ,
-  jumpDirection: 0,
-  focus: 2,
-  laying: 0,
-  casting  : 0  ,
-  charging  : 0  ,
-  barrier  : 0 ,
-  airCasted: 0  ,
-  charged  : 0  ,
-  energy   : 0 ,
-  levitation: 0 ,
-  invincible: 0,
-  dot: 0,
-  damageModifier: 1,
-  magic: 0 ,
-  stepsCount: 25,
-  rechargeRate: 1,
-  rechargeSec: Phaser.Timer.SECOND * 0.1,
-  alliance: 1,
-  resistance: "nothing",
-  weak: "nothing",
-  cutscene: 0
-};
 
 //---------------------------------------------------------
 // Player_Building
@@ -100,9 +100,8 @@ function createPlayer(){
 }
 
 function playerBody(){
-  //Remember: Set Scale Then apply Phyisics
   player = game.add.sprite(0, 400, 'template');
-  visual = game.add.sprite(0, 0, 'visualDino');
+  visual = game.add.sprite(0, 0, 'visualDino'); //Remember: Set Scale Then apply Phyisics
 
   player.scale.setTo(1,2);
   player.alpha = 1;
@@ -118,16 +117,13 @@ function playerBody(){
   visual.alpha = 1;
   visual.x-=30;
   visual.y-=20;
-
-  //These Below Fixes The Sprite Lagging when camera moves
-  game.renderer.renderSession.roundPixels = true;
-  game.camera.roundPx = false;
 }
 
 function playerInfo(){
   for(var attrname in playerStats){player[attrname] = playerStats[attrname]}
+  player.body.stats = playerStats;
+  console.log("Player Body Stats", playerStats);
   player.body.health = player.health;
-  console.log("Health", player.health);
 }
 
 function playerSounds(){
@@ -344,7 +340,7 @@ function damageOverTime(){
 }
 
 //--------------------------------
-// Player_Physics
+//  Living_Player
 //--------------------------------
 function movement(){
  if(checkIfCanJump()){
@@ -371,6 +367,10 @@ function movement(){
   else playerInactive();
 }
 
+
+//--------------------------------
+// Player_Physics_And_Render
+//--------------------------------
 function playerWalkMovement(){
   if(player.moveRight){
     if(player.body.velocity.x > 175) return;
@@ -381,7 +381,6 @@ function playerWalkMovement(){
     player.body.velocity.x -= 25;
   }
 }
-
 
 function playerAirMovement(){
   if(player.moveRight){
