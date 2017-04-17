@@ -13,8 +13,8 @@ var PreLoadState= {
     this.logo.anchor.setTo(0.5);
 
     game.stage.smoothed = false;
-    console.log("Loading Sprites");
 
+    console.log("Loading Sprites");
     loadMapAlpha();     // Preset Default Level
     preloadBackground();// Preset Background Default Level
     loadPlayerResource(); // The Player
@@ -23,8 +23,8 @@ var PreLoadState= {
     loadBoundaries();   // Physics Existance
     loadAISprite();     // The NPC
 
-
     loadSpecialsSprite();
+
     console.log("Done");
 
     game.time.advancedTiming = true;

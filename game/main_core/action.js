@@ -253,6 +253,65 @@ function addVelocityToPlayer(x, y){
   }
 }
 
+function placeFrontOfPlayerVisualChange(magicObject){
+  if(moveDown.isDown && (moveRight.isDown || moveLeft.isDown)){
+    magicObject.body.x = player.body.x + 37*player.direction;
+    magicObject.body.y = player.body.y + 40;
+    if(player.direction == 1){
+      magicObject.angle = 45;
+    }else{
+      magicObject.angle = 135;
+    }
+  }
+  else if(moveUp.isDown && (moveRight.isDown || moveLeft.isDown)){
+    magicObject.body.x = player.body.x + 37*player.direction;
+    magicObject.body.y = player.body.y - 40;
+    if(player.direction == -1){
+      magicObject.angle = -135;
+    }
+    else magicObject.angle = -45;
+  }
+  else if(moveDown.isDown){
+    magicObject.body.x = player.body.x;
+    magicObject.body.y = player.body.y + 60;
+    magicObject.angle = 90;
+  }
+  else if(moveUp.isDown){
+    magicObject.body.x = player.body.x;
+    magicObject.body.y = player.body.y - 40;
+    magicObject.angle = -90;
+  }
+  else{
+    magicObject.body.y = player.body.y - 12;
+    magicObject.body.x = player.body.x + 35 * player.direction;
+    if(player.direction == -1){
+      magicObject.angle = 180;
+    }
+  }
+}
+
+function velocityFrontOfPlayer(magicObject, x, y){
+  if(moveDown.isDown && (moveRight.isDown || moveLeft.isDown)){
+    magicObject.body.velocity.x += x*player.direction;
+    magicObject.body.velocity.y += y;
+  }
+  else if(moveUp.isDown && (moveRight.isDown || moveLeft.isDown)){
+    magicObject.body.velocity.x += x*player.direction;
+    magicObject.body.velocity.y += -y;
+  }
+  else if(moveDown.isDown){
+    magicObject.body.velocity.x += 0;
+    magicObject.body.velocity.y += y;
+  }
+  else if(moveUp.isDown){
+    magicObject.body.velocity.x += 0;
+    magicObject.body.velocity.y += -y;
+  }
+  else{
+    magicObject.body.velocity.y += 0;
+    magicObject.body.velocity.x += x*player.direction;
+  }
+}
 
 
 //TODO: We might need to make a new section called status effect
