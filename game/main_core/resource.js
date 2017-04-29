@@ -1,6 +1,24 @@
 //-----------------------------------------------------------------------------
-// Image_Source
+// Game_Source
 //-----------------------------------------------------------------------------
+function loadAll(){
+  console.log("Load All");
+
+  //Sprite
+  loadMapAlpha();
+  preloadBackground();
+  loadPlayerResource();
+  loadBoundaries();
+  loadAISprite();
+  loadSpecialsSprite();
+
+  //Sounds
+  loadSoundEffects();
+  loadMusic();
+
+}
+
+
 function loadPlayerResource(){
   game.load.spritesheet('dino', 'game/assets/player/Vark_TemplateGreen.png', 20, 20);
   game.load.spritesheet('visualDino', 'game/assets/player/Vark_v57caper.png', 20, 20);
@@ -27,7 +45,9 @@ function loadPlayerResource(){
   game.load.spritesheet('magicBlast', 'game/assets/spells/MagicBlast.png', 30, 20);
 
   game.load.spritesheet('chargeCast', 'game/assets/spells/Casting2.png', 26, 26);
+}
 
+function loadSoundEffects(){
   game.load.audio('blast', 'game/assets/sound_effect/Blast.wav');
   game.load.audio('blast2', 'game/assets/sound_effect/blast_simple.wav');
   game.load.audio('charge', 'game/assets/sound_effect/sootheCharge2.wav');
