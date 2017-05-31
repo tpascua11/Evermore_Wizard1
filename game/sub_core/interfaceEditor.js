@@ -1,5 +1,4 @@
 (function(){
-
   var app = angular.module('editor', [ ]);
 
   app.controller('EditorController', function($scope, $http){
@@ -87,25 +86,25 @@
         $scope.level.SfloPlacement.push(tmp);
       }
       /*
-      localStorage.removeItem("levelAiPlacement");
-      localStorage.removeItem("levelBlockPlacement");
-      localStorage.removeItem("levelStmpPlacement");
-      localStorage.removeItem("levelSfloPlacement");
-      localStorage.setItem("levelAiPlacement", JSON.stringify($scope.level.aiPlacement));
-      localStorage.setItem("levelBlockPlacement", JSON.stringify($scope.level.blockPlacement));
-      localStorage.setItem("levelStmp", JSON.stringify($scope.level.StmpPlacement));
-      localStorage.setItem("levelSflo", JSON.stringify($scope.level.SfloPlacement));*/
+         localStorage.removeItem("levelAiPlacement");
+         localStorage.removeItem("levelBlockPlacement");
+         localStorage.removeItem("levelStmpPlacement");
+         localStorage.removeItem("levelSfloPlacement");
+         localStorage.setItem("levelAiPlacement", JSON.stringify($scope.level.aiPlacement));
+         localStorage.setItem("levelBlockPlacement", JSON.stringify($scope.level.blockPlacement));
+         localStorage.setItem("levelStmp", JSON.stringify($scope.level.StmpPlacement));
+         localStorage.setItem("levelSflo", JSON.stringify($scope.level.SfloPlacement));*/
 
       var levelThing = JSON.stringify($scope.level);
       console.log("levelThing", levelThing);
       //var levelName
       /*
-      firebase.database().ref('level/pilot').set({
-        aiPlacement: JSON.stringify($scope.level.aiPlacement),
-        blockPlacement: JSON.stringify($scope.level.blockPlacement),
-        specialPlacement: JSON.stringify($scope.level.SfloPlacement),
-        tmpspecialPlacement: JSON.stringify($scope.level.StmpPlacement)
-      });*/
+         firebase.database().ref('level/pilot').set({
+         aiPlacement: JSON.stringify($scope.level.aiPlacement),
+         blockPlacement: JSON.stringify($scope.level.blockPlacement),
+         specialPlacement: JSON.stringify($scope.level.SfloPlacement),
+         tmpspecialPlacement: JSON.stringify($scope.level.StmpPlacement)
+         });*/
 
       //var test = JSON.parse(localStorage.getItem("level"));
       //console.log("Storage Tr", test);

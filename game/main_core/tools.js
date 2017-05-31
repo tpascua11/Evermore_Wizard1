@@ -78,6 +78,8 @@ function toolControls(){
 }
 
 function toolsSetup(){
+  setupMouse();
+  toolControls();
   create6pinPoints();
   //var levelAiPlacement = JSON.parse(localStorage.getItem("levelAiPlacement"));
   //var levelBlockPlacement = JSON.parse(localStorage.getItem("levelBlockPlacement"));
@@ -291,7 +293,7 @@ function makeExist(){
 
   console.log("Existing Blocks", existingBlocks.length);
 
-  game.world.bringToTop(bg2);
+  game.world.bringToTop(foreground);
 }
 
 function reviveExist(width, height, xoo, yoo){
@@ -344,7 +346,7 @@ function existance(width, height, xoo, yoo){
   box.body.indestructible = true;
   console.log(box.eid);
   console.log(box.body.eid);
-  game.world.bringToTop(bg2);
+  game.world.bringToTop(foreground);
 
   existingBlocks[pinTargetID-1] = box;
 }

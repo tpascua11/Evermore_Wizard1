@@ -10,15 +10,11 @@ var livingGame = {
             game.renderer.renderSession.roundPixels = true;
             game.camera.roundPx = false;
 
-            createPlayer();
-            playerActions();
+            toolsSetup();
 
-            //game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
-            //game.input.onDown.add(gofull, this);
           },
   update:function(){
            game.world.bringToTop(foreground);
-           movement();
          }
 }
 
