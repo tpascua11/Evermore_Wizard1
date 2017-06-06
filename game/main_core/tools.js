@@ -7,7 +7,6 @@
 //  6_Adding_Collisions
 //  7_Creation
 //---------------------------------------------------------------------
-
 function editorCamera(){
 }
 
@@ -184,10 +183,6 @@ function resizeOn(body){
 
   pinWidth = pinTR.body.x - pinTL.body.x;
   pinAtX = pinTL.body.x + pinWidth/2;
-
-  //console.log("AXIS ", pinAtX, pinAtY);
-  //console.log("Width ", pinWidth);
-  //console.log("Height ", pinHeight);
 }
 
 function moveWithTR(){
@@ -358,8 +353,6 @@ function forceStatic(){
   bodyPast = true;
   targetBody.velocity.x = 0;
   targetBody.velocity.y = 0;
-  //lastTargetBody.data.shapes[0].sensor = false;
-  //mouse.body.static = false;
 }
 
 //---------------------------------------
