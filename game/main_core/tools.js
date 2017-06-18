@@ -165,7 +165,7 @@ var existingBlocks = [];
 function widthPower(){
   console.log("Width Power");
   console.log("lastbody", lastTargetBody.eid);
-  var i = lastTargetBody.eid-1;
+  var i = lastTargetBody.eid;
   //Width 
   existingBlocks[i].scale.x += 2;
   existingBlocks[i].body.setRectangle(existingBlocks[i].width, existingBlocks[i].height);
@@ -173,7 +173,7 @@ function widthPower(){
 
 function heightPower(){
   console.log("Height Power");
-  var i = lastTargetBody.eid-1;
+  var i = lastTargetBody.eid;
   //Width 
   existingBlocks[i].scale.y += 2;
   existingBlocks[i].body.setRectangle(existingBlocks[i].width, existingBlocks[i].height);
@@ -202,7 +202,7 @@ function makeExist(x,y){
 
   existingBlocks.push(box);
   box.eid = existingBlocks.length;
-  box.body.eid = existingBlocks.length;
+  box.body.eid = existingBlocks.length-1;
   box.body.indestructible = true;
   console.log(box.eid);
   console.log(box.body.eid);
@@ -232,8 +232,8 @@ function makeExist(){
   //existingBlocks = [];
 
   existingBlocks.push(box);
-  box.eid = existingBlocks.length;
-  box.body.eid = existingBlocks.length;
+  box.eid = existingBlocks.length-1;
+  box.body.eid = existingBlocks.length-1;
   box.body.indestructible = true;
   console.log(box.eid);
   console.log(box.body.eid);
@@ -271,7 +271,7 @@ function reviveExist(width, height, xoo, yoo){
 
 
 function pinEdit(width, height, xoo, yoo){
-  var box = existingBlocks[pinTargetID-1];
+  var box = existingBlocks[pinTargetID];
   box.width  = width;
   box.height = height;
   box.body.setRectangle(box.width, box.height);
