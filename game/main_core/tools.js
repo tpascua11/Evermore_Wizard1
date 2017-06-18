@@ -1,5 +1,6 @@
 //---------------------------------------------------------------------
 //  1_Tools_Control
+//  Object All
 //  2_Camera_Control
 //  5_Mouse_Control
 //  4_Object_Creation
@@ -45,6 +46,40 @@ function toolControls(){
 
   moveDown = game.input.keyboard.addKey(Phaser.Keyboard.S);
   moveDown.onDown.add(cameraMoveDown, this);
+
+  moveDown = game.input.keyboard.addKey(Phaser.Keyboard.U);
+  moveDown.onDown.add(saveLevel, this);
+}
+
+//---------------------------------------
+// Object All
+//---------------------------------------
+var maxExistance = 100;
+var nextExistanceID = 0;
+function refreshExistance(){
+  for(var i = 0; i < maxExistance; i++){
+    firstStart();
+  }
+}
+
+function firstStart(){
+  var box = game.add.sprite(x, y, 'exist');
+  box.hooks = true;
+  size = 3;
+  box.scale.setTo(size, 0.5);
+  game.physics.p2.enable(box);
+
+  box.frame = 0;
+  box.body.fixedRotation = true;
+  box.body.mass = 6;
+  box.body.health = 1;
+
+  box.body.setMaterial(boxMaterial);
+  box.body.static = true;
+
+  box.eid = existingBlocks.length;
+  box.body.eid = existingBlocks.length;
+  existingBlocks.push(box);
 }
 //---------------------------------------
 // 2_Camera_Control
@@ -180,6 +215,10 @@ function heightPower(){
 }
 
 function makeExist(x,y){
+  if(nextExistanceID > maxExistance){
+    console.log("Exceeded Amounts Of Collision Objects");
+    return;
+  }
   console.log("EXIST");
   var box = game.add.sprite(x, y, 'exist');
   //var size = game.rnd.integerInRange(1, 5);
@@ -502,6 +541,18 @@ function gameModeSetup(){
     createHere2(levelSflo[i].x, levelSflo[i].y, 0, 0);
   }
   console.log(levelSflo, "FLO");
+}
+
+function saveLevel(){
+  //TODO: When Converting ExistingBlocks to storage level only get the
+  //      positioning and id information. Can't load in ciruclar structure.
+  //
+  console.log("save");
+  //var levelAiPlacement = JSON.parse(localStorage.getItem("levelAiPlacement"));
+  //localStorage.removeItem("blockPlacement");
+  //localStorage.setItem("blockPlacement", JSON.stringify(existingBlocks));
+  //var checkA = localStorage.getItem("blockPlacement");
+  //console.log("test", checkA);
 }
 
 function editorCamera(){
