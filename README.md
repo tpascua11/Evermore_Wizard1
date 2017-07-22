@@ -10,7 +10,7 @@ Play as a lizard who wants to become a wizard. For years he worked as Librarian 
 
 ## Demo/Playtesting
 
-https://bahamutech.com/
+https://dragons-den-ad546.firebaseapp.com
 
 NOTE: it takes awhile to load.
 Controls:
