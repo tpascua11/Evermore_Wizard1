@@ -5,7 +5,6 @@ var livingGame = {
   create: function(){
             startUniversalTimer(); 
             createWorldBase();
-            createWorldBeta(1,2);
             //These Below Fixes The Sprite Lagging when camera moves
             game.renderer.renderSession.roundPixels = true;
             game.camera.roundPx = false;
@@ -14,7 +13,7 @@ var livingGame = {
 
           },
   update:function(){
-           game.world.bringToTop(foreground);
+           //game.world.bringToTop(foreground);
          }
 }
 

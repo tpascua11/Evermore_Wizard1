@@ -12,6 +12,9 @@ function loadAll(){
   loadAISprite();
   loadSpecialsSprite();
 
+
+  //setupSpells();
+
   //Sounds
   loadSoundEffects();
   loadMusic();
@@ -21,7 +24,7 @@ function loadAll(){
 
 function loadPlayerResource(){
   game.load.spritesheet('dino', 'game/assets/player/Vark_TemplateGreen.png', 20, 20);
-  game.load.spritesheet('visualDino', 'game/assets/player/Vark_v57caper.png', 20, 20);
+  game.load.spritesheet('visualDino', 'game/assets/player/Vark_v58.png', 20, 20);
   game.load.spritesheet('redBoundary', 'game/assets/player/Vark_TemplateRedSingle.png', 20, 20);
   game.load.spritesheet('template', 'game/assets/player/Player_Template.png', 20, 20);
 

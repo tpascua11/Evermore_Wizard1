@@ -14,6 +14,7 @@ function toolsSetup(){
   setupMouse();
   toolControls();
   create6pinPoints();
+  refreshExistance();;
 }
 
 function setupMouse(){
@@ -58,12 +59,12 @@ var maxExistance = 100;
 var nextExistanceID = 0;
 function refreshExistance(){
   for(var i = 0; i < maxExistance; i++){
-    firstStart();
+    refreshBox();
   }
 }
 
-function firstStart(){
-  var box = game.add.sprite(x, y, 'exist');
+function refreshBox(){
+  var box = game.add.sprite(0, 0, 'exist');
   box.hooks = true;
   size = 3;
   box.scale.setTo(size, 0.5);
@@ -80,7 +81,9 @@ function firstStart(){
   box.eid = existingBlocks.length;
   box.body.eid = existingBlocks.length;
   existingBlocks.push(box);
+  existingBlocks[box.eid].kill();
 }
+
 //---------------------------------------
 // 2_Camera_Control
 //---------------------------------------
@@ -220,66 +223,8 @@ function makeExist(x,y){
     return;
   }
   console.log("EXIST");
-  var box = game.add.sprite(x, y, 'exist');
-  //var size = game.rnd.integerInRange(1, 5);
-  box.hooks = true;
-  size = 3;
-  box.scale.setTo(size, 0.5);
-  game.physics.p2.enable(box);
-
-  //box.animations.add('auto',
-  //    [0, 1, 2, 3, 4, 5, 6], 25, true);
-  //box.animations.play('auto', 15, true);
-  box.frame = 0;
-  box.body.fixedRotation = true;
-  box.body.mass = 6;
-  box.body.health = 1;
-
-  box.body.setMaterial(boxMaterial);
-  box.body.static = true;
-  //existingBlocks = [];
-
-  existingBlocks.push(box);
-  box.eid = existingBlocks.length;
-  box.body.eid = existingBlocks.length-1;
-  box.body.indestructible = true;
-  console.log(box.eid);
-  console.log(box.body.eid);
-
-  console.log("Existing Blocks", existingBlocks.length);
-
-  game.world.bringToTop(bg2);
-}
-
-
-function makeExist(){
-  console.log("EXIST");
-  var box = game.add.sprite(mouse.body.x, mouse.body.y, 'exist');
-  //var size = game.rnd.integerInRange(1, 5);
-  box.hooks = true;
-  size = 3;
-  box.scale.setTo(size, 0.5);
-  game.physics.p2.enable(box);
-
-  box.frame = 0;
-  box.body.fixedRotation = true;
-  box.body.mass = 6;
-  box.body.health = 1;
-
-  box.body.setMaterial(boxMaterial);
-  box.body.static = true;
-  //existingBlocks = [];
-
-  existingBlocks.push(box);
-  box.eid = existingBlocks.length-1;
-  box.body.eid = existingBlocks.length-1;
-  box.body.indestructible = true;
-  console.log(box.eid);
-  console.log(box.body.eid);
-
-  console.log("Existing Blocks", existingBlocks.length);
-
-  game.world.bringToTop(foreground);
+  existingBlocks[nextExistanceID].reset(x,y);
+  nextExistanceID++;
 }
 
 function reviveExist(width, height, xoo, yoo){

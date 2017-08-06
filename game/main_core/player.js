@@ -150,8 +150,8 @@ function playerControl(){
 }
 
 function createPlayerAnimations(){
-  visual.animations.add('walkRight', [31, 32, 33, 34, 35, 36, 37], 15, true);
-  visual.animations.add('walkLeft', [41, 42, 43, 44, 45, 46, 47], 15, true);
+  visual.animations.add('walkRight', [31, 32, 33, 34], 12, true);
+  visual.animations.add('walkLeft', [41, 42, 43, 44], 12, true);
 
   visual.animations.add('sprintRight', [31, 32, 33, 34, 35, 36, 37], 30, true);
   visual.animations.add('sprintLeft', [41, 42, 43, 44, 45, 46, 47], 30, true);
@@ -195,8 +195,8 @@ function createPlayerAnimations(){
   visual.animations.add('magicJumpRight', [5,6,7], 30, false);
 
   //ill keep these for now
-  player.animations.add('right', [28, 29, 30, 31, 32, 33], 25, true);
-  player.animations.add('left', [19, 20, 21, 22, 23, 24], 25, true);
+  player.animations.add('right', [28, 29, 30, 31, 32], 25, true);
+  player.animations.add('left', [19, 20, 21, 22, 23], 25, true);
   player.animations.add('leftJump', [3], 10, true);
   player.animations.add('rightJump', [7], 10, true);
 }
@@ -449,7 +449,7 @@ function playerMoveRightMovement(){
   //player.body.velocity.x = player.speed;
   visual.animations.play('walkRight');
 
-  playSteps(13);
+  //playSteps(13);
 }
 
 function playerMoveLeftMovement(){
@@ -459,7 +459,7 @@ function playerMoveLeftMovement(){
   //player.body.velocity.x = -player.speed;
   visual.animations.play('walkLeft');
 
-  playSteps(13);
+  //playSteps(13);
 }
 
 function playSteps(count){
@@ -505,35 +505,35 @@ function jumpCasting(){
 }
 
 function castedRight(){
-  if(moveLeft.isDown && moveUp.isDown) visual.frame = 75;
-  else if(moveLeft.isDown && moveDown.isDown) visual.frame = 75;//SouthWest
-  else if(moveRight.isDown && moveUp.isDown) visual.frame = 73;
-  else if(moveRight.isDown && moveDown.isDown) visual.frame = 71;
+  if(moveLeft.isDown && moveUp.isDown) visual.frame = 65;
+  else if(moveLeft.isDown && moveDown.isDown) visual.frame = 65;//SouthWest
+  else if(moveRight.isDown && moveUp.isDown) visual.frame = 63;
+  else if(moveRight.isDown && moveDown.isDown) visual.frame = 61;
   else if(player.direction == 1){
-    if(moveUp.isDown) visual.frame = 74;
-    else if(moveDown.isDown) visual.frame = 71;
-    else visual.frame = 76;
+    if(moveUp.isDown) visual.frame = 64;
+    else if(moveDown.isDown) visual.frame = 61;
+    else visual.frame = 66;
   }
   else{
-    if(moveUp.isDown) visual.frame = 74;
-    else if(moveDown.isDown) visual.frame = 71;
-    else visual.frame = 75;
+    if(moveUp.isDown) visual.frame = 64;
+    else if(moveDown.isDown) visual.frame = 61;
+    else visual.frame = 65;
   }
 }
 function castedLeft(){
-  if(moveLeft.isDown && moveUp.isDown) visual.frame = 63;//North West
-  else if(moveLeft.isDown && moveDown.isDown) visual.frame = 61;//SouthWestk
-  else if(moveRight.isDown && moveUp.isDown) visual.frame = 65;//NorthEast
-  else if(moveRight.isDown && moveDown.isDown) visual.frame = 65;//SouthEast
+  if(moveLeft.isDown && moveUp.isDown) visual.frame = 53;//North West
+  else if(moveLeft.isDown && moveDown.isDown) visual.frame = 52;//SouthWestk
+  else if(moveRight.isDown && moveUp.isDown) visual.frame = 55;//NorthEast
+  else if(moveRight.isDown && moveDown.isDown) visual.frame = 55;//SouthEast
   else if(player.direction == 1){
-    if(moveUp.isDown) visual.frame = 64;//Shooting Up
-    else if(moveDown.isDown) visual.frame = 65;//Shooting Down
-    else visual.frame = 65;//Shooting Foward
+    if(moveUp.isDown) visual.frame = 54;//Shooting Up
+    else if(moveDown.isDown) visual.frame = 55;//Shooting Down
+    else visual.frame = 55;//Shooting Foward
   }
   else{
-    if(moveUp.isDown) visual.frame = 64;//Shoot Up
-    else if(moveDown.isDown) visual.frame = 61;//Shooting se visual.frame = 66;//Shooting Foward
-    else visual.frame = 66;
+    if(moveUp.isDown) visual.frame = 54;//Shoot Up
+    else if(moveDown.isDown) visual.frame = 51;//Shooting se visual.frame = 66;//Shooting Foward
+    else visual.frame = 56;
   }
 }
 

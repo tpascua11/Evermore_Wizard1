@@ -30,7 +30,7 @@ function createWorldBase(){
 }
 
 function createWorldBeta(levelName, destination){
-  game.stage.backgroundColor = "#000000";
+  game.stage.backgroundColor = "#7ec0ee";
   game.world.setBounds(0, 0, 1920, 500);
   background = game.add.tileSprite(0,0, 1920, 500, '');
   foreground = game.add.tileSprite(0,260,1920,500, '');
