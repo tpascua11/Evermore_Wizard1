@@ -1,7 +1,7 @@
 (function(){
   var app = angular.module('editor', [ ]);
 
-  app.controller('EditorController', function($scope, $http){
+ app.controller('EditorController', function($scope, $http){
 
     //$scope.loadList = [];
     $scope.loadList = creationList;
