@@ -32,11 +32,13 @@ function setupMagicChargeTimer(){
 }
 
 function chargeMagicIncrement(){
+  /*
   if(magicModifier <= magicModifierLimit){
     console.log("Charging", magicModifier);
    // circleCasting.animations.currentAnim.speed +=15;
     magicModifier+=1;
   }
+  */
 }
 
 function chargeMagic2(){
@@ -48,14 +50,15 @@ function chargeMagic2(){
   //circleCasting.play('run', 10, true);
   //circleCasting.alpha = 1;
   state = "charging";
-
+/* TH
   magicChargeTimer = game.time.create(false);
   magicChargeTimer.loop(magicChargeSec, chargeMagicIncrement, this);
   magicChargeTimer.start();
+  */
 }
 
 function endCharge(){
-  magicChargeTimer.stop();
+  //magicChargeTimer.stop();
   player.charging = player.casting = 0;
   player.casting = false;
   player.energy = false;
@@ -78,10 +81,10 @@ function chargeUp(){
 //------------
 function shootMagicBomb(){
   if(!player.charging) return;
+  /*
   player.rmana-=3;
   magicBomb = game.add.sprite(0, 0, 'energyBall');
   //shootSound.play();
-  /*
   magicBomb.scale.setTo(1,1);
   game.physics.p2.enable(magicBomb);
   var size  = 1 + 0.05*magicModifier;

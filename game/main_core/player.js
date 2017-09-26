@@ -18,7 +18,6 @@
   Spell_Building
   Living_Player
   Player_Physics_And_Render
-
 */
 
 //---------------------------------------------------------
@@ -521,7 +520,7 @@ function castedRight(){
   }
 }
 function castedLeft(){
-  if(moveLeft.isDown && moveUp.isDown) visual.frame = 53;//North West
+  if(moveLeft.isDown && moveUp.isDown) visual.frame = 54;//North West
   else if(moveLeft.isDown && moveDown.isDown) visual.frame = 52;//SouthWestk
   else if(moveRight.isDown && moveUp.isDown) visual.frame = 55;//NorthEast
   else if(moveRight.isDown && moveDown.isDown) visual.frame = 55;//SouthEast
@@ -531,7 +530,7 @@ function castedLeft(){
     else visual.frame = 55;//Shooting Foward
   }
   else{
-    if(moveUp.isDown) visual.frame = 54;//Shoot Up
+    if(moveUp.isDown) visual.frame = 53;//Shoot Up
     else if(moveDown.isDown) visual.frame = 51;//Shooting se visual.frame = 66;//Shooting Foward
     else visual.frame = 56;
   }
