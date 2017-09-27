@@ -97,6 +97,7 @@ function createAI(){
     //goblinArcher(50+i*50,50,i);
   }
  continueGoblins();
+ goblinMaking123();
 
 }
 //---------------
@@ -678,7 +679,7 @@ function testDamage(){
 //------------------------------
 function continueGoblins(){
   timer = game.time.create(false);
-  timer.loop(5000, goblinMaking123, this);
+  timer.loop(10000, goblinMaking123, this);
   timer.start();
 
   timer2 = game.time.create(false);
