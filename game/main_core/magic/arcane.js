@@ -42,6 +42,7 @@ function chargeMagicIncrement(){
 }
 
 function chargeMagic2(){
+  playerAnchor();
   //chargeSound.loop = true;
 
   //chargeSound.play();
@@ -80,6 +81,8 @@ function chargeUp(){
 // Magic_Bomb
 //------------
 function shootMagicBomb(){
+  playerStartDelay(250);
+
   if(!player.charging) return;
   /*
   player.rmana-=3;

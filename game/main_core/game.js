@@ -19,6 +19,7 @@ var livingGame = {
   update:function(){
            //game.world.bringToTop(foreground);
            movement();
+           updatePlayerFrame();
          }
 }
 

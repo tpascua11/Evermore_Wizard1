@@ -7,6 +7,7 @@ function playerMoveLeft(){
   player.moveLeft = 1;
 }
 function playerStopLeft(){
+  playerAnchor();
   player.moveLeft = 0;
 }
 function playerMoveRight(){
@@ -15,6 +16,7 @@ function playerMoveRight(){
   player.moveRight = 1;
 }
 function playerStopRight(){
+  playerAnchor();
   player.moveRight = 0;
 }
 function playerSprint(){
@@ -45,7 +47,7 @@ function playerJump(){
   }
   player.jump++;
   player.jumping = 1;
-  jumpSound.play();
+  //jumpSound.play();
   console.log("Jumping\n", player.jump);
 }
 
