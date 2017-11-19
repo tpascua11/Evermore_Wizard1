@@ -13,12 +13,17 @@ var livingGame = {
             //testBuildingEntity();
             //game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
             //game.input.onDown.add(gofull, this);
-            testBuildingEntity();
+            buildPlatforms();
           },
   update:function(){
            //game.world.bringToTop(foreground);
            movement();
            updatePlayerFrame();
+          //game.physics.arcade.collide(sprites);
+          //game.physics.arcade.collide(sprites, player);
+          game.physics.arcade.collide(sprites, player, collisionCallback, processCallback, this);
+
+
          }
 }
 
