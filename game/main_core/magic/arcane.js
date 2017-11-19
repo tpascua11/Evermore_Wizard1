@@ -13,10 +13,26 @@
            |/     `       //        '     \|
            ---------------------------------
            Charging_Magic
-
-
-
 */
+
+//---------------------------------------------------------------------
+//  Charge_Magic
+//--------------------------------------------------------------------
+var chargingMagic;
+//chargingMagic.time.create(false);
+//chargingMagic.loop(magicChargeSec, chargeMagicIncrement, this);
+var magicCharge = 0;
+function addMagicCharge(){
+}
+
+
+function chargeMagic(){
+
+}
+
+function cancelChargeMagic(){
+
+}
 //-----------------
 // Charging_Magic
 //-----------------
@@ -42,7 +58,7 @@ function chargeMagicIncrement(){
 }
 
 function chargeMagic2(){
-  playerAnchor();
+  //playerAnchor();
   //chargeSound.loop = true;
 
   //chargeSound.play();

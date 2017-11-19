@@ -80,6 +80,7 @@
   var manaHUD;
   var hearts;
   var invc;
+
   //---------------------------------------------------------
   // Player_Building
   //---------------------------------------------------------
@@ -102,11 +103,9 @@
 
     player.scale.setTo(1,2);
     player.alpha = 1;
-    game.physics.p2.enable(player);
-    player.body.fixedRotation = true;
-    player.body.damping = 0.5;
-    playerMaterial = game.physics.p2.createMaterial('playerMaterial', player.body);
-    player.body.data.gravityScale = 1.00;
+    game.physics.arcade.enable(player);
+
+    player.body.collideWorldBounds = true;
 
     visual.scale.setTo(3,3);
     visual.setScaleMinMax(3,3);
@@ -245,6 +244,7 @@ function updatePlayerFrameAt(x, y){
   visual.x = x;
   visual.y = y;
 }
+
 function playerHitBoxResize(height, weight){
   visual.x = x;
   visual.y = y;
@@ -281,14 +281,12 @@ function startRegenTimer(){
   regenTimer.loop(player.rechargeSec, regainMana2, this);
   regenTimer.start();
 }
-
 function regainMana2(){
   if (player.maxRmana <= player.rmana || player.barrier || player.casting) return;
   else if(player.rmana < 0) player.rmana = 0;
   else if(player.laying) player.rmana += player.rechargeRate;
   else player.rmana += player.rechargeRate;
 }
-
 function spendMana(cost){
   cost = cost - player.rmana;
   player.rmana-= cost;
@@ -296,7 +294,6 @@ function spendMana(cost){
   if(player.rmana < 0) player.rmana = 0;
   player.mana -= cost;
 }
-
 function gainMana(amount){
   player.mana += amount;
   leftovers = player.mana - player.maxMana;
@@ -310,7 +307,6 @@ invc = Phaser.Timer.SECOND*1;
 function buildInvicible(){
   invc = Phaser.Timer.SECOND*1;
 }
-
 function startInvincible(){
   if(player.invincible) return;
   player.alpha = 0.5;
@@ -318,14 +314,12 @@ function startInvincible(){
   player.invincible = true;
   game.time.events.add(invc, stopInvincible, this);
 }
-
 function stopInvincible(){
   console.log("did I happen");
   player.alpha = 1;
   visual.alpha = 1;
   player.invincible = false;
 }
-
 function startDamageOverTime(){
 }
 function damageOverTime(){
@@ -342,7 +336,6 @@ function harmPlayer(body, damage){
   //console.log("Health", body.health);
   if(body.health <= 0) missionFailed();
 }
-
 function missionFailed(){
   console.log("RESTART OR CRACTY");
   player.body.health = 25;

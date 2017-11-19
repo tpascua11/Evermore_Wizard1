@@ -13,20 +13,10 @@ var background;
 var foreground;
 
 function createWorldBase(){
-  game.physics.startSystem(Phaser.Physics.P2JS);
-  game.physics.p2.gravity.y = 1100;
-  game.physics.p2.world.defaultContactMaterial.friction = 0.3;
-  game.physics.p2.world.setGlobalStiffness(1e5);
-  game.physics.p2.setImpactEvents(true);
-  var worldMaterial = game.physics.p2.createMaterial('worldMaterial');
-  boxMaterial = game.physics.p2.createMaterial('worldMaterial');
-  game.physics.p2.setWorldMaterial(worldMaterial, true, true, true, true); 
-
-  var groundBoxesCM = 
-    game.physics.p2.createContactMaterial(
-        worldMaterial, boxMaterial, { friction: 0.7 , restitution: 0.0 });
-
-  game.stage.smoothed = false;
+    game.physics.startSystem(Phaser.Physics.ARCADE);
+    game.physics.arcade.gravity.y = 1000;
+    game.stage.smoothed = false;
+    createWorldBeta();
 }
 
 function createWorldBeta(levelName, destination){
@@ -34,8 +24,7 @@ function createWorldBeta(levelName, destination){
   game.world.setBounds(0, 0, 1920, 500);
   background = game.add.tileSprite(0,0, 1920, 500, '');
   foreground = game.add.tileSprite(0,260,1920,500, '');
-/*
-  simple = game.add.audio('symbo');
+/* simple = game.add.audio('symbo');
   simple.play();
   simple.loopFull(0.4);
   simple.loop = true;

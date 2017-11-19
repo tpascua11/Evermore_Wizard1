@@ -68,7 +68,7 @@ function refreshBox(){
   box.hooks = true;
   size = 3;
   box.scale.setTo(size, 0.5);
-  game.physics.p2.enable(box);
+  game.physics.arcade.enable(box);
 
   box.frame = 0;
   box.body.fixedRotation = true;
@@ -504,3 +504,6 @@ function editorCamera(){
 }
 
 
+function testBuildingEntity(){
+  console.log("TEST AL");
+}

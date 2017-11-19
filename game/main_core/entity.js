@@ -16,11 +16,16 @@ var entityStats = {
 };
 
 function entityCollision(){
-
 }
 
 function fixedPlaced(blocks){
-
 }
 
+function testBuildingEntity(){
+  console.log("TEST AL");
+  tox = game.add.sprite(300, 300, 'template');
+  tox.scale.setTo(1,2);
+  game.physics.arcade.enable(tox);
+  tox.reset(100,100);
+}
 

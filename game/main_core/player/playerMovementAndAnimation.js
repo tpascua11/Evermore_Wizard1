@@ -10,7 +10,6 @@
    |    /\ /      \\       \ /\    |
    |  /   V        ))       V   \  |
    |/     `       //        '     \|
-
     Main_Center
     Physics
     Physics_Beyond_Control
@@ -22,13 +21,12 @@
 //  Main_Center
 //---------------------------------------------------------
 function movement(){
-  if(checkIfCanJump()) jumpRefresh();
+  if(player.body.onFloor()) jumpRefresh();
   else jumpContinue();
 
   switch(1 || true){
     case player.cutscene    : console.log("HERO", player.cutscene); 
                               break;
-
     case player.casting     :
     case player.charging    :
     case player.barrier     : playerCastingPhysics();
@@ -88,9 +86,11 @@ function jumpRefresh(){
     player.airCasted = 0;
     player.jumpDirection = 0;
     player.focus = 2;
+    player.body.drag.x = 1000;
 }
 function jumpContinue(){
   player.jump = 1;
+  player.body.drag.x = 100;
 }
 //----------------------------
 //  Physics
@@ -167,22 +167,6 @@ function playerInactivePhysics(){
 //  Physics_Beyond_Control
 //---------------------------------
 var yAxis = p2.vec2.fromValues(0, 1);
-function checkIfCanJump() {
-  var result = false;
-  for (var i=0; i < game.physics.p2.world.narrowphase.contactEquations.length; i++){
-    var c = game.physics.p2.world.narrowphase.contactEquations[i];
-    if (c.bodyA === player.body.data || c.bodyB === player.body.data){
-      var d = p2.vec2.dot(c.normalA, yAxis);
-      if (c.bodyA === player.body.data){
-        d *= -1;
-      }
-      if (d > 0.5){
-        result = true;
-      }
-    }
-  }
-  return result;
-}
 
 function playerAirMovement(){
   if(player.moveRight){
