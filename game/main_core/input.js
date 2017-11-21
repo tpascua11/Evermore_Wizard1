@@ -68,14 +68,14 @@ function normalAction(action){
   switch(action){
     case "jump"      : playerJump()    ;   break;
     case "jumpStop"  : playerJumpStop();   break;
-    case "walkL"     : playerMoveLeft();   break;
-    case "walkLstop" : playerStopLeft();   break;
-    case "walkR"     : playerMoveRight();  break;
-    case "walkRstop" : playerStopRight();  break;
+    case "walkL"     : characterMoveLeft(player);  break;
+    case "walkLstop" : characterStopLeft(player);  break;
+    case "walkR"     : characterMoveRight(player); break;
+    case "walkRstop" : characterStopRight(player); break;
     case "sprint"    : playerSprint();     break;
     case "sprintStop": playerSprintStop(); break;
-    case "duck"      : break;
-    case "duckStop"  : break;
+    case "duck"      : player.laying = 1; break;
+    case "duckStop"  : player.laying = 0; break;
     case "scan"      : break;
     case "scanStop"  : break;
     case "barrier"   : playerBarrier();    break;
@@ -89,13 +89,13 @@ function chargeAction(action){
   switch(action){
     case "bombStop"  : shootMagicBomb();   break;
     case "jump"      : magicForce()    ;   break;
-    case "walkL"     : playerMoveLeft();   break;
-    case "walkLstop" : playerStopLeft();   break;
-    case "walkR"     : playerMoveRight();  break;
-    case "walkRstop" : playerStopRight();  break;
-    case "sprint"    : playerSprint();     break;
-    case "sprintStop": playerSprintStop(); break;
-    case "barrier"   : playerBarrier();    break;
+    case "walkL"     : characterMoveLeft(player);  break;
+    case "walkLstop" : characterStopLeft(player);  break;
+    case "walkR"     : characterMoveRight(player); break;
+    case "walkRstop" : characterStopRight(player); break;
+    case "sprint"    : Sprint();     break;
+    case "sprintStop": SprintStop(); break;
+    case "barrier"   : Barrier();    break;
     case "duck"      : break;
     case "duckStop"  : break;
     case "scan"      : break;
@@ -106,10 +106,10 @@ function chargeAction(action){
 function barrierAction(action){
   switch(action){
     case "bombStop" : trueMagicBomb();     break;
-    case "walkL"    : playerMoveLeft();    break;
-    case "walkLstop": playerStopLeft();    break;
-    case "walkR"    : playerMoveRight();   break;
-    case "walkRstop": playerStopRight();   break;
+    case "walkL"     : characterMoveLeft(player);  break;
+    case "walkLstop" : characterStopLeft(player);  break;
+    case "walkR"     : characterMoveRight(player); break;
+    case "walkRstop" : characterStopRight(player); break;
     case "sprint"   : playerSprint();      break;
     case "sprintStop":playerSprintStop();  break;
     case "duck"     : break;

@@ -17,6 +17,12 @@ function createWorldBase(){
     game.physics.arcade.gravity.y = 1000;
     game.stage.smoothed = false;
     createWorldBeta();
+
+  simple = game.add.audio('symbo');
+  simple.play();
+  simple.loopFull(0.4);
+  simple.loop = true;
+  simple.volume = 0.4;
 }
 
 function createWorldBeta(levelName, destination){

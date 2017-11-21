@@ -1,3 +1,41 @@
+//-------------------------------
+// Change Status
+//-------------------------------
+function characterMoveLeft(character){
+  character.state.direction = -1;
+  character.state.moving = 1;
+}
+
+function characterMoveRight(character){
+  character.state.direction = 1;
+  character.state.moving = 1;
+}
+
+function characterStopLeft(character){
+  if(character.state.direction == -1 && character.state.moving){
+    character.state.moving = 0;
+    if(character.body.onFloor()) character.body.velocity.x = 0;
+  }
+}
+
+function characterStopRight(character){
+  if(character.state.direction == 1 && character.state.moving){
+    character.state.moving = 0;
+    if(character.body.onFloor()) character.body.velocity.x = 0;
+  }
+}
+function characterSprint(){
+}
+
+function characterSprintStop(){
+}
+
+function characterJump(){
+
+}
+//-----------------------------
+// Positon and Velocity Setup
+//-----------------------------
 function lineUp(back , front, starAim){
   //TODO: starAim - this will a template 
   //      for all entity to use ablities that aim
@@ -106,6 +144,3 @@ function velocityFrontOfPlayer(magicObject, x, y){
     magicObject.body.velocity.x += x*player.direction;
   }
 }
-
-
-

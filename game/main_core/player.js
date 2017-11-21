@@ -81,6 +81,10 @@
   var hearts;
   var invc;
 
+	var defaultState = {
+		moving: 0,
+		direction: 1
+	};
   //---------------------------------------------------------
   // Player_Building
   //---------------------------------------------------------
@@ -98,28 +102,36 @@
   }
 
   function playerBody(){
-    player = game.add.sprite(0, 400, 'template');
-    visual = game.add.sprite(0, 0, 'visualDino'); //Remember: Set Scale Then apply Phyisics
-
+    player = game.add.sprite(0, 400, 'visualDino');
     player.scale.setTo(1,2);
     player.alpha = 1;
     game.physics.arcade.enable(player);
 
     player.body.collideWorldBounds = true;
 
-    visual.scale.setTo(3,3);
-    visual.setScaleMinMax(3,3);
-    player.addChild(visual);
-    visual.alpha = 1;
-    visual.x-=30;
-    visual.y-=20;
+    player.scale.setTo(3,3);
+    player.setScaleMinMax(3,3);
+
+    player.body.setSize(10, 15, 5, 5);
+
+
+    //player.addChild(visual);
+    //visual.alpha = 1;
+    //visual.x-=30;
+    //visual.y-=20;
   }
 
   function playerInfo(){
-    for(var attrname in playerStats){player[attrname] = playerStats[attrname]}
+    for(var attrname in playerStats){
+			player[attrname] = playerStats[attrname]
+		}
     player.body.stats = playerStats;
     player.stats = playerStats;
     player.body.health = player.health;
+
+		player.state = Object.assign({}, defaultState);
+		console.log("player", player);
+
   }
 
   function playerSounds(){
@@ -146,55 +158,57 @@
   }
 
   function createPlayerAnimations(){
-    visual.animations.add('walkRight', [31, 32, 33, 34], 12, true);
-    visual.animations.add('walkLeft', [41, 42, 43, 44], 12, true);
+    player.animations.add('walkRight', [31, 32, 33, 34], 12, true);
+    player.animations.add('walkLeft', [41, 42, 43, 44], 12, true);
 
-    visual.animations.add('sprintRight', [31, 32, 33, 34, 35, 36, 37], 30, true);
-    visual.animations.add('sprintLeft', [41, 42, 43, 44, 45, 46, 47], 30, true);
+    player.animations.add('sprintRight', [31, 32, 33, 34, 35, 36, 37], 30, true);
+    player.animations.add('sprintLeft', [41, 42, 43, 44, 45, 46, 47], 30, true);
 
-    visual.animations.add('jumpRight', [7], 5, true);
-    visual.animations.add('jumpLeft', [3], 5, true);
+    player.animations.add('jumpRight', [7], 5, true);
+    player.animations.add('jumpLeft', [3], 5, true);
 
-    visual.animations.add('standRight', [5], 30, true);
-    visual.animations.add('leftStand', [1], 30, true);
+    player.animations.add('standRight', [5], 30, true);
+    player.animations.add('leftStand', [1], 30, true);
 
-    visual.animations.add('layRight', [8], 30, true);
-    visual.animations.add('layLeft', [4], 30, true);
+    player.animations.add('layRight', [8], 30, true);
+    player.animations.add('layLeft', [4], 30, true);
 
-    visual.animations.add('castLeft', [11], 30, true);
-    visual.animations.add('castLeftSlant', [12], 30, true);
-    visual.animations.add('castLeftUp', [13], 30, true);
+    player.animations.add('castLeft', [11], 30, true);
+    player.animations.add('castLeftSlant', [12], 30, true);
+    player.animations.add('castLeftUp', [13], 30, true);
 
-    visual.animations.add('castRight', [21], 30, true);
-    visual.animations.add('castRightSlant', [22], 30, true);
-    visual.animations.add('castRightUp', [23], 30, true);
+    player.animations.add('castRight', [21], 30, true);
+    player.animations.add('castRightSlant', [22], 30, true);
+    player.animations.add('castRightUp', [23], 30, true);
 
-    visual.animations.add('castJumpRightN', [23], 30, true);
-    visual.animations.add('castJumpRightNE', [23], 30, true);
-    visual.animations.add('castJumpRightE', [23], 30, true);
-    visual.animations.add('castJumpRightSE', [23], 30, true);
-    visual.animations.add('castJumpRightS', [23], 30, true);
-    visual.animations.add('castJumpRightSW', [23], 30, true);
-    visual.animations.add('castJumpRightW', [23], 30, true);
-    visual.animations.add('castJumpRightNW', [23], 30, true);
+    player.animations.add('castJumpRightN', [23], 30, true);
+    player.animations.add('castJumpRightNE', [23], 30, true);
+    player.animations.add('castJumpRightE', [23], 30, true);
+    player.animations.add('castJumpRightSE', [23], 30, true);
+    player.animations.add('castJumpRightS', [23], 30, true);
+    player.animations.add('castJumpRightSW', [23], 30, true);
+    player.animations.add('castJumpRightW', [23], 30, true);
+    player.animations.add('castJumpRightNW', [23], 30, true);
 
-    visual.animations.add('castJumpLeftN', [23], 30, true);
-    visual.animations.add('castJumpLeftNE', [23], 30, true);
-    visual.animations.add('castJumpLeftE', [23], 30, true);
-    visual.animations.add('castJumpRightSE', [23], 30, true);
-    visual.animations.add('castJumpRightS', [23], 30, true);
-    visual.animations.add('castJumpRightSW', [23], 30, true);
-    visual.animations.add('castJumpRightW', [23], 30, true);
-    visual.animations.add('castJumpRightNW', [23], 30, true);
+    player.animations.add('castJumpLeftN', [23], 30, true);
+    player.animations.add('castJumpLeftNE', [23], 30, true);
+    player.animations.add('castJumpLeftE', [23], 30, true);
+    player.animations.add('castJumpRightSE', [23], 30, true);
+    player.animations.add('castJumpRightS', [23], 30, true);
+    player.animations.add('castJumpRightSW', [23], 30, true);
+    player.animations.add('castJumpRightW', [23], 30, true);
+    player.animations.add('castJumpRightNW', [23], 30, true);
 
-    visual.animations.add('magicJumpLeft', [1,2,3], 30, false);
-    visual.animations.add('magicJumpRight', [5,6,7], 30, false);
+    player.animations.add('magicJumpLeft', [1,2,3], 30, false);
+    player.animations.add('magicJumpRight', [5,6,7], 30, false);
 
     //ill keep these for now
+    /*
     player.animations.add('right', [28, 29, 30, 31, 32], 25, true);
     player.animations.add('left', [19, 20, 21, 22, 23], 25, true);
     player.animations.add('leftJump', [3], 10, true);
     player.animations.add('rightJump', [7], 10, true);
+    */
   }
 
   function playerHUD(){
@@ -241,13 +255,13 @@ function updatePlayerFrame(){
 }
 
 function updatePlayerFrameAt(x, y){
-  visual.x = x;
-  visual.y = y;
+  //player.x = x;
+  //player.y = y;
 }
 
 function playerHitBoxResize(height, weight){
-  visual.x = x;
-  visual.y = y;
+  //visual.x = x;
+  //visual.y = y;
 }
 
 //--------------------------------------------------------

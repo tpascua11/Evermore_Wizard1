@@ -21,7 +21,7 @@
 //  Main_Center
 //---------------------------------------------------------
 function movement(){
-  if(player.body.onFloor()) jumpRefresh();
+  if(player.body.onFloor() || player.body.touching.down) jumpRefresh();
   else jumpContinue();
 
   switch(1 || true){
@@ -55,13 +55,18 @@ function movement(){
     case playerSprintRight(): playerSprintingRightPhysics();
                               playerSprintingRightAnimation();
                               break;
+															/*
     case player.moveLeft    : playerMoveLeftPhysics();
                               playerMoveLeftAnimation();
                               break;
     case player.moveRight   : playerMoveRightPhysics();
                               playerMoveRightAnimation();
                               break;
-    case player.laying      : playerLayPhysics();
+															*/
+		case player.state.moving: playerMovePhysics();
+															playerMoveAnimation();
+															break;
+    case player.laying      : //playerLayPhysics();
                               playerLayAnimation();
                               break;
     default                 : playerInactivePhysics();
@@ -87,6 +92,7 @@ function jumpRefresh(){
     player.jumpDirection = 0;
     player.focus = 2;
     player.body.drag.x = 1000;
+		console.log("on floor");
 }
 function jumpContinue(){
   player.jump = 1;
@@ -144,23 +150,35 @@ function playerSprintingLeftPhysics(){
 function playerSprintingRightPhysics(){
 }
 
+function playerMovePhysics(){
+	console.log("moving");
+	if(player.state.direction == 1){
+		if(player.body.velocity.x < player.speed){
+			player.body.velocity.x += player.acl;
+		}
+	} else {
+		if(player.body.velocity.x > -player.speed){
+			player.body.velocity.x -= player.acl;
+		}
+	}
+}
+
 function playerMoveLeftPhysics(){
-  if(player.body.velocity.x > -player.speed){
-    player.body.velocity.x -= player.acl;
-  }
+	if(player.body.velocity.x > -player.speed){
+		player.body.velocity.x -= player.acl;
+	}
 }
 
 function playerMoveRightPhysics(){
-  if(player.body.velocity.x < player.speed){
-    player.body.velocity.x += player.acl;
-  }
+	if(player.body.velocity.x < player.speed){
+		player.body.velocity.x += player.acl;
+	}
 }
 
 function playerMoveLayPhysics(){
 }
 
 function playerInactivePhysics(){
-
 }
 
 //---------------------------------
@@ -169,144 +187,150 @@ function playerInactivePhysics(){
 var yAxis = p2.vec2.fromValues(0, 1);
 
 function playerAirMovement(){
-  if(player.moveRight){
-    if(player.body.velocity.x > 175) return;
-    player.body.velocity.x += 25;
-  }
-  else if(player.moveLeft){
-    if(player.body.velocity.x < -175) return;
-    player.body.velocity.x -= 25;
-  }
+	if(!player.state.moving) return;
+	if(player.state.direction == 1){
+		if(player.body.velocity.x > 175) return;
+		player.body.velocity.x += 25;
+	}
+	else if(player.state.direction == -1){
+		if(player.body.velocity.x < -175) return;
+		player.body.velocity.x -= 25;
+	}
 }
 
 function playerStartDelay(count){
-  console.log("start delay");
-  delayTimer.stop();
-  player.delaying = 1;
-  delayTimer.loop(count, playerDelaying, this);
-  delayTimer.start();
+	console.log("start delay");
+	delayTimer.stop();
+	player.delaying = 1;
+	delayTimer.loop(count, playerDelaying, this);
+	delayTimer.start();
 }
 function playerDelaying(){
-  player.delaying = 0;
-  delayTimer.stop();
-  console.log("end delay");
+	player.delaying = 0;
+	delayTimer.stop();
+	console.log("end delay");
 }
 function playerAnchor(){
-  console.log("ANCHHOR");
-  if(player.jump == 0){
-    console.log("Doing it");
-    player.body.velocity.x *= .30;
-  }
+	console.log("ANCHHOR");
+	if(player.jump == 0){
+		console.log("Doing it");
+		player.body.velocity.x *= .30;
+	}
 }
 //----------------------------
 //  Animation
 //----------------------------
 function playerCastingAnimation(){
-  visual.animations.stop();
-  if(player.jump){//While in the Air
-    jumpCasting();
-  }
-  else{ //On The Ground
-    if(moveLeft.isDown && moveUp.isDown) visual.frame = 12;
-    else if(moveRight.isDown && moveUp.isDown) visual.frame = 22;
-    else if(player.direction == 1){
-      if(moveUp.isDown) visual.frame = 23;
-      else visual.frame = 21;
-    }
-    else{
-      if(moveUp.isDown) visual.frame = 13;
-      else visual.frame = 11;
-    }
-  }
+	player.animations.stop();
+	if(player.jump){//While in the Air
+		jumpCasting();
+	}
+	else{ //On The Ground
+		if(moveLeft.isDown && moveUp.isDown) player.frame = 12;
+		else if(moveRight.isDown && moveUp.isDown) player.frame = 22;
+		else if(player.state.direction == 1){
+			if(moveUp.isDown) player.frame = 23;
+			else player.frame = 21;
+		}
+		else{
+			if(moveUp.isDown) player.frame = 13;
+			else player.frame = 11;
+		}
+	}
 }
 function playerSpellingJumpingAnimation(){
 }
 function playerJumpingAnimation(){
-  if(player.direction == 1) visual.frame = 7;
-  else visual.frame = 3;
-  //playerAirMovement();
+	if(player.state.direction == 1) player.frame = 7;
+	else player.frame = 3;
+	//playerAirMovement();
 }
 function playerAirAnimation(){
-   if(player.barrier){}
-   else if(player.airCasted == 1) return;
-   if(player.direction == 1) visual.animations.play('jumpRight');
-   else visual.animations.play('jumpLeft');
+	if(player.barrier){}
+	else if(player.airCasted == 1) return;
+	if(player.state.direction == 1) player.animations.play('jumpRight');
+	else player.animations.play('jumpLeft');
 }
 function playerDragingAnimation(){
 }
 function playerBreakingAnimation(){
 }
 function playerSprintingLeftAnimation(){
-  visual.animations.play('walkLeft');
+	player.animations.play('walkLeft');
 }
 function playerSprintingRightAnimation(){
-  visual.animations.play('walkRight');
+	player.animations.play('walkRight');
+}
+function playerMoveAnimation(){
+	if(player.state.direction == 1) player.animations.play('walkRight');
+	else player.animations.play('walkLeft');
 }
 function playerMoveLeftAnimation(){
-  visual.animations.play('walkLeft');
+	player.animations.play('walkLeft');
 }
 function playerMoveRightAnimation(){
-  visual.animations.play('walkRight');
+	player.animations.play('walkRight');
 }
 function playerLayAnimation(){
-  if(player.direction ==  1) visual.animations.play('layRight');
-  else visual.animations.play('layLeft');
+	console.log("did it work");
+	if(player.state.direction ==  1) player.animations.play('layRight');
+	else player.animations.play('layLeft');
 }
 
 function playerInactiveAnimation(){
-  if(player.direction ==  1) visual.animations.play('standRight');
-  else visual.animations.play('leftStand');
+	if(player.state.direction ==  1) player.animations.play('standRight');
+	else player.animations.play('leftStand');
 }
 
 //----------------------------
 //  Advanced_Animation
 //----------------------------
 function playerFallingMovement(){
-   if(player.barrier){}
-   else if(player.airCasted == 1) return;
-   if(player.direction == 1) visual.animations.play('jumpRight');
-   else visual.animations.play('jumpLeft');
+	if(player.barrier){}
+	else if(player.airCasted == 1) return;
+	if(player.state.direction == 1) player.animations.play('jumpRight');
+	else player.animations.play('jumpLeft');
 }
 
 function jumpCasting(){
-  if(!player.casting) return;
-  if(player.jumpDirection == 0) player.jumpDirection = player.direction;
-  player.airCasted = 1;
-  player.animations.stop();
-  visual.animations.stop();
-  if(player.jumpDirection == 1) castedRight();
-  else castedLeft();
+	if(!player.casting) return;
+	if(player.jumpDirection == 0) player.jumpDirection = player.state.direction;
+	player.airCasted = 1;
+	player.animations.stop();
+	player.animations.stop();
+	if(player.jumpDirection == 1) castedRight();
+	else castedLeft();
 }
 
 function castedRight(){
-  if(moveLeft.isDown && moveUp.isDown) visual.frame = 65;
-  else if(moveLeft.isDown && moveDown.isDown) visual.frame = 65;//SouthWest
-  else if(moveRight.isDown && moveUp.isDown) visual.frame = 63;
-  else if(moveRight.isDown && moveDown.isDown) visual.frame = 61;
-  else if(player.direction == 1){
-    if(moveUp.isDown) visual.frame = 64;
-    else if(moveDown.isDown) visual.frame = 61;
-    else visual.frame = 66;
-  }
-  else{
-    if(moveUp.isDown) visual.frame = 64;
-    else if(moveDown.isDown) visual.frame = 61;
-    else visual.frame = 65;
-  }
+	if(moveLeft.isDown && moveUp.isDown) player.frame = 65;
+	else if(moveLeft.isDown && moveDown.isDown) player.frame = 65;//SouthWest
+	else if(moveRight.isDown && moveUp.isDown) player.frame = 63;
+	else if(moveRight.isDown && moveDown.isDown) player.frame = 61;
+	else if(player.state.direction == 1){
+		if(moveUp.isDown) player.frame = 64;
+		else if(moveDown.isDown) player.frame = 61;
+		else player.frame = 66;
+	}
+	else{
+		if(moveUp.isDown) player.frame = 64;
+		else if(moveDown.isDown) player.frame = 61;
+		else player.frame = 65;
+	}
 }
 function castedLeft(){
-  if(moveLeft.isDown && moveUp.isDown) visual.frame = 54;//North West
-  else if(moveLeft.isDown && moveDown.isDown) visual.frame = 52;//SouthWestk
-  else if(moveRight.isDown && moveUp.isDown) visual.frame = 55;//NorthEast
-  else if(moveRight.isDown && moveDown.isDown) visual.frame = 55;//SouthEast
-  else if(player.direction == 1){
-    if(moveUp.isDown) visual.frame = 54;//Shooting Up
-    else if(moveDown.isDown) visual.frame = 55;//Shooting Down
-    else visual.frame = 55;//Shooting Foward
-  }
-  else{
-    if(moveUp.isDown) visual.frame = 53;//Shoot Up
-    else if(moveDown.isDown) visual.frame = 51;//Shooting se visual.frame = 66;//Shooting Foward
-    else visual.frame = 56;
-  }
+	if(moveLeft.isDown && moveUp.isDown) player.frame = 54;//North West
+	else if(moveLeft.isDown && moveDown.isDown) player.frame = 52;//SouthWestk
+	else if(moveRight.isDown && moveUp.isDown) player.frame = 55;//NorthEast
+	else if(moveRight.isDown && moveDown.isDown) player.frame = 55;//SouthEast
+	else if(player.state.direction == 1){
+		if(moveUp.isDown) player.frame = 54;//Shooting Up
+		else if(moveDown.isDown) player.frame = 55;//Shooting Down
+		else player.frame = 55;//Shooting Foward
+	}
+	else{
+		if(moveUp.isDown) player.frame = 53;//Shoot Up
+		else if(moveDown.isDown) player.frame = 51;//Shooting se player.frame = 66;//Shooting Foward
+		else player.frame = 56;
+	}
 }
