@@ -38,7 +38,6 @@ function playerFlyDown(){
 function playerStopDown(){
   player.body.velocity.y = 0;
 }
-
 function playerJump(){
   if(player.casting) return;
   if(player.jump == 1){
@@ -51,6 +50,7 @@ function playerJump(){
   console.log("Jumping\n", player.jump);
 }
 
+var ghostJump;
 function playerJumpStop(){
   if(player.casting) return;
   player.jumping  = 0;

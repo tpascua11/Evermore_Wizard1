@@ -14,6 +14,7 @@ var livingGame = {
 		//game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
 		//game.input.onDown.add(gofull, this);
 		buildPlatforms();
+		buildSpellPool();
 	},
 	update:function(){
 		//game.world.bringToTop(foreground);
@@ -33,6 +34,8 @@ function create() {
 }
 
 function update() {
+
+
 }
 
 

@@ -39,10 +39,10 @@
           moving: 0,
             jump: 0,
        spellJump: 0,
-       jumpTotal: 100,
+       jumpTotal: 5,
          jumpAtY: 0,
          jumpAcl: 5,
-        jumpSpan: 50,
+        jumpSpan: 60,
          canJump: 0,
            clock: 0,
        direction: 1,
@@ -67,7 +67,8 @@
         alliance: 1,
       resistance: "nothing",
             weak: "nothing",
-        cutscene: 0
+        cutscene: 0,
+	 ghostJumpSpan: Phaser.Timer.SECOND * 2
   };
 
   var player;
@@ -114,7 +115,6 @@
 
     player.body.setSize(10, 15, 5, 5);
 
-
     //player.addChild(visual);
     //visual.alpha = 1;
     //visual.x-=30;
@@ -158,8 +158,8 @@
   }
 
   function createPlayerAnimations(){
-    player.animations.add('walkRight', [31, 32, 33, 34], 12, true);
-    player.animations.add('walkLeft', [41, 42, 43, 44], 12, true);
+    player.animations.add('walkRight', [31, 32, 33, 34], 15, true);
+    player.animations.add('walkLeft', [41, 42, 43, 44], 15, true);
 
     player.animations.add('sprintRight', [31, 32, 33, 34, 35, 36, 37], 30, true);
     player.animations.add('sprintLeft', [41, 42, 43, 44, 45, 46, 47], 30, true);
@@ -263,6 +263,7 @@ function playerHitBoxResize(height, weight){
   //visual.x = x;
   //visual.y = y;
 }
+
 
 //--------------------------------------------------------
 // Player_Timers

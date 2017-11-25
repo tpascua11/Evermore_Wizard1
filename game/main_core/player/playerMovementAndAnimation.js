@@ -32,9 +32,9 @@ function movement(){
     case player.barrier     : playerCastingPhysics();
                               playerCastingAnimation();
                               break;
-    case player.spellJumping: playerSpellJumpingPhysics();
-                              playerSpellJumpingAnimation();
-                              break;
+    //case player.spellJumping: playerSpellJumpingPhysics();
+    //                          playerSpellJumpingAnimation();
+    //                          break;
     case player.jumping     : playerJumpingPhysics();
                               playerJumpingAnimation();
                               break;
@@ -87,15 +87,15 @@ function playerSprintRight(){
 
 function jumpRefresh(){
     player.jump = 0;
-    player.spellJump = 0;
+    //player.spellJump = 0;
     player.airCasted = 0;
     player.jumpDirection = 0;
     player.focus = 2;
     player.body.drag.x = 1000;
-		console.log("on floor");
+		//console.log("on floor");
 }
 function jumpContinue(){
-  player.jump = 1;
+  //player.jump = 1;
   player.body.drag.x = 100;
 }
 //----------------------------
@@ -126,7 +126,6 @@ function playerJumpingPhysics(){
       player.jumpAtY = 0;
     }
    playerAirMovement();
-
 }
 
 function playerAirPhysics(){
@@ -151,7 +150,7 @@ function playerSprintingRightPhysics(){
 }
 
 function playerMovePhysics(){
-	console.log("moving");
+	//console.log("moving");
 	if(player.state.direction == 1){
 		if(player.body.velocity.x < player.speed){
 			player.body.velocity.x += player.acl;
@@ -199,7 +198,7 @@ function playerAirMovement(){
 }
 
 function playerStartDelay(count){
-	console.log("start delay");
+	//console.log("start delay");
 	delayTimer.stop();
 	player.delaying = 1;
 	delayTimer.loop(count, playerDelaying, this);
@@ -272,7 +271,7 @@ function playerMoveRightAnimation(){
 	player.animations.play('walkRight');
 }
 function playerLayAnimation(){
-	console.log("did it work");
+	//console.log("did it work");
 	if(player.state.direction ==  1) player.animations.play('layRight');
 	else player.animations.play('layLeft');
 }

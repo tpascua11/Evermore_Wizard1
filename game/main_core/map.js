@@ -14,7 +14,7 @@ var foreground;
 
 function createWorldBase(){
     game.physics.startSystem(Phaser.Physics.ARCADE);
-    game.physics.arcade.gravity.y = 1000;
+    game.physics.arcade.gravity.y = 1500;
     game.stage.smoothed = false;
     createWorldBeta();
 

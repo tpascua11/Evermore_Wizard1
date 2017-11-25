@@ -11,8 +11,6 @@ function buildPlatforms(){
 		s.body.allowGravity = false;
 
     s.scale.setTo(3,2);
-
-
 	}
 
 	//var groupB = game.make.group();

@@ -40,26 +40,28 @@ function lineUp(back , front, starAim){
   //TODO: starAim - this will a template 
   //      for all entity to use ablities that aim
   if(moveDown.isDown && (moveRight.isDown || moveLeft.isDown)){
-    front.body.x = back.body.x + starAim.bottomRightX * back.direction;
-    front.body.y = starAim.bottomRightY;
+    console.log("test DOWN");
+    front.body.x = back.body.x + starAim.bottomX * back.state.direction;
+    front.body.y = back.body.y + starAim.bottomY;
   }
   else if(moveUp.isDown && (moveRight.isDown || moveLeft.isDown)){
-    front.body.x = back.body.x + starAim.topRightX * back.direction;
-    front.body.y = back.body.y - starAim.topRightY;
+    console.log("test Up");
+    front.body.x = back.body.x + starAim.bottomX * back.state.direction;
+    front.body.y = back.body.y - starAim.bottomY;
   }
   else if(moveDown.isDown){
-    front.body.x = back.body.x;
-    front.body.x = back.body.x + starAim.BottomX;
-    front.body.y = back.body.y + starAim.BottomY;
+    front.body.x = back.body.x + starAim.bottomX * back.state.direction;
+    front.body.y = back.body.y + starAim.bottomY;
   }
   else if(moveUp.isDown){
-    front.body.x = back.body.x + starAim.topX;
-    front.body.y = back.body.y + starAim.topY;
+    front.body.x = back.body.x - starAim.topX * back.state.direction;
+    front.body.y = back.body.y - starAim.topY;
   }
   else{
     front.body.y = back.body.y + starAim.sideY;
-    front.body.x = back.body.x + starAim.sideX * back.direction;
+    front.body.x = back.body.x + starAim.sideX * back.state.direction;
   }
+  front.reset(front.body.x, front.body.y);
 }
 
 function placeFrontOfPlayerVisualChange(magicObject){
@@ -99,25 +101,25 @@ function placeFrontOfPlayerVisualChange(magicObject){
   }
 }
 
-function addVelocityTo(entity, x, y){
+function addVelocityTo(entity, x, y, caster){
   if(moveDown.isDown && (moveRight.isDown || moveLeft.isDown)){
-    entity.body.velocity.x += -x*entity.direction;
-    entity.body.velocity.y += -y;
+    entity.body.velocity.x += x*caster.state.direction;
+    entity.body.velocity.y += y;
   }
   else if(moveUp.isDown && (moveRight.isDown || moveLeft.isDown)){
-    entity.body.velocity.x += -x*entity.direction;
-    entity.body.velocity.y += y;
+    entity.body.velocity.x += x*caster.state.direction;
+    entity.body.velocity.y -= y;
   }
   else if(moveDown.isDown){
     entity.body.velocity.x += 0;
-    entity.body.velocity.y += -y;
+    entity.body.velocity.y += y;
   }
   else if(moveUp.isDown){
     entity.body.velocity.x += 0;
-    entity.body.velocity.y += y;
+    entity.body.velocity.y -= y;
   }
   else{
-    entity.body.velocity.x += -x*entity.direction;
+    entity.body.velocity.x += x*caster.state.direction;
     entity.body.velocity.y += 0;
   }
 }

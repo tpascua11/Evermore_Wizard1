@@ -87,7 +87,8 @@ function normalAction(action){
 
 function chargeAction(action){
   switch(action){
-    case "bombStop"  : shootMagicBomb();   break;
+    case "bombStop"  : shootMagicBomb();
+                       conjureSpellBomb(); break;
     case "jump"      : magicForce()    ;   break;
     case "walkL"     : characterMoveLeft(player);  break;
     case "walkLstop" : characterStopLeft(player);  break;
