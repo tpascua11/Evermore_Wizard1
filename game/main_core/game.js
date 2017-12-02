@@ -23,10 +23,12 @@ var livingGame = {
 		movement();
 		updatePlayerFrame();
 		//game.physics.arcade.collide(sprites);
+		spellUpdate();
 	},
 	render:function() {
 		//this.game.debug.renderPhysicsBody(player);
 		game.debug.body(player);
+		game.debug.body(arcane_bombs);
 	}
 }
 

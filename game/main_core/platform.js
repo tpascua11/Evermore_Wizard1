@@ -9,6 +9,8 @@ function buildPlatforms(){
 	//	s.body.velocity.y = game.rnd.integerInRange(-200, 200);
 		s.body.immovable = true;
 		s.body.allowGravity = false;
+		s.anchor.x = 0.5;
+		s.anchor.y = 0.8;
 
     s.scale.setTo(3,2);
 	}

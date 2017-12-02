@@ -30,8 +30,8 @@
            rmana: 25,
         maxRmana: 25,
           curSpd: 0,
-           speed: 350,
-       sprintSpd: 450,
+           speed: 335,
+       sprintSpd: 300,
        sprinting: 0,
              acl: 50,
         moveLeft: 0,
@@ -158,8 +158,8 @@
   }
 
   function createPlayerAnimations(){
-    player.animations.add('walkRight', [31, 32, 33, 34], 15, true);
-    player.animations.add('walkLeft', [41, 42, 43, 44], 15, true);
+    player.animations.add('walkRight', [31, 32, 33, 34], 12, true);
+    player.animations.add('walkLeft', [41, 42, 43, 44], 12, true);
 
     player.animations.add('sprintRight', [31, 32, 33, 34, 35, 36, 37], 30, true);
     player.animations.add('sprintLeft', [41, 42, 43, 44, 45, 46, 47], 30, true);

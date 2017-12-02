@@ -32,9 +32,9 @@ function movement(){
     case player.barrier     : playerCastingPhysics();
                               playerCastingAnimation();
                               break;
-    //case player.spellJumping: playerSpellJumpingPhysics();
-    //                          playerSpellJumpingAnimation();
-    //                          break;
+    case player.spellJumping: playerSpellJumpingPhysics();
+   													  playerSpellJumpingAnimation();
+    													break;
     case player.jumping     : playerJumpingPhysics();
                               playerJumpingAnimation();
                               break;
@@ -55,14 +55,12 @@ function movement(){
     case playerSprintRight(): playerSprintingRightPhysics();
                               playerSprintingRightAnimation();
                               break;
-															/*
     case player.moveLeft    : playerMoveLeftPhysics();
                               playerMoveLeftAnimation();
                               break;
     case player.moveRight   : playerMoveRightPhysics();
                               playerMoveRightAnimation();
                               break;
-															*/
 		case player.state.moving: playerMovePhysics();
 															playerMoveAnimation();
 															break;
@@ -95,7 +93,7 @@ function jumpRefresh(){
 		//console.log("on floor");
 }
 function jumpContinue(){
-  //player.jump = 1;
+  player.jump = 1;
   player.body.drag.x = 100;
 }
 //----------------------------
