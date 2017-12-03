@@ -89,8 +89,7 @@ function jumpRefresh(){
     player.airCasted = 0;
     player.jumpDirection = 0;
     player.focus = 2;
-    player.body.drag.x = 1000;
-		//console.log("on floor");
+		player.body.drag.x = 1200;
 }
 function jumpContinue(){
   player.jump = 1;
