@@ -20,6 +20,8 @@ var livingGame = {
 		//game.world.bringToTop(foreground);
 		//game.physics.arcade.collide(player, sprites);
 		game.physics.arcade.collide(sprites, player, collisionCallback, processCallback, this);
+		game.physics.arcade.collide(player, layer);
+
 		movement();
 		updatePlayerFrame();
 		//game.physics.arcade.collide(sprites);

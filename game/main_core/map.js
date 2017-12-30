@@ -28,15 +28,37 @@ function createWorldBase(){
 
 function createWorldBeta(levelName, destination){
   game.stage.backgroundColor = "#7ec0ee";
-  game.world.setBounds(0, 0, 1920, 500);
-  background = game.add.tileSprite(0,0, 1920, 500, '');
-  foreground = game.add.tileSprite(0,260,1920,500, '');
-/* simple = game.add.audio('symbo');
-  simple.play();
-  simple.loopFull(0.4);
-  simple.loop = true;
-  simple.volume = 0.4;
-*/
+  game.stage.backgroundColor = '#2d2d2d';
+
+  map = game.add.tilemap('tileTest5000');
+  map.addTilesetImage('Block', 'tileImage');
+	map.setCollisionBetween(1, 12);
+
+
+	layer = map.createLayer('Tile Layer 1');
+	layer.resizeWorld();
+
+  //game.world.setBounds(0, 0, 1920, 500);
+  //map = game.add.tilemap('tileTest5000');
+
+  //game.add.tilemap('tileTest5000');
+  //console.log("no");
+  //map.addTilesetImage('tiles');
+  //console.log("see");
+
+  //     addTilesetImage
+  //game.addTilesetImage('tileImage', 'tileImage');
+
+  //layer = map.createLayer('World1');
+
+  //background = game.add.tileSprite(0,0, 1920, 500, '');
+  //foreground = game.add.tileSprite(0,260,1920,500, '');
+  /* simple = game.add.audio('symbo');
+     simple.play();
+     simple.loopFull(0.4);
+     simple.loop = true;
+     simple.volume = 0.4;
+     */
 
 }
 

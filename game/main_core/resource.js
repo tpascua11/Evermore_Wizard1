@@ -11,6 +11,7 @@ function loadAll(){
   loadBoundaries();
   loadAISprite();
   loadSpecialsSprite();
+  gather();
 
 
   //setupSpells();
@@ -18,14 +19,19 @@ function loadAll(){
   //Sounds
   loadSoundEffects();
   loadMusic();
+}
+
+function gather(){
+  console.log("Roar!");
+  game.load.tilemap('tileTest5000', 'game/assets/Map/Level/DragonsGround2.json', null, Phaser.Tilemap.TILED_JSON);
+  game.load.image('tileImage', 'game/assets/Map/CollisionBlock/Block.png');
+  game.load.image('tiles', 'game/assets/Map/CollisionBlock/Block.png');
 
 }
 
-
 function loadPlayerResource(){
   game.load.spritesheet('dino', 'game/assets/player/Vark_TemplateGreen.png', 20, 20);
-  game.load.spritesheet('visualDino', 'game/assets/player/Vark_v58.png', 20, 20);
-  game.load.spritesheet('redBoundary', 'game/assets/player/Vark_TemplateRedSingle.png', 20, 20);
+  game.load.spritesheet('visualDino', 'game/assets/player/Vark_v58.png', 20, 20); game.load.spritesheet('redBoundary', 'game/assets/player/Vark_TemplateRedSingle.png', 20, 20);
   game.load.spritesheet('template', 'game/assets/player/Player_Template.png', 20, 20);
 
   game.load.spritesheet('woodHUD', 'game/assets/player/woodHud.png', 216, 32);
@@ -89,7 +95,7 @@ function loadMusic(){
   game.load.audio('symbo', ['game/assets/music/Visager_-_22_-_Battle_Loop.mp3']);
   //game.load.audio('simple', ['../assets/UncleBibby_The_Simple_Complex.mp3']);
   //game.load.audio('symbo', ['../assets/music/Ketsa_04_Symbiosis.mp3']);
- // game.load.audio('symbo',['../assets/music/FMA_Small_Colin_Free_Tone_Textures.mp3']);
+  // game.load.audio('symbo',['../assets/music/FMA_Small_Colin_Free_Tone_Textures.mp3']);
   game.load.audio('coin', 'game/assets/coin.wav');
 }
 
