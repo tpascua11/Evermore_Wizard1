@@ -11,8 +11,7 @@ function loadAll(){
   loadBoundaries();
   loadAISprite();
   loadSpecialsSprite();
-  gather();
-
+  loadTileSet();
 
   //setupSpells();
 
@@ -21,12 +20,14 @@ function loadAll(){
   loadMusic();
 }
 
-function gather(){
+function loadTileSet(){
   console.log("Roar!");
-  game.load.tilemap('tileTest5000', 'game/assets/Map/Level/DragonsGround2.json', null, Phaser.Tilemap.TILED_JSON);
+  game.load.tilemap('tileTest5000', 'game/assets/Map/Level/DragonsGround5.json', null, Phaser.Tilemap.TILED_JSON);
   game.load.image('tileImage', 'game/assets/Map/CollisionBlock/Block.png');
   game.load.image('tiles', 'game/assets/Map/CollisionBlock/Block.png');
 
+	game.load.tilemap('testingGround', 'game/assets/Map/Level/TestingGround.json', null, Phaser.Tilemap.TILED_JSON);
+	game.load.image('testingGround', 'game/assets/tile_set/basic.png');
 }
 
 function loadPlayerResource(){

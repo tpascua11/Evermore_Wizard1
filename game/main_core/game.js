@@ -15,6 +15,7 @@ var livingGame = {
 		//game.input.onDown.add(gofull, this);
 		buildPlatforms();
 		buildSpellPool();
+		console.log("layer", layer);
 	},
 	update:function(){
 		//game.world.bringToTop(foreground);

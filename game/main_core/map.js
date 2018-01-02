@@ -28,10 +28,14 @@ function createWorldBase(){
 
 function createWorldBeta(levelName, destination){
   game.stage.backgroundColor = "#7ec0ee";
-  game.stage.backgroundColor = '#2d2d2d';
+  //game.stage.backgroundColor = '#2d2d2d';
 
-  map = game.add.tilemap('tileTest5000');
-  map.addTilesetImage('Block', 'tileImage');
+  //map = game.add.tilemap('tileTest5000');
+  //map.addTilesetImage('Block', 'tileImage');
+
+  map = game.add.tilemap('testingGround');
+  map.addTilesetImage('basic', 'testingGround');
+
 	map.setCollisionBetween(1, 12);
 
 
