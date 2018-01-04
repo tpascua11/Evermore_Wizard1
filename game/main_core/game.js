@@ -16,15 +16,18 @@ var livingGame = {
 		buildPlatforms();
 		buildSpellPool();
 		console.log("layer", layer);
+  	//goblinSwordsMan(50,50,activeAI.length);
 	},
 	update:function(){
 		//game.world.bringToTop(foreground);
 		//game.physics.arcade.collide(player, sprites);
 		game.physics.arcade.collide(sprites, player, collisionCallback, processCallback, this);
 		game.physics.arcade.collide(player, layer);
+		game.physics.arcade.collide(goblin, layer);
 
 		movement();
 		updatePlayerFrame();
+		aiRuning();
 		//game.physics.arcade.collide(sprites);
 		spellUpdate();
 	},

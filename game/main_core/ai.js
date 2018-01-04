@@ -105,9 +105,9 @@ function createAI(){
 function goblinSwordsMan(x,y,id){
     goblin = game.add.sprite(x, y, 'templateAI');
     goblin.scale.setTo(1,2);
-    game.physics.p2.enable(goblin);
+    game.physics.arcade.enable(goblin);
     goblin.body.fixedRotation = true;
-    aiMaterial = game.physics.p2.createMaterial('aiMaterial', goblin.body);
+    //aiMaterial = game.physics.arcade.createMaterial('aiMaterial', goblin.body);
     goblin.body.health = 20;
     goblin.damage = 1;
     goblin.doAttack = function(){}
@@ -371,7 +371,7 @@ function goblinBow(){
 function aiHarmWave(goblinD){
   goblinD.damage = game.add.sprite(-500, 100, 'collision');
   goblinD.damage.scale.setTo(1,1);
-  game.physics.p2.enable(goblinD.damage);
+  game.physics.arcade.enable(goblinD.damage);
   goblinD.damage.body.fixedRotation = true;
   //aiMaterial = game.physics.p2.createMaterial('aiMaterial', damage);
   goblinD.damage.body.health = 10;
@@ -379,10 +379,10 @@ function aiHarmWave(goblinD){
   goblinD.damage.id = goblinD.aid;
   //console.log("Goblin ID", goblinD.aid);
 
-  goblinD.damage.body.onBeginContact.add(harm, goblinD.damage);
+  //goblinD.damage.body.onBeginContact.add(harm, goblinD.damage);
 
   goblinD.damage.body.static = true;
-  goblinD.damage.body.data.shapes[0].sensor = true;
+  //goblinD.damage.body.data.shapes[0].sensor = true;
   goblinD.damage.endAtTime = universalTime + 1;
 
   goblinD.damage.pushPowerX = 200;
