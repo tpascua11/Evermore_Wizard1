@@ -37,13 +37,14 @@ function createWorldBeta(levelName, destination){
   map.addTilesetImage('basic', 'testingGround');
 	console.log("MAP", map);
 
-	map.setCollisionBetween(1, 12);
-
-
+/*
 	map.objects.Enemy.forEach(function(enemy){
   	goblinSwordsMan(enemy.x, enemy.y, activeAI.length);
 	});
+	*/
 	layer = map.createLayer('Tile Layer 1');
+	map.setCollisionBetween(1, 12);
+	map.setCollision(40);
 	layer.resizeWorld();
 
   //game.world.setBounds(0, 0, 1920, 500);

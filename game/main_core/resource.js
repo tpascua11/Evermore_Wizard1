@@ -23,10 +23,10 @@ function loadAll(){
 function loadTileSet(){
   console.log("Roar!");
   game.load.tilemap('tileTest5000', 'game/assets/Map/Level/DragonsGround5.json', null, Phaser.Tilemap.TILED_JSON);
-  game.load.image('tileImage', 'game/assets/Map/CollisionBlock/Block.png');
-  game.load.image('tiles', 'game/assets/Map/CollisionBlock/Block.png');
+  //game.load.image('tileImage', 'game/assets/Map/CollisionBlock/Block.png');
+  //game.load.image('tiles', 'game/assets/Map/CollisionBlock/Block.png');
 
-	game.load.tilemap('testingGround', 'game/assets/Map/Level/TestingGroundWithEnemies.json', null, Phaser.Tilemap.TILED_JSON);
+	game.load.tilemap('testingGround', 'game/assets/Map/Level/DragonsGround5.json', null, Phaser.Tilemap.TILED_JSON);
 	game.load.image('testingGround', 'game/assets/tile_set/basic.png');
 }
 
@@ -40,12 +40,12 @@ function loadPlayerResource(){
   game.load.spritesheet('healthBalls', 'game/assets/player/healthBalls.png', 200, 8);
   game.load.spritesheet('emptyball', 'game/assets/player/emptyBall.png', 16, 16);
   game.load.spritesheet('manaballs', 'game/assets/player/manaBalls.png', 200, 8);
-  game.load.spritesheet('bmissle', 'game/assets/DarkMagicMisslesB.png', 64, 64);
-  game.load.spritesheet('smissle', 'game/assets/Blue_Magic_Missles.png', 16, 16);
+  //game.load.spritesheet('bmissle', 'game/assets/DarkMagicMisslesB.png', 64, 64);
+  //game.load.spritesheet('smissle', 'game/assets/Blue_Magic_Missles.png', 16, 16);
   game.load.spritesheet('energyBall', 'game/assets/spells/BlueEnergyBall.png', 16, 16);
   game.load.spritesheet('teleport', 'game/assets/spells/whiteTeleport.png', 16, 16);
   game.load.spritesheet('teleport301', 'game/assets/spells/whiteTeleport.png', 16, 16);
-  game.load.spritesheet('casting', 'game/assets/Casting.png', 16, 16);
+  //game.load.spritesheet('casting', 'game/assets/Casting.png', 16, 16);
   game.load.spritesheet('magicBlock', 'game/assets/spells/MagicBlock.png', 8, 16);
   game.load.spritesheet('magicShield', 'game/assets/spells/Shield_Up.png', 4, 16);
   game.load.spritesheet('circleBarrier', 'game/assets/spells/barrierv2.png', 20, 20);
@@ -64,8 +64,8 @@ function loadSoundEffects(){
   game.load.audio('shoot', 'game/assets/sound_effect/bigShot.wav');
   game.load.audio('teleport', 'game/assets/sound_effect/Teleport.wav');
   game.load.audio('wall', 'game/assets/sound_effect/Wall.wav');
-  game.load.audio('steps', 'game/assets/step.wav');
-  game.load.audio('jumpSound', 'game/assets/Jump19.wav');
+  //game.load.audio('steps', 'game/assets/step.wav');
+  //game.load.audio('jumpSound', 'game/assets/Jump19.wav');
   game.load.audio('hurt', 'game/assets/sound_effect/hurt.wav');
   game.load.audio('shieldHurt', 'game/assets/sound_effect/tmp_shield_hurt.wav');
   game.load.audio('bounce', 'game/assets/sound_effect/bounce.wav');
@@ -81,7 +81,7 @@ function loadAISprite(){
 }
 
 function preloadBackground(){
-  game.load.spritesheet('level1', 'game/assets/Blocks.png', 16, 16);
+  game.load.spritesheet('level1', 'game/assets/old/Blocks.png', 16, 16);
 }
 
 function loadMapAlpha(){
@@ -97,7 +97,7 @@ function loadMusic(){
   //game.load.audio('simple', ['../assets/UncleBibby_The_Simple_Complex.mp3']);
   //game.load.audio('symbo', ['../assets/music/Ketsa_04_Symbiosis.mp3']);
   // game.load.audio('symbo',['../assets/music/FMA_Small_Colin_Free_Tone_Textures.mp3']);
-  game.load.audio('coin', 'game/assets/coin.wav');
+  //game.load.audio('coin', 'game/assets/coin.wav');
 }
 
 function loadSpecialsSprite(){

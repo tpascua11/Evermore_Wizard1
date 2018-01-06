@@ -11,17 +11,60 @@
  |  /   V        ))       V   \  |
  |/     `       //        '     \|
 
-//1. AI_Information 
-//2. AI_Building
-//3. AI_Interaction
-//4. AI_Running
-//
-//5. Attack_Info
-//6. Attack_Collision
+1. AI_Running
+2. AI_Information
+3. AI_Building
+4. AI_Interaction
+5. Attack_Info
+6. Attack_Collision
 */
 
+//--------------------------------
+// 4. AI_Running
+//--------------------------------
+function aiRuning(){
+  //console.log(activeAI.length);
+  for(var i = 0; i < activeAI.length; i++){
+    if(activeAI[i] == 0) continue;
+    if(aiCheckDistance(activeAI[i], player)){
+      follow(activeAI[i]);
+    }
+    else{
+      move(activeAI[i]);
+    }
+    if(activeAI[i].stop || activeAI[i].readyAction){
+      activeAI[i].doAttack();
+    }
+    else{
+      movementAnimation(activeAI[i]);
+    }
+  }
+}
+
+function aiRuningEditor(){
+  //console.log(activeAI.length);
+  for(var i = 0; i < activeAI.length; i++){
+    if(activeAI[i] == 0) continue;
+    if(aiCheckDistance(activeAI[i], player)){
+      follow(activeAI[i]);
+    }
+    else{
+      move(activeAI[i]);
+    }
+    if(activeAI[i].stop || activeAI[i].readyAction){
+      activeAI[i].doAttack();
+      //activeAI[i].body.velocity.x = 0;
+    }
+    else{
+      movementAnimation(activeAI[i]);
+    }
+  }
+}
+
+
+
 //---------------------------------------------------------
-// 1. AI_Information 
+// 1. AI_Information
 //---------------------------------------------------------
 var ai;
 var activeAI = [];
@@ -46,7 +89,7 @@ var aiBasicStats = {
   actionTime: 0,
   doingAction: 0,
   alliance: 2,
-  lastAnimation: 0, 
+  lastAnimation: 0
 }
 
 var aiDefaultStats = {
@@ -81,13 +124,11 @@ var aiDefaultStats = {
 //---------------------------------------------------------
 // 2. AI_Building
 //---------------------------------------------------------
-
 function createAI(){
   //NOTES:
   //  Always GIve AI its own ID according to whats avaiable at AIRUNNING
   //  Once That AI dies, save that id and use it for the newest AI addition
   //  if thats not the case add to the end of AI_Running
-  //
   var i = 0;
   //console.log("Start AI", activeAI.length);
   for(i = 0; i < 50; i++){
@@ -103,7 +144,8 @@ function createAI(){
 //  Goblin
 //---------------
 function goblinSwordsMan(x,y,id){
-    goblin = game.add.sprite(x, y, 'templateAI');
+    goblin = enemy_group.create(x,y,'templateAI');
+    //goblin = game.add.sprite(x, y, 'templateAI');
     goblin.scale.setTo(1,2);
     game.physics.arcade.enable(goblin);
     goblin.body.fixedRotation = true;
@@ -115,7 +157,7 @@ function goblinSwordsMan(x,y,id){
     goblin.aid = id;
     goblinSword();
     //console.log(goblin);
-    goblin.visual = game.add.sprite(-24,-15,'goblin');
+    goblin.visual = game.add.sprite(-10,-4,'goblin');
     goblin.visual.scale.setTo(3,3);
     goblin.visual.setScaleMinMax(3,3);
     goblin.visual.frame = 3;
@@ -131,11 +173,12 @@ function goblinSwordsMan(x,y,id){
 
 
 function goblinStaber(x, y, id){
-    goblin = game.add.sprite(x, y, 'templateAI');
+    goblin = enemy_group.create(x,y,'templateAI');
+    //goblin = game.add.sprite(x, y, 'templateAI');
     goblin.scale.setTo(1,2);
     game.physics.p2.enable(goblin);
     goblin.body.fixedRotation = true;
-    aiMaterial = game.physics.p2.createMaterial('aiMaterial', goblin.body);
+    //aiMaterial = game.physics.p2.createMaterial('aiMaterial', goblin.body);
     goblin.body.health = 15;
     goblin.damage = 1;
     goblin.doAttack = function(){}
@@ -145,7 +188,7 @@ function goblinStaber(x, y, id){
     goblin.maxSpeed = 150;
     goblinDagger();
     //console.log(goblin);
-    goblin.visual = game.add.sprite(-24,-15,'goblin');
+    goblin.visual = game.add.sprite(-10,-4,'goblin');
     goblin.visual.scale.setTo(3,3);
     goblin.visual.setScaleMinMax(3,3);
     goblin.visual.frame = 3;
@@ -159,11 +202,12 @@ function goblinStaber(x, y, id){
 }
 
 function goblinArcher(x,y,id){
-    goblin = game.add.sprite(x, y, 'templateAI');
+    goblin = enemy_group.create(x,y,'templateAI');
+    //goblin = game.add.sprite(x, y, 'templateAI');
     goblin.scale.setTo(1,2);
     game.physics.p2.enable(goblin);
     goblin.body.fixedRotation = true;
-    aiMaterial = game.physics.p2.createMaterial('aiMaterial', goblin.body);
+    //aiMaterial = game.physics.p2.createMaterial('aiMaterial', goblin.body);
     goblin.body.health = 15;
     goblin.damage = 1;
     goblin.doAttack = function(){}
@@ -172,7 +216,7 @@ function goblinArcher(x,y,id){
     goblin.acl = 0;
     goblinBow();
     //console.log(goblin);
-    goblin.visual = game.add.sprite(-24,-15,'goblin');
+    goblin.visual = game.add.sprite(-10,-4,'goblin');
     goblin.visual.scale.setTo(3,3);
     goblin.visual.setScaleMinMax(3,3);
     goblin.visual.frame = 3;
@@ -260,7 +304,6 @@ function goblinDagger(){
   goblin.attack.body.data.shapes[0].sensor = true;
   goblin.attack.id = activeAI.length;//Change THIS LATer
   //console.log("Goblin ATtack", goblin.attack);
-  
   goblin.attack.postUpdate = function(){
     if(activeAI[this.id] == 0 || (this.id > activeAI.length)){ this.destroy; return;}
     this.damage.direction = activeAI[this.id].direction;
@@ -590,49 +633,6 @@ function movementAnimation(ai){
     ai.visual.anchor.setTo(1,0);
   }
 }
-//--------------------------------
-// 4. AI_Running
-//--------------------------------
-function aiRuning(){
-  //console.log(activeAI.length);
-  for(var i = 0; i < activeAI.length; i++){
-    if(activeAI[i] == 0) continue; 
-    if(aiCheckDistance(activeAI[i], player)){
-      follow(activeAI[i]);
-    }
-    else{
-      move(activeAI[i]);
-    }
-    if(activeAI[i].stop || activeAI[i].readyAction){
-      activeAI[i].doAttack();
-      //activeAI[i].body.velocity.x = 0;
-    }
-    else{
-      movementAnimation(activeAI[i]);
-    }
-  }
-}
-
-function aiRuningEditor(){
-  //console.log(activeAI.length);
-  for(var i = 0; i < activeAI.length; i++){
-    if(activeAI[i] == 0) continue; 
-    if(aiCheckDistance(activeAI[i], player)){
-      follow(activeAI[i]);
-    }
-    else{
-      move(activeAI[i]);
-    }
-    if(activeAI[i].stop || activeAI[i].readyAction){
-      activeAI[i].doAttack();
-      //activeAI[i].body.velocity.x = 0;
-    }
-    else{
-      movementAnimation(activeAI[i]);
-    }
-  }
-}
-
 //-------------------------------
 // 5. Attack_Info
 //-------------------------------

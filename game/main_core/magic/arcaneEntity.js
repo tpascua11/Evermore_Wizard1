@@ -4,8 +4,8 @@
 function buildSpellPool(){
   spell_group = game.add.group();
   buildArcaneBombs();
-
   spell_group.setAll('body.collideWorldBounds', true);
+  spell_group.setAll('map', true);
 }
 
 function conjureSpellBomb(){
@@ -20,8 +20,7 @@ function conjureSpellBomb(){
 }
 
 function spellUpdate(){
-  //game.physics.arcade.collide(bomb, sprites, collisionCallback, processCallback, this);
-  game.physics.arcade.collide(arcane_bombs, sprites);
+
 }
 //----------------------
 // 1. Arane_Bomb
@@ -56,6 +55,7 @@ function buildArcaneBombs(){
 }
 
 function arcaneBombExplode(bomb, impactTarget){
+  console.log("Testing ", impactTarget);
   var explode = arcane_bomb_explosions.getFirstExists(false);
   //impactTarget.kill();
   if(explode){
