@@ -11,6 +11,7 @@
 //--------------------------------------------------------------------
 var background;
 var foreground;
+var objects = [];
 
 function createWorldBase(){
     game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -36,6 +37,8 @@ function createWorldBeta(levelName, destination){
   map = game.add.tilemap('testingGround');
   map.addTilesetImage('basic', 'testingGround');
 	console.log("MAP", map);
+	console.log("check map", map.objects["Object Layer 1"]);
+	objects = map.objects["Object Layer 1"];
 
 /*
 	map.objects.Enemy.forEach(function(enemy){

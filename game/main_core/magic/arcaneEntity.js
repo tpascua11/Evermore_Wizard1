@@ -2,7 +2,6 @@
 // Arcane_Components
 //----------------------
 function buildSpellPool(){
-  spell_group = game.add.group();
   buildArcaneBombs();
   spell_group.setAll('body.collideWorldBounds', true);
   spell_group.setAll('map', true);
@@ -26,8 +25,6 @@ function spellUpdate(){
 // 1. Arane_Bomb
 //----------------------
 function buildArcaneBombs(){
-  arcane_bombs = game.add.group();
-  spell_group.add(arcane_bombs);
   for(var i = 0; i < 20; i++){
     var arcaneBomb = arcane_bombs.create(0,0,'energyBall');
     game.physics.enable(arcaneBomb, Phaser.Physics.ARCADE);
@@ -55,9 +52,10 @@ function buildArcaneBombs(){
 }
 
 function arcaneBombExplode(bomb, impactTarget){
+  if(impactTarget.index == -1) return;
+  console.log("bomb", bomb);
   console.log("Testing ", impactTarget);
   var explode = arcane_bomb_explosions.getFirstExists(false);
-  //impactTarget.kill();
   if(explode){
     bomb.kill();
     explode.revive();
@@ -65,6 +63,26 @@ function arcaneBombExplode(bomb, impactTarget){
     explode.animations.play('run', 20, false, true);
   }
 }
+
+function arcaneBombExplodeDamage(bomb, impactTarget){
+  if(impactTarget.index == -1) return;
+  console.log("bomb", bomb);
+  console.log("Testing ", impactTarget);
+  impactTarget.damage(10);
+  var explode = arcane_bomb_explosions.getFirstExists(false);
+  if(explode){
+    bomb.kill();
+    explode.revive();
+    explode.reset(bomb.body.center.x, bomb.body.center.y);
+    explode.animations.play('run', 20, false, true);
+  }
+}
+
+
+function rush(){
+  player.body.velocity.x = player.state.direction * player.stats.speed*2;
+}
+
 
 var arcane_bomb_index = 0;
 

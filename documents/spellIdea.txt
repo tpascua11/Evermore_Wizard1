@@ -1,0 +1,89 @@
+Candle = {
+  mp: low,
+  description: "light up a certain radius around you"
+}
+
+Portal = {
+  mp: low,
+  description: "use 2 teleport between , any projectile will pass throught
+                without losing velocity, enemy projectile may turn"
+}
+
+Superjump = {
+  mp: low,
+  description: "jump incredible high"
+}
+
+SuperStrength = {
+}
+
+Camoflauge = {
+  mp: low:
+  description: "blend in with the enviroment"
+}
+
+duplicates = {
+  mp: low,
+  description: "make a clone of yourself"
+}
+
+parade = {
+  mp: low,
+  description: "make a clone that will follow you, can be used multiple times"
+}
+
+Mockery = {
+  mp:
+  description: "make a static image of enemy"
+}
+
+Mimic= {
+  mp:
+  description: "make a sound in location"
+}
+
+
+Home = {}
+
+
+Burning Saga = {
+  mp: low,
+  description: "enchant all your attacks to be fire base"
+  actionChange:{
+    Flamethrower: "burn everything with your breath"
+    Comet: " use the fire to propel yourself foward"
+    Fireball: "charge up a massive fireball"
+  }
+}
+
+Frozen Arc = {
+  mp: low,
+  description: "enchant all your attacks to be ice base"
+  actionChange: {
+    Winterwinds: "big freeze everything with your breath"
+    Avalanche: "as long you nothing stops your track, continuly grow as a big snowball rolling"
+    Icywind: "a channel of freeze, hold to contiously freeze. let go to cause
+              a hard freeze"
+  }
+
+Eletrical Age {
+  mp: low,
+  description: "enchant all your attacks to be lighning base"
+  actionChange:{
+    Discharge: "eletricy everything with your breath"
+    Volt Wave: "each charge is now like a teleport, it will zap ever
+                everything in between desetination"
+    Eletrical Whip: "use an eletrical whip, hold to charge whip distance and damage"
+  }
+}
+
+
+Fruits:
+  Sable (battery)
+  Geka (Overcharge)
+  Reka (charge up)
+  Deku (reinforce)
+  Mist (illusion)
+  Abra (abjuration)
+  Conj (conjuration)
+

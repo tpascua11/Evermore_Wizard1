@@ -115,6 +115,8 @@
 
     player.body.setSize(10, 15, 5, 5);
 
+		living_group.add(player);
+
     //player.addChild(visual);
     //visual.alpha = 1;
     //visual.x-=30;
@@ -125,13 +127,11 @@
     for(var attrname in playerStats){
 			player[attrname] = playerStats[attrname]
 		}
-    player.body.stats = playerStats;
     player.stats = playerStats;
+    player.body.stats = player.stats;
     player.body.health = player.health;
-
 		player.state = Object.assign({}, defaultState);
-		console.log("player", player);
-
+		console.log("player please yes", player);
   }
 
   function playerSounds(){
@@ -212,8 +212,8 @@
   }
 
   function playerHUD(){
-    playerFPS = game.add.text(10, 10, game.time.fps, {fontSize: '25px', fill: '#ffff00'});
-    playerFPS.fixedToCamera = true;
+    //playerFPS = game.add.text(10, 10, game.time.fps, {fontSize: '25px', fill: '#ffff00'});
+    //playerFPS.fixedToCamera = true;
 
     var manaWidth = 40;
     var manaHeight = 25;
@@ -248,8 +248,8 @@
 }
 
 function updatePlayerFrame(){
-  playerFPS.text = game.time.fps;
-  playerFPS.reset(player.body.x-33, player.body.y - 66);
+  //playerFPS.text = game.time.fps;
+  //playerFPS.reset(player.body.x-33, player.body.y - 66);
   //visual.x = player.body.x-30;
   //visual.y = player.body.y-30;
 }

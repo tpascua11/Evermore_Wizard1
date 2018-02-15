@@ -60,63 +60,60 @@ function aiRuningEditor(){
     }
   }
 }
-
-
-
 //---------------------------------------------------------
 // 1. AI_Information
 //---------------------------------------------------------
 var ai;
-var activeAI = [];
-var aiTotal = 0;
+var activeai = [];
+var aitotal = 0;
 
-var aiBasicStats = {
+var aibasicstats = {
   health   : 100,
-  maxHealth: 100,
+  maxhealth: 100,
   acl      : 50,
-  maxSpeed : 33,
-  curSpd   : 0,
+  maxspeed : 33,
+  curspd   : 0,
   ranged   : 0,
   melee    : 0,
   direction: 1,
-  targetAtX: 0,
-  targetAtY: 0,
+  targetatx: 0,
+  targetaty: 0,
   stop     : 0,
-  stopRange: 50,
-  detectRange: 700,
-  pushPowerX: 500,
-  pushPowerY: 200,
-  actionTime: 0,
-  doingAction: 0,
+  stoprange: 50,
+  detectrange: 700,
+  pushpowerx: 500,
+  pushpowery: 200,
+  actiontime: 0,
+  doingaction: 0,
   alliance: 2,
-  lastAnimation: 0
+  lastanimation: 0
 }
 
-var aiDefaultStats = {
+var aidefaultstats = {
   health   : 100,
-  maxHealth: 100,
+  maxhealth: 100,
   mana     : 75 ,
-  maxMana  : 100,
+  maxmana  : 100,
   rmana    : 25 ,
-  maxRmana : 25 ,
-  curSpd   : 0  ,
+  maxrmana : 25 ,
+  curspd   : 0  ,
   speed    : 200,
-  sprintSpd: 500,
+  sprintspd: 500,
   sprinting: 0  ,
   acl      : 50 ,
-  moveLeft : 0  ,
-  moveRight: 0  ,
+  moveleft : 0  ,
+  moveright: 0  ,
   moving   : 0  ,
   jump     : 0  ,
-  jumpTotal: 100,
-  jumpAtY  : 0  ,
-  jumpAcl  : 7  ,
-  jumpSpan : 50 ,
+  jumptotal: 100,
+  jumpaty  : 0  ,
+  jumpacl  : 7  ,
+  jumpspan : 50 ,
   direction: 1  ,
   casting  : 0  ,
   charged  : 0  ,
-  stepsCount: 25,
-  rechargeRate: 1,
+  stepscount: 25,
+  rechargerate: 1,
   resistance: "nothing",
   weak: "nothing"
 };
@@ -129,34 +126,22 @@ function createAI(){
   //  Always GIve AI its own ID according to whats avaiable at AIRUNNING
   //  Once That AI dies, save that id and use it for the newest AI addition
   //  if thats not the case add to the end of AI_Running
-  var i = 0;
-  //console.log("Start AI", activeAI.length);
-  for(i = 0; i < 50; i++){
-    //goblinMaking(50,50,i);
-    //goblinSwordsMan(50,50,i+1);
-    //i++;
-    //goblinArcher(50+i*50,50,i);
-  }
- continueGoblins();
-
 }
+
 //---------------
 //  Goblin
 //---------------
 function goblinSwordsMan(x,y,id){
     goblin = enemy_group.create(x,y,'templateAI');
-    //goblin = game.add.sprite(x, y, 'templateAI');
     goblin.scale.setTo(1,2);
     game.physics.arcade.enable(goblin);
     goblin.body.fixedRotation = true;
-    //aiMaterial = game.physics.arcade.createMaterial('aiMaterial', goblin.body);
     goblin.body.health = 20;
     goblin.damage = 1;
     goblin.doAttack = function(){}
     for(var attrname in aiBasicStats){goblin[attrname] = aiBasicStats[attrname]}
     goblin.aid = id;
     goblinSword();
-    //console.log(goblin);
     goblin.visual = game.add.sprite(-10,-4,'goblin');
     goblin.visual.scale.setTo(3,3);
     goblin.visual.setScaleMinMax(3,3);
@@ -166,19 +151,15 @@ function goblinSwordsMan(x,y,id){
     createGoblinSwordsmanAnimations();
     goblin.dead = false;
     goblin.name = "goblinSwordGuy";
-
-    //game.physics.p2.setPostBroadphaseCallback(checkVeg, this);
     activeAI.push(goblin);
 }
 
 
 function goblinStaber(x, y, id){
     goblin = enemy_group.create(x,y,'templateAI');
-    //goblin = game.add.sprite(x, y, 'templateAI');
     goblin.scale.setTo(1,2);
     game.physics.p2.enable(goblin);
     goblin.body.fixedRotation = true;
-    //aiMaterial = game.physics.p2.createMaterial('aiMaterial', goblin.body);
     goblin.body.health = 15;
     goblin.damage = 1;
     goblin.doAttack = function(){}
@@ -187,7 +168,6 @@ function goblinStaber(x, y, id){
     goblin.acl = 10;
     goblin.maxSpeed = 150;
     goblinDagger();
-    //console.log(goblin);
     goblin.visual = game.add.sprite(-10,-4,'goblin');
     goblin.visual.scale.setTo(3,3);
     goblin.visual.setScaleMinMax(3,3);
@@ -198,16 +178,13 @@ function goblinStaber(x, y, id){
     goblin.dead = false;
     goblin.name = "goblinDaggerGuy";
     activeAI.push(goblin);
-    //console.log("AI total", activeAI.length);
 }
 
 function goblinArcher(x,y,id){
     goblin = enemy_group.create(x,y,'templateAI');
-    //goblin = game.add.sprite(x, y, 'templateAI');
     goblin.scale.setTo(1,2);
     game.physics.p2.enable(goblin);
     goblin.body.fixedRotation = true;
-    //aiMaterial = game.physics.p2.createMaterial('aiMaterial', goblin.body);
     goblin.body.health = 15;
     goblin.damage = 1;
     goblin.doAttack = function(){}
@@ -215,7 +192,6 @@ function goblinArcher(x,y,id){
     goblin.aid = id;
     goblin.acl = 0;
     goblinBow();
-    //console.log(goblin);
     goblin.visual = game.add.sprite(-10,-4,'goblin');
     goblin.visual.scale.setTo(3,3);
     goblin.visual.setScaleMinMax(3,3);
@@ -232,16 +208,13 @@ function goblinArcher(x,y,id){
 
 function goblinMaking(x, y, id){
     goblin = game.add.sprite(x, y, 'templateAI');
-    //goblin.scale.setTo(0.5,1.5);
     goblin.scale.setTo(1,2);
     game.physics.p2.enable(goblin);
     goblin.body.fixedRotation = true;
     aiMaterial = game.physics.p2.createMaterial('aiMaterial', goblin.body);
     goblin.body.health = 10;
     goblin.damage = 1;
-
     goblin.doAttack = function(){}
-
     for(var attrname in aiBasicStats){goblin[attrname] = aiBasicStats[attrname]}
     //goblinDagger();
     goblin.aid = id;
@@ -597,7 +570,8 @@ function detectEnemy(){
   return true;
 }
 function move(ai){
-  //ai.body.velocity.x = ai.curSpd * ai.direction;
+  console.log("ch");
+  ai.body.velocity.x = ai.curSpd * ai.direction;
   //ai.body.velocity.x = 0;
 }
 function patrol(ai){
@@ -640,7 +614,7 @@ var attack = {
   force: 0,
   doingAction: 0,
   owner: 0,
-  constant: 0, 
+  constant: 0,
   ownerLink: "owner",
   alliance: 2
 }
