@@ -140,6 +140,11 @@
     spellJumpSound = game.add.audio('bounce'); spellJumpSound.volume = 0.5; 
     hurt = game.add.audio('hurt');
     shieldHurt = game.add.audio('shieldHurt'); shieldHurt.volume = 0.5;
+
+
+		explodeSound = game.add.audio('blast'); explodeSound.volume = 0.5;
+    blastSound = game.add.audio('shieldHurt'); blastSound.volume = 0.5; 
+    shootSound = game.add.audio('shoot'); shootSound.volume = 0.5; 
   }
 
   function playerControl(){

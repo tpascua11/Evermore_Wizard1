@@ -61,7 +61,7 @@ function input(){
     case "rift"     : riftAction(this.action)   ; break;
     default: break;
   }
-  console.log(state, this.action);
+  //console.log(state, this.action);
 }
 
 function normalAction(action){
@@ -79,9 +79,25 @@ function normalAction(action){
     case "scan"      : break;
     case "scanStop"  : break;
     case "barrier"   : playerBarrier();    break;
-    case "bomb"      : chargeMagic2();     break;
+    //case "bomb"      : chargeMagic2();     break;
+    case "bomb"      : normalBasicAttack();     break;
     case "bombStop"  : magicBlast;         break;
     default: break;
+  }
+}
+
+function normalBasicAttack(){
+  //console.log("is move right", moveRight.isDown);
+  //console.log("is move left", moveLeft.isDown);
+  if(player.laying){
+    player.body.velocity.x = 0;
+  }
+  else if(moveRight.isDown || moveLeft.isDown){
+    blastSound.play();
+    player.body.velocity.x = player.body.velocity.x * 2;
+  } else {
+    chargeMagic2();
+    shootSound.play();
   }
 }
 

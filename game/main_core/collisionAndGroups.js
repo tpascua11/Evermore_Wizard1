@@ -34,12 +34,12 @@ function runCollision(){
 		//game.physics.arcade.overlap(living_group, attack_group, overlapGod);
 		//
 		game.physics.arcade.collide(enemy_group, layer);
+		game.physics.arcade.collide(enemy_group, player);
 
 		game.physics.arcade.collide(attack_group, layer);
 		game.physics.arcade.collide(attack_group, attack_group);
 
-
-    game.physics.arcade.collide(arcane_bombs, enemy_group, null, arcaneBombExplodeDamage, this);
+    game.physics.arcade.overlap(arcane_bombs, enemy_group, null, arcaneBombExplodeDamage, this);
 		//game.physics.arcade.collide(breakable_group, player);
 
 		//game.physics.arcade.collide(breakable_group, arcane_bombs);

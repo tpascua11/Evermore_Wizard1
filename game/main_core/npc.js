@@ -17,12 +17,10 @@
 //--------------------------------
 var activeNPC = [];
 function betaNPC(){
-  /*
-  console.log("beta npc testing");
-  for(var i = 0; i < 1; i++){
-    buildSlime(400+(10*i),800,i);
+  console.log("beta npc testing fire");
+  for(var i = 0; i < 25; i++){
+    buildSlime(400+(10*i),700,i);
   }
-  */
 }
 //--------------------------------
 // Run_AI_Process
@@ -30,8 +28,9 @@ function betaNPC(){
 function runNPCProcess(){
   for(var i = 0; i < activeNPC.length; i++){
     //if(activeNPC[i] == 0) continue;
+    //console.log("Frame At", activeNPC[i].frame);
     if(aiCheckDistance(activeNPC[i], player)){
-      console.log("am i close?");
+      //console.log("am i close?");
       follow(activeNPC[i]);
     }
     else{
@@ -91,15 +90,13 @@ function aiCheckDistance(ai, target){
 //
 //----------------------------------
 function buildSlime(x, y, id){
-    enemy_group = game.add.group();
     slime = enemy_group.create(x,y,'slime');
     slime.scale.setTo(1,2);
     //game.physics.arcade.enable(slime);
 		game.physics.enable(slime, Phaser.Physics.ARCADE);
     slime.doAttack = function(){}
     for(var attrname in aiBasicStats){slime[attrname] = aiBasicStats[attrname]}
-    //slime.aid = id;
-
+    slime.aid = id;
     /*
     slime.visual = game.add.sprite(-10,-4,'slime');
     slime.visual.scale.setTo(3,3);
@@ -109,12 +106,9 @@ function buildSlime(x, y, id){
     slime.dead = false;
     slime.name = "slime";
     */
-    /*
-    slime.animations.add('move', [0, 1, 2, 3, 4, 4], 25, true);
-    slime.animations.play('move', 10, true);
-    slime.stopRange = 0;
-    */
-
+    slime.animations.add('move', [0, 1, 2, 3, 4, 4], 50, true);
+    slime.animations.play('move', 50, true);
+    slime.stopRange = 100;
     activeNPC.push(slime);
 }
 

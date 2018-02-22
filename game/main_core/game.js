@@ -22,12 +22,13 @@ var livingGame = {
 	},
 	update:function(){
 		//game.world.bringToTop(foreground);
-		//runNPCProcess();
+		runNPCProcess();
 		runCollision();
 		movement();
 		updatePlayerFrame();
 		spellUpdate();
 		fps = game.time.fps;
+		updateEnergyBalls();
 	},
 	render:function() {
 		//this.game.debug.renderPhysicsBody(player);

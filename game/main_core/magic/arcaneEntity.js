@@ -15,6 +15,7 @@ function conjureSpellBomb(){
     lineUp(player, bomb, templateStarAim);
     addVelocityTo(bomb, 500, 500, player);
     bomb.animations.play('run', 10, true);
+    bomb.lifespan = 500;
   }
 }
 
@@ -53,21 +54,22 @@ function buildArcaneBombs(){
 
 function arcaneBombExplode(bomb, impactTarget){
   if(impactTarget.index == -1) return;
-  console.log("bomb", bomb);
-  console.log("Testing ", impactTarget);
+  //console.log("bomb", bomb);
+  //console.log("Testing ", impactTarget);
   var explode = arcane_bomb_explosions.getFirstExists(false);
   if(explode){
     bomb.kill();
     explode.revive();
     explode.reset(bomb.body.center.x, bomb.body.center.y);
     explode.animations.play('run', 20, false, true);
+    explodeSound.play();
   }
 }
 
 function arcaneBombExplodeDamage(bomb, impactTarget){
   if(impactTarget.index == -1) return;
-  console.log("bomb", bomb);
-  console.log("Testing ", impactTarget);
+  //console.log("bomb", bomb);
+  //console.log("Testing ", impactTarget);
   impactTarget.damage(10);
   var explode = arcane_bomb_explosions.getFirstExists(false);
   if(explode){
