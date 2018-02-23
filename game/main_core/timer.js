@@ -10,5 +10,6 @@ function startUniversalTimer(){
 }
 
 function incrementUniversalTimer(){
+//  console.log("Universal Time", universalTime);
   universalTime++;
 }

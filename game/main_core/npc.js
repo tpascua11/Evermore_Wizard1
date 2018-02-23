@@ -17,34 +17,62 @@
 //--------------------------------
 var activeNPC = [];
 function betaNPC(){
-  console.log("beta npc testing fire");
-  for(var i = 0; i < 25; i++){
-    buildSlime(400+(10*i),700,i);
+  for(var i = 0; i < 1; i++){
+    //buildSlime(400+(30*i),700,i);
+    jumperSlimer(400, 700, i);
   }
 }
 //--------------------------------
 // Run_AI_Process
 //--------------------------------
-function runNPCProcess(){
-  for(var i = 0; i < activeNPC.length; i++){
-    //if(activeNPC[i] == 0) continue;
-    //console.log("Frame At", activeNPC[i].frame);
-    if(aiCheckDistance(activeNPC[i], player)){
-      //console.log("am i close?");
-      follow(activeNPC[i]);
-    }
-    else{
-      move(activeNPC[i]);
-    }
-/*
-    if(activeNPC[i].stop || activeNPC[i].readyAction){
-      activeNPC[i].doAttack();
-    }
-    else{
-      movementAnimation(activeNPC[i]);
-    }
-*/
+function runNPCAI(){
+  activeNPC.forEach(function(npc){
+    if(npc.incapciated) incapciatedBehavior(npc);
+    else if(npc.doingAction) doingActionBehavior(npc);
+    else if(npc.aggro) aggroBehavior(npc);
+    else defaultBehavior(npc);
+  });
+}
+//-------------------------------
+// Indiviual_AI_PROCESS
+//------------------------------
+function incapciatedBehavior(npc){
+  if(npc.delayIncapciatedUntil <= universalTime) npc.incapciated = false;
+}
+
+function doingActionBehavior(npc){
+  //  actionDone can be set ture on the following condition
+  //  When Animation Is Done. Animation will target the npc.doingAction to false
+  //  this might not be needed but will be here just in case
+}
+
+function aggroBehavior(npc){
+  if(!aiCheckIfPlayerWithinRange(npc, player)){
+    npc.aggro = false;
   }
+  else {
+    if(withinActionRange(npc)){
+      if(npc.doActionAt <= universalTime){
+        npc.doAggroAction();
+      }
+    }
+  }
+  aggroMovement(npc);
+}
+
+function defaultBehavior(npc){
+  if(npc.willAggro){
+    if(aiCheckIfPlayerWithinRange(npc, player)){
+      console.log("you are getting aggro");
+      npc.aggro = true;
+    }
+  }
+  else if (!npc.doingAction){
+    if(npc.doActionAt <= universalTime){
+      npc.doDefaultAction();
+    }
+  }
+  defaultMovement(npc);
 }
 //-----------------------------------
 //
@@ -66,6 +94,27 @@ function move(ai){
   ai.body.velocity.x = 15;
   //console.log("ai velocity", ai.body.velocity.x);
   //ai.body.velocity.x = 0;
+}
+
+function aiCheckIfPlayerWithinRange(ai, target){
+  var dx = ai.body.x - target.body.x;
+  var dy = ai.body.y - target.body.y;
+  if(dx < 0) ai.targetAtX = 1;
+  else ai.targetAtX = -1;
+  if(dy < 0) ai.targetAtY = 1;
+  else ai.targetAtY = -1;
+  var distance = Math.sqrt(dx * dx + dy * dy);
+
+  if(ai.detectRange >= distance){
+    /*
+    if(ai.stopRange >= distance){
+      ai.stop = true;
+    }
+    else ai.stop = false;
+    */
+    return true;
+  }
+  else return false;
 }
 
 function aiCheckDistance(ai, target){
@@ -91,24 +140,55 @@ function aiCheckDistance(ai, target){
 //----------------------------------
 function buildSlime(x, y, id){
     slime = enemy_group.create(x,y,'slime');
-    slime.scale.setTo(1,2);
-    //game.physics.arcade.enable(slime);
+    slime.scale.setTo(3,3);
 		game.physics.enable(slime, Phaser.Physics.ARCADE);
     slime.doAttack = function(){}
     for(var attrname in aiBasicStats){slime[attrname] = aiBasicStats[attrname]}
     slime.aid = id;
-    /*
-    slime.visual = game.add.sprite(-10,-4,'slime');
-    slime.visual.scale.setTo(3,3);
-    slime.visual.setScaleMinMax(3,3);
-    slime.visual.frame = 3;
-    slime.addChild(slime.visual);
-    slime.dead = false;
-    slime.name = "slime";
-    */
-    slime.animations.add('move', [0, 1, 2, 3, 4, 4], 50, true);
-    slime.animations.play('move', 50, true);
+
+    slime.animations.add('move', [0, 1, 2, 3, 4, 4], 10, true);
+    slime.animations.play('move', 10, true);
     slime.stopRange = 100;
+    slime.doActionAt = universalTime+10;
+    slime.body.gravity.y = 0;
+    slime.curSpd = 50;
+
+
+    slime.doDefaultAction = function(){
+        this.body.velocity.y = -500;
+        this.direction *= -1;
+        //this.body.velocity.x *= -1;
+        setNextActionTime(this, 10);
+    }
     activeNPC.push(slime);
 }
 
+function jumperSlimer(x,y,id){
+   slime = enemy_group.create(x,y,'slime');
+    slime.scale.setTo(3,3);
+		game.physics.enable(slime, Phaser.Physics.ARCADE);
+    slime.doAttack = function(){}
+    for(var attrname in aiBasicStats){slime[attrname] = aiBasicStats[attrname]}
+    slime.aid = id;
+    slime.willAggro = true;
+    slime.animations.add('move', [0, 1, 2, 3, 4, 4], 10, true);
+    slime.animations.play('move', 10, true);
+    slime.stopRange = 100;
+    slime.doActionAt = universalTime+10;
+    slime.body.gravity.y = 0;
+    slime.curSpd = 50;
+    slime.doDefaultAction = function(){
+        this.body.velocity.y = -300;
+        this.direction *= -1;
+        //this.body.velocity.x *= -1;
+        setNextActionTime(this, 10);
+    };
+    slime.doAggroAction = function(){
+      this.body.velocity.y = -800;
+      this.body.velocity.x = 0;
+      setNextActionTime(this, 5);
+    }
+
+
+    activeNPC.push(slime);
+}

@@ -15,7 +15,8 @@ function conjureSpellBomb(){
     lineUp(player, bomb, templateStarAim);
     addVelocityTo(bomb, 500, 500, player);
     bomb.animations.play('run', 10, true);
-    bomb.lifespan = 500;
+    bomb.lifespan = 1200;
+    bomb.body.velocity.y = 25;
   }
 }
 
@@ -77,6 +78,7 @@ function arcaneBombExplodeDamage(bomb, impactTarget){
     explode.revive();
     explode.reset(bomb.body.center.x, bomb.body.center.y);
     explode.animations.play('run', 20, false, true);
+    explodeSound.play();
   }
 }
 

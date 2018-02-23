@@ -552,6 +552,7 @@ function aiCheckDistance(ai, target){
   if(dy < 0) ai.targetAtY = 1;
   else ai.targetAtY = -1;
   var distance = Math.sqrt(dx * dx + dy * dy);
+  ai.distance = distance;
 
   if(ai.detectRange >= distance){
     if(ai.stopRange >= distance){

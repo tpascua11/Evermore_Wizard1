@@ -8,6 +8,7 @@
 function initAllGroup(){
   console.log("initializing all groups");
   enemy_group = game.add.group();
+	phantom_group = game.add.group();
   layer_group = game.add.group();
   breakable_group = game.add.group();
   platform_group = game.add.group()
@@ -41,7 +42,6 @@ function runCollision(){
 
     game.physics.arcade.overlap(arcane_bombs, enemy_group, null, arcaneBombExplodeDamage, this);
 		//game.physics.arcade.collide(breakable_group, player);
-
 		//game.physics.arcade.collide(breakable_group, arcane_bombs);
 		//game.physics.arcade.overlap(breakable_group, player, overlap);
 
@@ -51,8 +51,6 @@ function runCollision(){
 		//game.physics.arcade.collide(player, sprites);
 		//game.physics.arcade.collide(goblin, layer);
 		//game.physics.arcade.collide(sprites);
-		//
-		//
 }
 var take = 0;
 function overlapGod(area, target){

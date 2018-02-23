@@ -95,6 +95,7 @@ function normalBasicAttack(){
   else if(moveRight.isDown || moveLeft.isDown){
     blastSound.play();
     player.body.velocity.x = player.body.velocity.x * 2;
+    player.body.velocity.y = -500;
   } else {
     chargeMagic2();
     shootSound.play();

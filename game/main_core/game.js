@@ -22,8 +22,9 @@ var livingGame = {
 	},
 	update:function(){
 		//game.world.bringToTop(foreground);
-		runNPCProcess();
-		runCollision();
+		//runNPCProcess();
+		runCollision(); //FOR ALL OBJECTS to properly jump RUN COLLISION FIRST
+		runNPCAI();
 		movement();
 		updatePlayerFrame();
 		spellUpdate();
@@ -38,7 +39,6 @@ var livingGame = {
 		attack_group.forEach( game.debug.body, game.debug, true, 'rgba(255,0,0,0.4)', true);
 
     game.debug.text(fps, 0, 30, 'yellow', 'Segoe UI');
-
 
 
 		//game.debug.body(graphics, 'rgba(255,0,0,0.3');

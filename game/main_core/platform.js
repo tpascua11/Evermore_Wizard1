@@ -9,6 +9,8 @@ function buildPlatforms(){
 		s.body.allowGravity = false;
 		s.anchor.x = 0.5;
 		s.anchor.y = 0.8;
+		s.body.velocity.y = 10;
+		s.body.velocity.x = 10;
 
 		s.scale.setTo(3,2);
 	}
