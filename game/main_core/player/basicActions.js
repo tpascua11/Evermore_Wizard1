@@ -31,7 +31,6 @@ function characterSprintStop(){
 }
 
 function characterJump(){
-
 }
 //-----------------------------
 // Positon and Velocity Setup

@@ -2,7 +2,7 @@
 // 2_Specials_Loading
 //----------------------------------
 function setupSpecials(){
-    regen = game.add.audio('regen'); 
+    regen = game.add.audio('regen');
 }
 //---------------------------------
 // 3_Specials_List
@@ -184,7 +184,6 @@ function transitionPoint(x,y){
   manaStone.wayPointAt = "rightend";
 
   floSpecials.push(manaStone);
-  
 }
 
 function doTransition(body1){
