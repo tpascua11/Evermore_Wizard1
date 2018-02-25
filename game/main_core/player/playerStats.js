@@ -1,8 +1,7 @@
 //---------------------------------------------------------
 // Player_Information
 //---------------------------------------------------------
-
-  var playerStats = {
+var playerStats = {
           health: 5,
        maxHealth: 25,
             mana: 75,
@@ -51,9 +50,20 @@
 	 ghostJumpSpan: Phaser.Timer.SECOND * 2
 };
 
+var templateStarAim ={
+  bottomRightX  : 20,
+  bottomRightY  : 20,
+  topRightX     : 20,
+  topRightY     : 20,
+  bottomX       : 20,
+  bottomY       : 20,
+  topX          : 5,
+  topY          :20,
+  sideY         : 0,
+  sideX         : 30
+};
+
 var defaultState = {
 		moving: 0,
 		direction: 1
 };
-
-

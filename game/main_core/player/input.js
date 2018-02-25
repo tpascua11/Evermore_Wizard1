@@ -81,7 +81,7 @@ function normalAction(action){
     case "barrier"   : playerBarrier();    break;
     //case "bomb"      : chargeMagic2();     break;
     case "bomb"      : normalBasicAttack();     break;
-    case "bombStop"  : magicBlast;         break;
+    //case "bombStop"  : magicBlast;         break;
     default: break;
   }
 }

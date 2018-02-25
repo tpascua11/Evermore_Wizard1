@@ -16,7 +16,6 @@ function conjureSpellBomb(){
     addVelocityTo(bomb, 500, 500, player);
     bomb.animations.play('run', 10, true);
     bomb.lifespan = 1200;
-    bomb.body.velocity.y = 25;
   }
 }
 
@@ -91,15 +90,4 @@ function rush(){
 
 var arcane_bomb_index = 0;
 
-var templateStarAim ={
-  bottomRightX: 20,
-  bottomRightY: 20,
-  topRightX: 20,
-  topRightY: 20,
-  bottomX: 20,
-  bottomY: 20,
-  topX: 5,
-  topY:20,
-  sideY: 0,
-  sideX: 30
-};
+
