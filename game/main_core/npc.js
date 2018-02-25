@@ -17,9 +17,8 @@
 //--------------------------------
 var activeNPC = [];
 function betaNPC(){
-  for(var i = 0; i < 10; i++){
-    //buildSlime(400+(30*i),700,i);
-    jumperSlimer(400, 700);
+  for(var i = 0; i < 5; i++){
+    jumperSlimer(400+(30*i), 700);
   }
 }
 //--------------------------------
@@ -27,9 +26,9 @@ function betaNPC(){
 //--------------------------------
 function runNPCAI(){
   activeNPC.forEach(function(npc){
-    if(npc.incapciated) incapciatedBehavior(npc);
-    else if(npc.doingAction) doingActionBehavior(npc);
-    else if(npc.aggro) aggroBehavior(npc);
+    if(npc.state.incapciated) incapciatedBehavior(npc);
+    else if(npc.state.doingAction) doingActionBehavior(npc);
+    else if(npc.state.is_aggroed) aggroBehavior(npc);
     else defaultBehavior(npc);
   });
 }
@@ -37,28 +36,28 @@ function runNPCAI(){
 // Indiviual_AI_PROCESS
 //------------------------------
 function incapciatedBehavior(npc){
-  //if(delayIncapacitatedUntil <= universalTime) npc.incapacitated = false;
+  if(npc.state.delayIncapacitatedUntil <= universalTime) npc.state.incapacitated = false;
 }
 
 function doingActionBehavior(npc){
-  if(npc.doActionAt <= universalTime){
-    npc.doingAction = false;
-  }
   //  actionDone can be set ture on the following condition
   //  When Animation Is Done. Animation will target the npc.doingAction to false
   //  this might not be needed but will be here just in case
   //  precise timing on doActionAt has multiple effects
+  if(npc.state.doActionAt <= universalTime){
+    npc.state.doingAction = false;
+  }
 }
 
 function aggroBehavior(npc){
   if(!aiCheckIfPlayerWithinRange(npc, player)){
-    npc.aggro = false;
+    npc.state.is_aggroed = false;
     defaultBehavior(npc);
   }
   else {
     aggroMovement(npc);
     if(withinActionRange(npc)){
-      if(npc.doActionAt <= universalTime){
+      if(npc.state.doActionAt <= universalTime){
         npc.doAggroAction();
       }
     }
@@ -66,15 +65,22 @@ function aggroBehavior(npc){
 }
 
 function defaultBehavior(npc){
-  if(npc.willAggro){
+  if(npc.behavior.willAggro){
     if(aiCheckIfPlayerWithinRange(npc, player)){
-      npc.aggro = true;
+    npc.state.is_aggroed = true;
       aggroBehavior(npc);
     }
+    else{
+      defaultMovement(npc);
+      if(npc.state.doActionAt <= universalTime){
+        npc.doDefaultAction();
+      }
+    }
   }
-  else if (!npc.doingAction){
+  else{
+    //if (!npc.state.doingAction){
     defaultMovement(npc);
-    if(npc.doActionAt <= universalTime){
+    if(npc.state.doActionAt <= universalTime){
       npc.doDefaultAction();
     }
   }
@@ -85,16 +91,16 @@ function aiCheckIfPlayerWithinRange(ai, target){
   var dx = ai.body.x - target.body.x;
   var dy = ai.body.y - target.body.y;
   var distance = Math.sqrt(dx * dx + dy * dy);
-  ai.distance = distance;
+  ai.state.distance = distance;
 
   //Check Where Target is At
-  if(dx < 0) ai.targetAtX = 1;
-  else ai.targetAtX = -1;
-  if(dy < 0) ai.targetAtY = 1;
-  else ai.targetAtY = -1;
+  if(dx < 0) ai.state.targetAtX = 1;
+  else ai.state.targetAtX = -1;
+  if(dy < 0) ai.state.targetAtY = 1;
+  else ai.state.targetAtY = -1;
 
   //If Within Aggro Range
-  if(ai.detectRange >= distance){
+  if(ai.stats.detectRange >= distance){
     return true;
   }
   else return false;
@@ -129,28 +135,15 @@ function jumperSlimer(x,y){
     slime.scale.setTo(3,3);
 		game.physics.enable(slime, Phaser.Physics.ARCADE);
     slime.doAttack = function(){}
-    //for(var attrname in aiBasicStats){slime[attrname] = aiBasicStats[attrname]}
 
-    slime.willAggro = true;
     slime.animations.add('move', [0, 1, 2, 3, 4, 4], 10, true);
     slime.animations.play('move', 10, true);
-    slime.stopRange = 100;
-    slime.doActionAt = universalTime+10;
-    slime.body.gravity.y = 0;
-    slime.curSpd = 0;
-    slime.aggroSpeed = 100;
-    slime.detectRange = 300;
-    slime.actionRange = 100;
-    slime.willFollow = true;
-
     slime.stats = Object.assign({}, npcStats);
     slime.state = Object.assign({}, npcState);
+    slime.behavior = Object.assign({}, npcBehavior);
 
     slime.doDefaultAction = function(){
         this.body.velocity.y = -100;
-        //this.body.velocity.x = this.targetAtX * 200;
-        //this.direction *= -1;
-        //this.body.velocity.x *= -1;
         setNextActionTime(this, 15);
         this.doingAction = true;
     };
@@ -161,5 +154,6 @@ function jumperSlimer(x,y){
       this.doingAction = true;
     }
 
+    //slime.body.gravity.y = 0;
     activeNPC.push(slime);
 }
