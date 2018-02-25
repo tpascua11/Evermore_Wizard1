@@ -29,7 +29,7 @@ var npcState = {
 
   //--  Action State  --
   doingActon: 0,
-  doActionAt: 10,
+  doActionAt: 10 + universalTime,
   lastAnimation: 0,
 
   //--  Behavior State --
@@ -41,19 +41,19 @@ var npcState = {
 var npcStats = {
   health   : 100,
   maxhealth: 100,
+  currentSpeed: 0,
   acl      : 50,
   maxspeed : 33,
-  curspd   : 50,
-  aggroSpeed: 50,
+  detectRange: 300,
+  willAggro: true,
+  willFollow : true,
+  aggroSpeed: 100,
+  stopRange: 100,
+  pushpowerx: 250,
+  pushpowery: 250,
+  actionRange: 100,
   ranged   : 0,
   melee    : 0,
-  willAggro: 0,
-  willFollow : 0,
-  stoprange: 50,
-  detectRange: 100,
-  pushpowerx: 500,
-  pushpowery: 200,
-  actionRange: 100,
   alliance: 2
 };
 
@@ -63,7 +63,7 @@ var aiBasicStats= {
   acl      : 50,
   maxspeed : 33,
   curspd   : 50,
-  aggroSpeed: 50,
+  aggroSpeed: 100,
   ranged   : 0,
   melee    : 0,
   direction: 1,

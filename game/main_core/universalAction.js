@@ -20,22 +20,16 @@ function setNextActionTime(ai, time){
 }
 
 function defaultMovement(ai){
-  /*
-     if(!ai.stop) ai.body.velocity.x = ai.curSpd * ai.direction;
-     else ai.body.velocity.x = 0;
-     */
   ai.body.velocity.x = ai.curSpd * ai.direction;
 }
 
 function aggroMovement(ai){
-  //ai.body.velocity.x = ai.curSpd * ai.direction;
   if(ai.willFollow){
     ai.body.velocity.x = ai.aggroSpeed * ai.targetAtX;
   } else {
     ai.body.velocity.x = ai.aggroSpeed;
   }
 }
-
 //--------------------------------------------------------------------
 //  Status_Events
 //--------------------------------------------------------------------

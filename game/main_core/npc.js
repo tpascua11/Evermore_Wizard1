@@ -17,9 +17,9 @@
 //--------------------------------
 var activeNPC = [];
 function betaNPC(){
-  for(var i = 0; i < 30; i++){
+  for(var i = 0; i < 10; i++){
     //buildSlime(400+(30*i),700,i);
-    jumperSlimer(400, 700, i);
+    jumperSlimer(400, 700);
   }
 }
 //--------------------------------
@@ -79,19 +79,6 @@ function defaultBehavior(npc){
     }
   }
 }
-//-----------------------------------
-//
-//-----------------------------------
-function follow(ai){
-  //ai.body.velocity.x = ai.curSpd * ai.targetAtX;
-  if(ai.direction == 1){
-    if(ai.body.velocity.x < ai.maxSpeed) ai.body.velocity.x += ai.acl;
-  }
-  else{
-    if(ai.body.velocity.x > -ai.maxSpeed) ai.body.velocity.x -= ai.acl;
-  }
-  ai.direction = ai.targetAtX;
-}
 
 function aiCheckIfPlayerWithinRange(ai, target){
   //Check Distance
@@ -113,35 +100,11 @@ function aiCheckIfPlayerWithinRange(ai, target){
   else return false;
 }
 
-
-function aiCheckDistance(ai, target){
-  var dx = ai.body.x - target.body.x;
-  var dy = ai.body.y - target.body.y;
-  if(dx < 0) ai.targetAtX = 1;
-  else ai.targetAtX = -1;
-  if(dy < 0) ai.targetAtY = 1;
-  else ai.targetAtY = -1;
-  var distance = Math.sqrt(dx * dx + dy * dy);
-
-  if(ai.detectRange >= distance){
-    if(ai.stopRange >= distance){
-      ai.stop = true;
-    }
-    else ai.stop = false;
-    return true;
-  }
-  else return false;
-}
-//----------------------------------
-//
-//----------------------------------
-function buildSlime(x, y, id){
+function buildSlime(x, y){
     slime = enemy_group.create(x,y,'slime');
     slime.scale.setTo(3,3);
 		game.physics.enable(slime, Phaser.Physics.ARCADE);
     slime.doAttack = function(){}
-    for(var attrname in aiBasicStats){slime[attrname] = aiBasicStats[attrname]}
-    slime.aid = id;
 
     slime.animations.add('move', [0, 1, 2, 3, 4, 4], 10, true);
     slime.animations.play('move', 10, true);
@@ -161,13 +124,13 @@ function buildSlime(x, y, id){
     activeNPC.push(slime);
 }
 
-function jumperSlimer(x,y,id){
+function jumperSlimer(x,y){
    slime = enemy_group.create(x,y,'slime');
     slime.scale.setTo(3,3);
 		game.physics.enable(slime, Phaser.Physics.ARCADE);
     slime.doAttack = function(){}
-    for(var attrname in aiBasicStats){slime[attrname] = aiBasicStats[attrname]}
-    slime.aid = id;
+    //for(var attrname in aiBasicStats){slime[attrname] = aiBasicStats[attrname]}
+
     slime.willAggro = true;
     slime.animations.add('move', [0, 1, 2, 3, 4, 4], 10, true);
     slime.animations.play('move', 10, true);
@@ -179,6 +142,9 @@ function jumperSlimer(x,y,id){
     slime.detectRange = 300;
     slime.actionRange = 100;
     slime.willFollow = true;
+
+    slime.stats = Object.assign({}, npcStats);
+    slime.state = Object.assign({}, npcState);
 
     slime.doDefaultAction = function(){
         this.body.velocity.y = -100;
