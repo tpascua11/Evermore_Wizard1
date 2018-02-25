@@ -17,7 +17,7 @@
 //--------------------------------
 var activeNPC = [];
 function betaNPC(){
-  for(var i = 0; i < 1; i++){
+  for(var i = 0; i < 30; i++){
     //buildSlime(400+(30*i),700,i);
     jumperSlimer(400, 700, i);
   }
@@ -37,42 +37,47 @@ function runNPCAI(){
 // Indiviual_AI_PROCESS
 //------------------------------
 function incapciatedBehavior(npc){
-  if(npc.delayIncapciatedUntil <= universalTime) npc.incapciated = false;
+  //if(delayIncapacitatedUntil <= universalTime) npc.incapacitated = false;
 }
 
 function doingActionBehavior(npc){
+  if(npc.doActionAt <= universalTime){
+    npc.doingAction = false;
+  }
   //  actionDone can be set ture on the following condition
   //  When Animation Is Done. Animation will target the npc.doingAction to false
   //  this might not be needed but will be here just in case
+  //  precise timing on doActionAt has multiple effects
 }
 
 function aggroBehavior(npc){
   if(!aiCheckIfPlayerWithinRange(npc, player)){
     npc.aggro = false;
+    defaultBehavior(npc);
   }
   else {
+    aggroMovement(npc);
     if(withinActionRange(npc)){
       if(npc.doActionAt <= universalTime){
         npc.doAggroAction();
       }
     }
   }
-  aggroMovement(npc);
 }
 
 function defaultBehavior(npc){
   if(npc.willAggro){
     if(aiCheckIfPlayerWithinRange(npc, player)){
-      console.log("you are getting aggro");
       npc.aggro = true;
+      aggroBehavior(npc);
     }
   }
   else if (!npc.doingAction){
+    defaultMovement(npc);
     if(npc.doActionAt <= universalTime){
       npc.doDefaultAction();
     }
   }
-  defaultMovement(npc);
 }
 //-----------------------------------
 //
@@ -88,34 +93,26 @@ function follow(ai){
   ai.direction = ai.targetAtX;
 }
 
-function move(ai){
-  //console.log("what is ai", ai);
-  //ai.body.velocity.x = ai.curSpd * ai.direction;
-  ai.body.velocity.x = 15;
-  //console.log("ai velocity", ai.body.velocity.x);
-  //ai.body.velocity.x = 0;
-}
-
 function aiCheckIfPlayerWithinRange(ai, target){
+  //Check Distance
   var dx = ai.body.x - target.body.x;
   var dy = ai.body.y - target.body.y;
+  var distance = Math.sqrt(dx * dx + dy * dy);
+  ai.distance = distance;
+
+  //Check Where Target is At
   if(dx < 0) ai.targetAtX = 1;
   else ai.targetAtX = -1;
   if(dy < 0) ai.targetAtY = 1;
   else ai.targetAtY = -1;
-  var distance = Math.sqrt(dx * dx + dy * dy);
 
+  //If Within Aggro Range
   if(ai.detectRange >= distance){
-    /*
-    if(ai.stopRange >= distance){
-      ai.stop = true;
-    }
-    else ai.stop = false;
-    */
     return true;
   }
   else return false;
 }
+
 
 function aiCheckDistance(ai, target){
   var dx = ai.body.x - target.body.x;
@@ -152,6 +149,7 @@ function buildSlime(x, y, id){
     slime.doActionAt = universalTime+10;
     slime.body.gravity.y = 0;
     slime.curSpd = 50;
+    slime.aggroSpeed = 50;
 
 
     slime.doDefaultAction = function(){
@@ -176,19 +174,26 @@ function jumperSlimer(x,y,id){
     slime.stopRange = 100;
     slime.doActionAt = universalTime+10;
     slime.body.gravity.y = 0;
-    slime.curSpd = 50;
+    slime.curSpd = 0;
+    slime.aggroSpeed = 100;
+    slime.detectRange = 300;
+    slime.actionRange = 100;
+    slime.willFollow = true;
+
     slime.doDefaultAction = function(){
-        this.body.velocity.y = -300;
-        this.direction *= -1;
+        this.body.velocity.y = -100;
+        //this.body.velocity.x = this.targetAtX * 200;
+        //this.direction *= -1;
         //this.body.velocity.x *= -1;
-        setNextActionTime(this, 10);
+        setNextActionTime(this, 15);
+        this.doingAction = true;
     };
     slime.doAggroAction = function(){
-      this.body.velocity.y = -800;
-      this.body.velocity.x = 0;
+      this.body.velocity.y = -400;
+      this.body.velocity.x = this.targetAtX * 200;
       setNextActionTime(this, 5);
+      this.doingAction = true;
     }
-
 
     activeNPC.push(slime);
 }

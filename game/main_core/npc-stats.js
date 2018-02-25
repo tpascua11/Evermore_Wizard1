@@ -5,7 +5,7 @@
    ____/_____\__\@  @/___/_____\____
    |            |\../|              |
    |             \VV/               |
-   |    ---- NPC Stats 
+   |    ---- NPC Stats
    |_________________________________|
    |    /\ /      \\       \ /\    |
    |  /   V        ))       V   \  |
@@ -19,12 +19,51 @@ var ai;
 var activeai = [];
 var aitotal = 0;
 
+
+var npcState = {
+  //--  Direction And Distance Between Target --
+  direction: 1,
+  targetAtX: 0,
+  targetAtY: 0,
+  distanceBetweenTarget: 0
+
+  //--  Action State  --
+  doingActon: 0,
+  doActionAt: 10,
+  lastAnimation: 0,
+
+  //--  Behavior State --
+  is_aggroed: 0,
+  is_incapacitated: 0,
+  delayIncapacitatedUntil: 0,
+};
+
+var npcStats = {
+  health   : 100,
+  maxhealth: 100,
+  acl      : 50,
+  maxspeed : 33,
+  curspd   : 50,
+  aggroSpeed: 50,
+  ranged   : 0,
+  melee    : 0,
+  willAggro: 0,
+  willFollow : 0,
+  stoprange: 50,
+  detectRange: 100,
+  pushpowerx: 500,
+  pushpowery: 200,
+  actionRange: 100,
+  alliance: 2
+};
+
 var aiBasicStats= {
   health   : 100,
   maxhealth: 100,
   acl      : 50,
   maxspeed : 33,
   curspd   : 50,
+  aggroSpeed: 50,
   ranged   : 0,
   melee    : 0,
   direction: 1,
@@ -32,6 +71,7 @@ var aiBasicStats= {
   targetaty: 0,
   stop     : 0,
   willAggro: 0,
+  willFollow : 0,
   stoprange: 50,
   detectRange: 100,
   pushpowerx: 500,
@@ -54,6 +94,7 @@ var aidefaultstats = {
   maxrmana : 25 ,
   curspd   : 50  ,
   speed    : 200,
+  aggroSpeed: 100,
   sprintspd: 500,
   sprinting: 0  ,
   acl      : 50 ,
@@ -78,3 +119,4 @@ var aidefaultstats = {
   doActionAt: 10,
   actionRange: 25
 };
+
