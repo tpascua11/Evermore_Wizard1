@@ -71,7 +71,8 @@ function arcaneBombExplodeDamage(bomb, impactTarget){
   if(impactTarget.index == -1) return;
   //console.log("bomb", bomb);
   //console.log("Testing ", impactTarget);
-  impactTarget.damage(10);
+  damage(impactTarget, 10);
+  //impactTarget.damage(10);
   var explode = arcane_bomb_explosions.getFirstExists(false);
   if(explode){
     bomb.kill();

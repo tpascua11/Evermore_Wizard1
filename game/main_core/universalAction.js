@@ -2,6 +2,12 @@
 //  Collision_Events
 //---------------------------------------------------------------------
 function damage(target, damageAmount){
+  target.stats.health -= damageAmount;
+  console.log("target: ", target.stats.health, "target took", damageAmount);
+
+  if(target.stats.health <= 0){
+    target.kill();
+  }
 }
 
 function push(target, pushAmount, xDirection, yDirection){

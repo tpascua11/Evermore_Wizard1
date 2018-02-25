@@ -39,7 +39,7 @@ var npcState = {
 };
 
 var npcStats = {
-  health   : 100,
+  health   : 50,
   maxhealth: 100,
   currentSpeed: 100,
   acl      : 50,

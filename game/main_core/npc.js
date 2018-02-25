@@ -18,7 +18,7 @@
 var activeNPC = [];
 function betaNPC(){
   for(var i = 0; i < 5; i++){
-    jumperSlimer(400+(30*i), 700);
+    jumperSlimer(400+(100*i), 700);
   }
 }
 //--------------------------------
