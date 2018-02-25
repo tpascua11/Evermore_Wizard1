@@ -2,8 +2,12 @@
 //  Collision_Events
 //---------------------------------------------------------------------
 function damage(target, damageAmount){
+  if(!target.stats){ //Debug Damage Calculation
+    console.log("target: ", target, "does not have stats");
+    return;
+  }
   target.stats.health -= damageAmount;
-  console.log("target: ", target.stats.health, "target took", damageAmount);
+  console.log("target: ", target, "target took", damageAmount);
 
   if(target.stats.health <= 0){
     target.kill();
