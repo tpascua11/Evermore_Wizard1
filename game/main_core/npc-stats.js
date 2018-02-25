@@ -25,7 +25,7 @@ var npcState = {
   direction: 1,
   targetAtX: 0,
   targetAtY: 0,
-  distanceBetweenTarget: 0
+  distanceBetweenTarget: 0,
 
   //--  Action State  --
   doingActon: 0,
@@ -35,7 +35,7 @@ var npcState = {
   //--  Behavior State --
   is_aggroed: 0,
   is_incapacitated: 0,
-  delayIncapacitatedUntil: 0,
+  delayIncapacitatedUntil: 0
 };
 
 var npcStats = {
