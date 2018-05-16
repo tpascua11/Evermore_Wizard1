@@ -131,7 +131,7 @@ function buildSlime(x, y){
 }
 
 function jumperSlimer(x,y){
-   slime = enemy_group.create(x,y,'slime');
+    slime = enemy_group.create(x,y,'slime');
     slime.scale.setTo(3,3);
 		game.physics.enable(slime, Phaser.Physics.ARCADE);
     slime.doAttack = function(){}
@@ -150,8 +150,12 @@ function jumperSlimer(x,y){
     slime.doAggroAction = function(){
       this.body.velocity.y = -400;
       this.body.velocity.x = this.targetAtX * 200;
-      setNextActionTime(this, 5);
+      //callSquareCollision(this.body.x, this.body.y);
+      this.addChild(callSquareCollision(0, 0));
+      setNextActionTime(this, 10);
       this.doingAction = true;
+      console.log("this", this);
+      console.log("check collision grouyp size", attack_group.children.length);
     }
 
     //slime.body.gravity.y = 0;
