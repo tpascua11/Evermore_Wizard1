@@ -7,3 +7,10 @@ game/bower_components/**
 !game/bower_components/bootstrap/dist/js/bootstrap.min.js
 !game/bower_components/bootstrap/dist/css/bootstrap.min.css
 !game/bower_components/firebase/firebase.js
+
+node_modules/**
+
+!node_modules/**/
+!node_modules/phaser-ce/build/phaser.min.js
+
+.DS_Store
