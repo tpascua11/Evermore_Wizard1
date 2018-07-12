@@ -88,10 +88,12 @@ function playerSounds(){
 function playerControl(){
 	sprint = game.input.keyboard.addKey(Phaser.Keyboard.SHIFT);
 
-	moveUp = game.input.keyboard.addKey(Phaser.Keyboard.W);
-	moveLeft = game.input.keyboard.addKey(Phaser.Keyboard.A);
-	moveRight = game.input.keyboard.addKey(Phaser.Keyboard.D);
-	moveDown = game.input.keyboard.addKey(Phaser.Keyboard.S);
+	moveUp = game.input.keyboard.addKey(Phaser.Keyboard.E);
+
+	moveLeft = game.input.keyboard.addKey(Phaser.Keyboard.S);
+
+	moveRight = game.input.keyboard.addKey(Phaser.Keyboard.F);
+	moveDown = game.input.keyboard.addKey(Phaser.Keyboard.D);
 
 	doJump = game.input.keyboard.addKey(Phaser.Keyboard.J);
 

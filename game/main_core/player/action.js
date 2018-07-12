@@ -39,6 +39,7 @@ function playerStopDown(){
   player.body.velocity.y = 0;
 }
 function playerJump(){
+  console.log("Going To Jump");
   if(player.casting) return;
   if(player.jump == 1){
     playerSpellJump();

@@ -61,10 +61,11 @@ function input(){
     case "rift"     : riftAction(this.action)   ; break;
     default: break;
   }
-  //console.log(state, this.action);
+  console.log(state, this.action);
 }
 
 function normalAction(action){
+  console.log("see action", action);
   switch(action){
     case "jump"      : playerJump()    ;   break;
     case "jumpStop"  : playerJumpStop();   break;
@@ -103,6 +104,7 @@ function normalBasicAttack(){
 }
 
 function chargeAction(action){
+  console.log("Charge Action");
   switch(action){
     case "bombStop"  : shootMagicBomb();
                        conjureSpellBomb(); break;
