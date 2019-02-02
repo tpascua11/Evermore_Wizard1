@@ -84,8 +84,8 @@ var levelName = "level0";
 
 function respawnBack(){
   player.reset(respawnAtX, respawnAtY);
-  player.health = 5;
-  player.body.health = 5;
+  player.health = 25;
+  player.body.health = 25;
   hearts.frame = player.body.health;
   console.log("player cutscene", player.cutscene);
   player.cutscene = 0;

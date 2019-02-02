@@ -78,7 +78,7 @@ function chargeUp(){
 //------------
 function shootMagicBomb(){
   if(!player.charging) return;
-  player.rmana-=3;
+  player.rmana-=2;
   magicBomb = game.add.sprite(0, 0, 'energyBall');
   shootSound.play();
   magicBomb.scale.setTo(1,1);
@@ -172,7 +172,7 @@ function magicForce(){
   if(!player.charging) return;
   if(player.focus <= 0 || player.rmana < 15) return;
   player.focus-=2;
-  player.rmana-=10;
+  player.rmana-=3;
   player.charging = player.casting = 0;
 
   magicBomb = game.add.sprite(0, 0, 'magicBlast');
@@ -253,7 +253,7 @@ function playerStopBarrier(){
 
 function playerBarrier(){
   if(player.rmana <= 0) return;
-  player.rmana -= 5;
+  player.rmana -= 3;
   circleBarrier.play('run', 10, true);
   //circleBarrier.tint = 0xFF0000;
   circleBarrier.alpha = 0.7;
@@ -333,7 +333,7 @@ function playerSpellJump(){
     player.body.velocity.x*=0.5;
     player.spellJump = 1;
     player.casting = 0;
-    player.rmana -=10;
+    player.rmana -=3;
     spellJumpSound.play();
     player.body.velocity.y= -300;
   }
@@ -397,8 +397,8 @@ function teleportWave(){
   if(player.rmana < 10) return;
   if(player.focus <= 0) return;
   if(teleport != null) teleport.destroy();
-  player.rmana -= 10;
-  player.focus-=2;
+  player.rmana -= 2;
+  player.focus-=0;
   var teleportVisualEnd;
   teleportVisualEnd = game.add.sprite(player.body.x-35, player.body.y-23, 'teleport301');
 

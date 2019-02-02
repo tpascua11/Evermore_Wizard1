@@ -38,7 +38,7 @@ var hearts;
 var invc;
 
 var playerStats = {
-  health   : 5,
+  health   : 25,
   maxHealth: 25,
   mana     : 75 ,
   maxMana  : 100,
